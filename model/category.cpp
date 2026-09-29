@@ -1,5 +1,16 @@
 #include "category.h"
 
+string categoryTypeToString(CategoryType type) {
+    return type == CategoryType::INCOME ? "INCOME" : "EXPENSE";
+}
+
+CategoryType categoryTypeFromString(const string& value) {
+    if (value == "INCOME") {
+        return CategoryType::INCOME;
+    }
+    return CategoryType::EXPENSE;
+}
+
 Category::Category() {
     id = 0;
     name = "";
@@ -29,9 +40,5 @@ void Category::setName(string name) {
 }
 
 string Category::getTypeString() const {
-    if (type == CategoryType::INCOME) {
-        return "Thu nhap";
-    }
-
-    return "Chi tieu";
+    return type == CategoryType::INCOME ? "Thu nhap" : "Chi tieu";
 }

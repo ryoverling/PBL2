@@ -1,0 +1,13 @@
+build/
+.vscode/
+*.exe
+*.o
+*.obj
+*.user
+*.autosave
+CMakeCache.txt
+CMakeFiles/
+
+# Runtime data is local to each machine.
+data/*.txt
+!data/.gitkeep

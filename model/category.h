@@ -8,6 +8,9 @@ enum class CategoryType {
     EXPENSE
 };
 
+string categoryTypeToString(CategoryType type);
+CategoryType categoryTypeFromString(const string& value);
+
 class Category {
 private:
     int id;
@@ -16,7 +19,6 @@ private:
 
 public:
     Category();
-
     Category(int id, string name, CategoryType type);
 
     int getId() const;
@@ -24,6 +26,5 @@ public:
     CategoryType getType() const;
 
     void setName(string name);
-
     string getTypeString() const;
 };

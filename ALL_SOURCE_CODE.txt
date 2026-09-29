@@ -1,0 +1,5172 @@
+
+
+================================================================================
+FILE: .gitignore
+================================================================================
+build/
+.vscode/
+*.exe
+*.o
+*.obj
+*.user
+*.autosave
+CMakeCache.txt
+CMakeFiles/
+
+# Runtime data is local to each machine.
+data/*.txt
+!data/.gitkeep
+
+
+================================================================================
+FILE: CMakeLists.txt
+================================================================================
+cmake_minimum_required(VERSION 3.16)
+
+project(MoneyManager VERSION 1.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+
+qt_add_executable(MoneyManager
+    main.cpp
+
+    model/category.cpp
+    model/wallet.cpp
+    model/transaction.cpp
+    model/income.cpp
+    model/expense.cpp
+    model/budget.cpp
+    model/user.cpp
+
+    manager/category_manager.cpp
+    manager/wallet_manager.cpp
+    manager/transaction_manager.cpp
+    manager/budget_manager.cpp
+
+    storage/file_manager.cpp
+
+    utils/date_utils.cpp
+
+    ui/chart_widgets.cpp
+    ui/login_window.cpp
+    ui/main_window.cpp
+    ui/dashboard_page.cpp
+    ui/transaction_page.cpp
+    ui/transaction_dialog.cpp
+    ui/wallet_page.cpp
+    ui/wallet_dialog.cpp
+    ui/budget_page.cpp
+    ui/budget_dialog.cpp
+    ui/statistics_page.cpp
+    ui/category_page.cpp
+    ui/category_dialog.cpp
+)
+
+target_include_directories(MoneyManager PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_link_libraries(MoneyManager PRIVATE
+    Qt6::Widgets
+)
+
+
+if(MSVC)
+    target_compile_options(MoneyManager PRIVATE /utf-8)
+endif()
+
+set_target_properties(MoneyManager PROPERTIES
+    WIN32_EXECUTABLE TRUE
+)
+
+# Copy the data directory next to the executable at build time.
+add_custom_command(TARGET MoneyManager POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+            $<TARGET_FILE_DIR:MoneyManager>/data
+)
+
+
+================================================================================
+FILE: README.md
+================================================================================
+# MoneyManager - PBL2 (Qt GUI)
+
+Ứng dụng desktop quản lý chi tiêu cá nhân bằng **C++17 + Qt 6 Widgets**.
+
+Đây là phiên bản đã nối **GUI + core OOP + LinkedList + file local**.
+
+## Chức năng
+
+- Đăng nhập local.
+- Dashboard: tổng tài sản, thu/chi tháng, ngân sách, biểu đồ và giao dịch gần đây.
+- Quản lý giao dịch Income / Expense.
+- Ngày giờ giao dịch tự lấy từ thời gian thật của máy.
+- Quản lý nhiều ví.
+- Quản lý danh mục.
+- Ngân sách theo tuần / tháng / năm / tùy chọn.
+- Thống kê theo thời gian.
+- Biểu đồ donut chi tiêu theo danh mục.
+- Biểu đồ cột 6 tháng gần nhất.
+- Lưu dữ liệu bằng file cục bộ.
+- `LinkedList<T>` tự cài.
+- `Transaction` abstract; `Income`, `Expense` kế thừa.
+
+## Tài khoản mặc định
+
+Lần đầu chạy:
+
+```text
+Username: admin
+Password: 123456
+```
+
+## Kiến trúc
+
+```text
+MoneyManager/
+├── model/       # Entity OOP
+├── manager/     # Nghiệp vụ / quản lý danh sách
+├── structure/   # Node<T>, LinkedList<T>
+├── storage/     # FileManager
+├── utils/       # DateUtils
+├── ui/          # Qt Widgets GUI
+├── data/        # file runtime
+├── main.cpp
+└── CMakeLists.txt
+```
+
+## Yêu cầu
+
+- C++17
+- CMake 3.16+
+- Qt 6 có module Widgets
+- Compiler phải khớp với Qt kit:
+  - Qt MinGW -> dùng MinGW tương ứng
+  - Qt MSVC -> dùng Visual Studio compiler tương ứng
+
+## Build bằng Qt Creator
+
+1. Mở `CMakeLists.txt` bằng Qt Creator.
+2. Chọn Qt 6 Desktop Kit.
+3. Configure Project.
+4. Build.
+5. Run.
+
+## Build bằng terminal
+
+Nếu CMake tìm được Qt:
+
+```powershell
+cmake -S . -B build
+cmake --build build
+```
+
+Nếu CMake không tìm được Qt:
+
+```powershell
+cmake -S . -B build -DCMAKE_PREFIX_PATH=C:\Qt\6.x.x\mingw_64
+cmake --build build
+```
+
+Thay đường dẫn bằng Qt trên máy.
+
+## Dữ liệu
+
+Ứng dụng tạo thư mục `data/` **bên cạnh file thực thi**.
+
+Các file runtime:
+
+```text
+user.txt
+categories.txt
+wallets.txt
+transactions.txt
+budgets.txt
+```
+
+Các file này được `.gitignore` để mỗi máy có dữ liệu riêng.
+
+## Lưu ý học tập
+
+GUI đã được làm sẵn để team có sản phẩm trực quan, nhưng phần cần hiểu khi bảo vệ vẫn là:
+
+1. Category
+2. Wallet
+3. Transaction -> Income / Expense
+4. Budget / User
+5. LinkedList<T>
+6. Manager
+7. FileManager
+8. Qt GUI gọi Manager như thế nào
+
+Không nên coi GUI là thay thế cho việc hiểu core OOP.
+
+
+================================================================================
+FILE: SETUP_QT.md
+================================================================================
+# Cài Qt để chạy MoneyManager
+
+## Cách dễ nhất: Qt Online Installer + Qt Creator
+
+1. Cài **Qt 6 Desktop**.
+2. Chọn một compiler kit:
+   - Nếu dùng MinGW: cài đúng MinGW đi kèm Qt.
+   - Nếu dùng MSVC: cài Visual Studio C++ workload tương ứng.
+3. Mở Qt Creator.
+4. Chọn **Open Project** và mở `CMakeLists.txt`.
+5. Chọn **Desktop Qt 6.x Kit**.
+6. Configure Project -> Build -> Run.
+
+## Dùng VS Code + CMake
+
+Cài extension:
+
+- C/C++
+- CMake Tools
+
+Sau đó cần cho CMake biết Qt nằm ở đâu.
+
+Ví dụ Qt MinGW:
+
+```powershell
+cmake -S . -B build -DCMAKE_PREFIX_PATH=C:\Qt\6.8.0\mingw_64
+cmake --build build
+```
+
+Đổi `6.8.0` và đường dẫn theo máy của bạn.
+
+## Nếu CMake báo không tìm thấy Qt6
+
+Lỗi thường có dạng:
+
+```text
+Could not find a package configuration file provided by "Qt6"
+```
+
+Điều này nghĩa là CMake chưa biết thư mục Qt.
+
+Dùng:
+
+```powershell
+cmake -S . -B build -DCMAKE_PREFIX_PATH=DUONG_DAN_QT_KIT
+```
+
+Ví dụ:
+
+```powershell
+cmake -S . -B build -DCMAKE_PREFIX_PATH=C:\Qt\6.8.0\mingw_64
+```
+
+## Dữ liệu
+
+Khi chạy, app tự tạo thư mục `data` cạnh file `.exe`.
+
+Tài khoản mặc định:
+
+```text
+admin
+123456
+```
+
+
+================================================================================
+FILE: build.bat
+================================================================================
+@echo off
+setlocal
+
+echo ==========================================
+echo        MoneyManager - Qt 6 Build
+echo ==========================================
+
+if not exist build mkdir build
+
+cmake -S . -B build
+if errorlevel 1 (
+    echo.
+    echo CMake khong tim thay Qt.
+    echo Neu ban da cai Qt, hay cau hinh CMAKE_PREFIX_PATH.
+    echo Vi du:
+    echo cmake -S . -B build -DCMAKE_PREFIX_PATH=C:\Qt\6.8.0\mingw_64
+    pause
+    exit /b 1
+)
+
+cmake --build build --config Release
+if errorlevel 1 (
+    echo Build that bai.
+    pause
+    exit /b 1
+)
+
+echo.
+echo Build thanh cong.
+echo File chay nam trong thu muc build.
+pause
+
+
+================================================================================
+FILE: main.cpp
+================================================================================
+#include <QApplication>
+
+#include "ui/login_window.h"
+#include "ui/theme.h"
+
+int main(int argc, char* argv[]) {
+    QApplication app(argc, argv);
+
+    app.setApplicationName("MoneyManager");
+    app.setOrganizationName("PBL2 Team");
+    app.setStyleSheet(Theme::appStyleSheet());
+
+    LoginWindow loginWindow;
+    loginWindow.show();
+
+    return app.exec();
+}
+
+
+================================================================================
+FILE: manager/budget_manager.cpp
+================================================================================
+#include "budget_manager.h"
+#include "../utils/date_utils.h"
+
+bool BudgetManager::addBudget(const Budget& budget) {
+    if (findById(budget.getId()) != nullptr || budget.getAmount() <= 0) return false;
+    budgets.pushBack(budget);
+    return true;
+}
+
+int BudgetManager::createBudget(double amount, string startDate, string endDate, int categoryId) {
+    if (amount <= 0 || startDate > endDate) return -1;
+    int id = getNextId();
+    budgets.pushBack(Budget(id, amount, startDate, endDate, categoryId));
+    return id;
+}
+
+bool BudgetManager::deleteBudget(int id) {
+    return budgets.removeIf([id](const Budget& b) {
+        return b.getId() == id;
+    });
+}
+
+bool BudgetManager::updateBudgetAmount(int id, double amount) {
+    Budget* budget = findById(id);
+    if (budget == nullptr || amount <= 0) return false;
+    budget->setAmount(amount);
+    return true;
+}
+
+Budget* BudgetManager::findById(int id) {
+    return budgets.findIf([id](const Budget& b) {
+        return b.getId() == id;
+    });
+}
+
+const Budget* BudgetManager::findById(int id) const {
+    return budgets.findIf([id](const Budget& b) {
+        return b.getId() == id;
+    });
+}
+
+double BudgetManager::calculateSpent(const Budget& budget, const TransactionManager& transactionManager) const {
+    double spent = 0;
+    transactionManager.getTransactions().forEach([&](Transaction* const& t) {
+        if (t == nullptr || t->getType() != TransactionType::EXPENSE) return;
+        if (!DateUtils::isDateInRange(t->getDateTime(), budget.getStartDate(), budget.getEndDate())) return;
+        if (budget.getCategoryId() != 0 && t->getCategoryId() != budget.getCategoryId()) return;
+        spent += t->getAmount();
+    });
+    return spent;
+}
+
+double BudgetManager::calculateRemaining(const Budget& budget, const TransactionManager& transactionManager) const {
+    return budget.getAmount() - calculateSpent(budget, transactionManager);
+}
+
+bool BudgetManager::isOverBudget(const Budget& budget, const TransactionManager& transactionManager) const {
+    return calculateSpent(budget, transactionManager) > budget.getAmount();
+}
+
+bool BudgetManager::hasCategoryBudget(int categoryId) const {
+    bool found = false;
+    budgets.forEach([&](const Budget& b) {
+        if (b.getCategoryId() == categoryId) found = true;
+    });
+    return found;
+}
+
+int BudgetManager::getNextId() const {
+    int maxId = 0;
+    budgets.forEach([&](const Budget& b) {
+        if (b.getId() > maxId) maxId = b.getId();
+    });
+    return maxId + 1;
+}
+
+void BudgetManager::clear() {
+    budgets.clear();
+}
+
+LinkedList<Budget>& BudgetManager::getBudgets() {
+    return budgets;
+}
+
+const LinkedList<Budget>& BudgetManager::getBudgets() const {
+    return budgets;
+}
+
+
+================================================================================
+FILE: manager/budget_manager.h
+================================================================================
+#pragma once
+
+#include "../model/budget.h"
+#include "../structure/linked_list.h"
+#include "transaction_manager.h"
+
+class BudgetManager {
+private:
+    LinkedList<Budget> budgets;
+
+public:
+    bool addBudget(const Budget& budget);
+    int createBudget(double amount, string startDate, string endDate, int categoryId);
+    bool deleteBudget(int id);
+    bool updateBudgetAmount(int id, double amount);
+
+    Budget* findById(int id);
+    const Budget* findById(int id) const;
+
+    double calculateSpent(const Budget& budget, const TransactionManager& transactionManager) const;
+    double calculateRemaining(const Budget& budget, const TransactionManager& transactionManager) const;
+    bool isOverBudget(const Budget& budget, const TransactionManager& transactionManager) const;
+
+    bool hasCategoryBudget(int categoryId) const;
+    int getNextId() const;
+    void clear();
+
+    LinkedList<Budget>& getBudgets();
+    const LinkedList<Budget>& getBudgets() const;
+};
+
+
+================================================================================
+FILE: manager/category_manager.cpp
+================================================================================
+#include "category_manager.h"
+
+bool CategoryManager::addCategory(const Category& category) {
+    if (findById(category.getId()) != nullptr) return false;
+    categories.pushBack(category);
+    return true;
+}
+
+int CategoryManager::createCategory(string name, CategoryType type) {
+    int id = getNextId();
+    categories.pushBack(Category(id, name, type));
+    return id;
+}
+
+bool CategoryManager::deleteCategory(int id) {
+    return categories.removeIf([id](const Category& c) {
+        return c.getId() == id;
+    });
+}
+
+bool CategoryManager::updateCategoryName(int id, string newName) {
+    Category* category = findById(id);
+    if (category == nullptr || newName.empty()) return false;
+    category->setName(newName);
+    return true;
+}
+
+Category* CategoryManager::findById(int id) {
+    return categories.findIf([id](const Category& c) {
+        return c.getId() == id;
+    });
+}
+
+const Category* CategoryManager::findById(int id) const {
+    return categories.findIf([id](const Category& c) {
+        return c.getId() == id;
+    });
+}
+
+int CategoryManager::getNextId() const {
+    int maxId = 0;
+    categories.forEach([&maxId](const Category& c) {
+        if (c.getId() > maxId) maxId = c.getId();
+    });
+    return maxId + 1;
+}
+
+void CategoryManager::clear() {
+    categories.clear();
+}
+
+LinkedList<Category>& CategoryManager::getCategories() {
+    return categories;
+}
+
+const LinkedList<Category>& CategoryManager::getCategories() const {
+    return categories;
+}
+
+
+================================================================================
+FILE: manager/category_manager.h
+================================================================================
+#pragma once
+
+#include "../model/category.h"
+#include "../structure/linked_list.h"
+
+class CategoryManager {
+private:
+    LinkedList<Category> categories;
+
+public:
+    bool addCategory(const Category& category);
+    int createCategory(string name, CategoryType type);
+    bool deleteCategory(int id);
+    bool updateCategoryName(int id, string newName);
+
+    Category* findById(int id);
+    const Category* findById(int id) const;
+
+    int getNextId() const;
+    void clear();
+
+    LinkedList<Category>& getCategories();
+    const LinkedList<Category>& getCategories() const;
+};
+
+
+================================================================================
+FILE: manager/transaction_manager.cpp
+================================================================================
+#include "transaction_manager.h"
+#include "../utils/date_utils.h"
+
+TransactionManager::~TransactionManager() {
+    clear();
+}
+
+bool TransactionManager::validateTransaction(const Transaction* transaction,
+                                               const WalletManager& walletManager,
+                                               const CategoryManager& categoryManager) const {
+    if (transaction == nullptr || transaction->getAmount() <= 0) return false;
+
+    const Wallet* wallet = walletManager.findById(transaction->getWalletId());
+    const Category* category = categoryManager.findById(transaction->getCategoryId());
+    if (wallet == nullptr || category == nullptr) return false;
+
+    if (transaction->getType() == TransactionType::INCOME &&
+        category->getType() != CategoryType::INCOME) return false;
+
+    if (transaction->getType() == TransactionType::EXPENSE &&
+        category->getType() != CategoryType::EXPENSE) return false;
+
+    return true;
+}
+
+bool TransactionManager::applyWalletEffect(const Transaction* transaction,
+                                            WalletManager& walletManager,
+                                            bool reverse) {
+    if (transaction == nullptr) return false;
+    Wallet* wallet = walletManager.findById(transaction->getWalletId());
+    if (wallet == nullptr) return false;
+
+    double amount = transaction->getAmount();
+
+    if (!reverse) {
+        if (transaction->getType() == TransactionType::INCOME) {
+            return wallet->deposit(amount);
+        }
+        return wallet->withdraw(amount);
+    }
+
+    // Hoan tac giao dich cu.
+    if (transaction->getType() == TransactionType::INCOME) {
+        return wallet->withdraw(amount);
+    }
+    return wallet->deposit(amount);
+}
+
+bool TransactionManager::addTransaction(Transaction* transaction,
+                                        WalletManager& walletManager,
+                                        const CategoryManager& categoryManager,
+                                        bool applyWallet) {
+    if (transaction == nullptr) return false;
+    if (findById(transaction->getId()) != nullptr) return false;
+    if (!validateTransaction(transaction, walletManager, categoryManager)) return false;
+
+    if (applyWallet && !applyWalletEffect(transaction, walletManager, false)) {
+        return false;
+    }
+
+    transactions.pushBack(transaction);
+    return true;
+}
+
+bool TransactionManager::addLoadedTransaction(Transaction* transaction) {
+    if (transaction == nullptr || findById(transaction->getId()) != nullptr) return false;
+    transactions.pushBack(transaction);
+    return true;
+}
+
+bool TransactionManager::deleteTransaction(int id, WalletManager& walletManager) {
+    Transaction* transaction = findById(id);
+    if (transaction == nullptr) return false;
+
+    if (!applyWalletEffect(transaction, walletManager, true)) return false;
+
+    Transaction* pointerToDelete = transaction;
+    bool removed = transactions.removeIf([id](Transaction* const& t) {
+        return t != nullptr && t->getId() == id;
+    });
+
+    if (removed) {
+        delete pointerToDelete;
+        return true;
+    }
+    return false;
+}
+
+bool TransactionManager::updateTransaction(int id,
+                                           Transaction* replacement,
+                                           WalletManager& walletManager,
+                                           const CategoryManager& categoryManager) {
+    Transaction* oldTransaction = findById(id);
+    if (oldTransaction == nullptr || replacement == nullptr) return false;
+    if (replacement->getId() != id) return false;
+    if (!validateTransaction(replacement, walletManager, categoryManager)) return false;
+
+    if (!applyWalletEffect(oldTransaction, walletManager, true)) return false;
+
+    if (!applyWalletEffect(replacement, walletManager, false)) {
+        applyWalletEffect(oldTransaction, walletManager, false);
+        return false;
+    }
+
+    Transaction* oldPointer = oldTransaction;
+    bool removed = transactions.removeIf([id](Transaction* const& t) {
+        return t != nullptr && t->getId() == id;
+    });
+
+    if (!removed) {
+        applyWalletEffect(replacement, walletManager, true);
+        applyWalletEffect(oldTransaction, walletManager, false);
+        return false;
+    }
+
+    delete oldPointer;
+    transactions.pushBack(replacement);
+    return true;
+}
+
+Transaction* TransactionManager::findById(int id) {
+    Transaction** result = transactions.findIf([id](Transaction* const& t) {
+        return t != nullptr && t->getId() == id;
+    });
+    return result == nullptr ? nullptr : *result;
+}
+
+const Transaction* TransactionManager::findById(int id) const {
+    Transaction* const* result = transactions.findIf([id](Transaction* const& t) {
+        return t != nullptr && t->getId() == id;
+    });
+    return result == nullptr ? nullptr : *result;
+}
+
+double TransactionManager::getTotalIncome(string startDate, string endDate) const {
+    double total = 0;
+    transactions.forEach([&](Transaction* const& t) {
+        if (t == nullptr || t->getType() != TransactionType::INCOME) return;
+        if (!startDate.empty() && !endDate.empty() &&
+            !DateUtils::isDateInRange(t->getDateTime(), startDate, endDate)) return;
+        total += t->getAmount();
+    });
+    return total;
+}
+
+double TransactionManager::getTotalExpense(string startDate, string endDate) const {
+    double total = 0;
+    transactions.forEach([&](Transaction* const& t) {
+        if (t == nullptr || t->getType() != TransactionType::EXPENSE) return;
+        if (!startDate.empty() && !endDate.empty() &&
+            !DateUtils::isDateInRange(t->getDateTime(), startDate, endDate)) return;
+        total += t->getAmount();
+    });
+    return total;
+}
+
+bool TransactionManager::hasWalletTransactions(int walletId) const {
+    bool found = false;
+    transactions.forEach([&](Transaction* const& t) {
+        if (t != nullptr && t->getWalletId() == walletId) found = true;
+    });
+    return found;
+}
+
+bool TransactionManager::hasCategoryTransactions(int categoryId) const {
+    bool found = false;
+    transactions.forEach([&](Transaction* const& t) {
+        if (t != nullptr && t->getCategoryId() == categoryId) found = true;
+    });
+    return found;
+}
+
+int TransactionManager::getNextId() const {
+    int maxId = 0;
+    transactions.forEach([&](Transaction* const& t) {
+        if (t != nullptr && t->getId() > maxId) maxId = t->getId();
+    });
+    return maxId + 1;
+}
+
+void TransactionManager::clear() {
+    transactions.forEach([](Transaction*& t) {
+        delete t;
+        t = nullptr;
+    });
+    transactions.clear();
+}
+
+LinkedList<Transaction*>& TransactionManager::getTransactions() {
+    return transactions;
+}
+
+const LinkedList<Transaction*>& TransactionManager::getTransactions() const {
+    return transactions;
+}
+
+
+================================================================================
+FILE: manager/transaction_manager.h
+================================================================================
+#pragma once
+
+#include "../model/transaction.h"
+#include "../model/income.h"
+#include "../model/expense.h"
+#include "../structure/linked_list.h"
+#include "wallet_manager.h"
+#include "category_manager.h"
+
+class TransactionManager {
+private:
+    LinkedList<Transaction*> transactions;
+
+    bool validateTransaction(const Transaction* transaction,
+                             const WalletManager& walletManager,
+                             const CategoryManager& categoryManager) const;
+
+    bool applyWalletEffect(const Transaction* transaction,
+                           WalletManager& walletManager,
+                           bool reverse);
+
+public:
+    TransactionManager() = default;
+    ~TransactionManager();
+
+    TransactionManager(const TransactionManager&) = delete;
+    TransactionManager& operator=(const TransactionManager&) = delete;
+
+    bool addTransaction(Transaction* transaction,
+                        WalletManager& walletManager,
+                        const CategoryManager& categoryManager,
+                        bool applyWallet = true);
+
+    bool addLoadedTransaction(Transaction* transaction);
+
+    bool deleteTransaction(int id, WalletManager& walletManager);
+
+    bool updateTransaction(int id,
+                           Transaction* replacement,
+                           WalletManager& walletManager,
+                           const CategoryManager& categoryManager);
+
+    Transaction* findById(int id);
+    const Transaction* findById(int id) const;
+
+    double getTotalIncome(string startDate = "", string endDate = "") const;
+    double getTotalExpense(string startDate = "", string endDate = "") const;
+
+    bool hasWalletTransactions(int walletId) const;
+    bool hasCategoryTransactions(int categoryId) const;
+
+    int getNextId() const;
+    void clear();
+
+    LinkedList<Transaction*>& getTransactions();
+    const LinkedList<Transaction*>& getTransactions() const;
+};
+
+
+================================================================================
+FILE: manager/wallet_manager.cpp
+================================================================================
+#include "wallet_manager.h"
+
+bool WalletManager::addWallet(const Wallet& wallet) {
+    if (findById(wallet.getId()) != nullptr) return false;
+    wallets.pushBack(wallet);
+    return true;
+}
+
+int WalletManager::createWallet(string name, WalletType type, double initialBalance) {
+    int id = getNextId();
+    wallets.pushBack(Wallet(id, name, type, initialBalance));
+    return id;
+}
+
+bool WalletManager::deleteWallet(int id) {
+    return wallets.removeIf([id](const Wallet& w) {
+        return w.getId() == id;
+    });
+}
+
+bool WalletManager::updateWalletName(int id, string newName) {
+    Wallet* wallet = findById(id);
+    if (wallet == nullptr || newName.empty()) return false;
+    wallet->setName(newName);
+    return true;
+}
+
+Wallet* WalletManager::findById(int id) {
+    return wallets.findIf([id](const Wallet& w) {
+        return w.getId() == id;
+    });
+}
+
+const Wallet* WalletManager::findById(int id) const {
+    return wallets.findIf([id](const Wallet& w) {
+        return w.getId() == id;
+    });
+}
+
+double WalletManager::getTotalBalance() const {
+    double total = 0;
+    wallets.forEach([&total](const Wallet& w) {
+        total += w.getBalance();
+    });
+    return total;
+}
+
+int WalletManager::getNextId() const {
+    int maxId = 0;
+    wallets.forEach([&maxId](const Wallet& w) {
+        if (w.getId() > maxId) maxId = w.getId();
+    });
+    return maxId + 1;
+}
+
+void WalletManager::clear() {
+    wallets.clear();
+}
+
+LinkedList<Wallet>& WalletManager::getWallets() {
+    return wallets;
+}
+
+const LinkedList<Wallet>& WalletManager::getWallets() const {
+    return wallets;
+}
+
+
+================================================================================
+FILE: manager/wallet_manager.h
+================================================================================
+#pragma once
+
+#include "../model/wallet.h"
+#include "../structure/linked_list.h"
+
+class WalletManager {
+private:
+    LinkedList<Wallet> wallets;
+
+public:
+    bool addWallet(const Wallet& wallet);
+    int createWallet(string name, WalletType type, double initialBalance);
+    bool deleteWallet(int id);
+    bool updateWalletName(int id, string newName);
+
+    Wallet* findById(int id);
+    const Wallet* findById(int id) const;
+
+    double getTotalBalance() const;
+    int getNextId() const;
+    void clear();
+
+    LinkedList<Wallet>& getWallets();
+    const LinkedList<Wallet>& getWallets() const;
+};
+
+
+================================================================================
+FILE: model/budget.cpp
+================================================================================
+#include "budget.h"
+
+Budget::Budget() {
+    id = 0;
+    amount = 0;
+    startDate = "";
+    endDate = "";
+    categoryId = 0;
+}
+
+Budget::Budget(int id, double amount, string startDate, string endDate, int categoryId) {
+    this->id = id;
+    this->amount = amount;
+    this->startDate = startDate;
+    this->endDate = endDate;
+    this->categoryId = categoryId;
+}
+
+int Budget::getId() const { return id; }
+double Budget::getAmount() const { return amount; }
+string Budget::getStartDate() const { return startDate; }
+string Budget::getEndDate() const { return endDate; }
+int Budget::getCategoryId() const { return categoryId; }
+
+void Budget::setAmount(double amount) {
+    if (amount > 0) this->amount = amount;
+}
+
+void Budget::setDateRange(string startDate, string endDate) {
+    this->startDate = startDate;
+    this->endDate = endDate;
+}
+
+void Budget::setCategoryId(int categoryId) {
+    this->categoryId = categoryId;
+}
+
+
+================================================================================
+FILE: model/budget.h
+================================================================================
+#pragma once
+
+#include <string>
+using namespace std;
+
+class Budget {
+private:
+    int id;
+    double amount;
+    string startDate;
+    string endDate;
+    int categoryId; // 0 = tat ca danh muc chi
+
+public:
+    Budget();
+    Budget(int id, double amount, string startDate, string endDate, int categoryId);
+
+    int getId() const;
+    double getAmount() const;
+    string getStartDate() const;
+    string getEndDate() const;
+    int getCategoryId() const;
+
+    void setAmount(double amount);
+    void setDateRange(string startDate, string endDate);
+    void setCategoryId(int categoryId);
+};
+
+
+================================================================================
+FILE: model/category.cpp
+================================================================================
+#include "category.h"
+
+string categoryTypeToString(CategoryType type) {
+    return type == CategoryType::INCOME ? "INCOME" : "EXPENSE";
+}
+
+CategoryType categoryTypeFromString(const string& value) {
+    if (value == "INCOME") {
+        return CategoryType::INCOME;
+    }
+    return CategoryType::EXPENSE;
+}
+
+Category::Category() {
+    id = 0;
+    name = "";
+    type = CategoryType::EXPENSE;
+}
+
+Category::Category(int id, string name, CategoryType type) {
+    this->id = id;
+    this->name = name;
+    this->type = type;
+}
+
+int Category::getId() const {
+    return id;
+}
+
+string Category::getName() const {
+    return name;
+}
+
+CategoryType Category::getType() const {
+    return type;
+}
+
+void Category::setName(string name) {
+    this->name = name;
+}
+
+string Category::getTypeString() const {
+    return type == CategoryType::INCOME ? "Thu nhap" : "Chi tieu";
+}
+
+
+================================================================================
+FILE: model/category.h
+================================================================================
+#pragma once
+
+#include <string>
+using namespace std;
+
+enum class CategoryType {
+    INCOME,
+    EXPENSE
+};
+
+string categoryTypeToString(CategoryType type);
+CategoryType categoryTypeFromString(const string& value);
+
+class Category {
+private:
+    int id;
+    string name;
+    CategoryType type;
+
+public:
+    Category();
+    Category(int id, string name, CategoryType type);
+
+    int getId() const;
+    string getName() const;
+    CategoryType getType() const;
+
+    void setName(string name);
+    string getTypeString() const;
+};
+
+
+================================================================================
+FILE: model/expense.cpp
+================================================================================
+#include "expense.h"
+
+Expense::Expense() : Transaction() {}
+
+Expense::Expense(int id, double amount, string dateTime, string note, int walletId, int categoryId)
+    : Transaction(id, amount, dateTime, note, walletId, categoryId) {}
+
+TransactionType Expense::getType() const {
+    return TransactionType::EXPENSE;
+}
+
+double Expense::getSignedAmount() const {
+    return -getAmount();
+}
+
+
+================================================================================
+FILE: model/expense.h
+================================================================================
+#pragma once
+
+#include "transaction.h"
+
+class Expense : public Transaction {
+public:
+    Expense();
+    Expense(int id, double amount, string dateTime, string note, int walletId, int categoryId);
+
+    TransactionType getType() const override;
+    double getSignedAmount() const override;
+};
+
+
+================================================================================
+FILE: model/income.cpp
+================================================================================
+#include "income.h"
+
+Income::Income() : Transaction() {}
+
+Income::Income(int id, double amount, string dateTime, string note, int walletId, int categoryId)
+    : Transaction(id, amount, dateTime, note, walletId, categoryId) {}
+
+TransactionType Income::getType() const {
+    return TransactionType::INCOME;
+}
+
+double Income::getSignedAmount() const {
+    return getAmount();
+}
+
+
+================================================================================
+FILE: model/income.h
+================================================================================
+#pragma once
+
+#include "transaction.h"
+
+class Income : public Transaction {
+public:
+    Income();
+    Income(int id, double amount, string dateTime, string note, int walletId, int categoryId);
+
+    TransactionType getType() const override;
+    double getSignedAmount() const override;
+};
+
+
+================================================================================
+FILE: model/transaction.cpp
+================================================================================
+#include "transaction.h"
+#include "../utils/date_utils.h"
+
+string transactionTypeToString(TransactionType type) {
+    return type == TransactionType::INCOME ? "INCOME" : "EXPENSE";
+}
+
+Transaction::Transaction() {
+    id = 0;
+    amount = 0;
+    dateTime = DateUtils::getCurrentDateTime();
+    note = "";
+    walletId = 0;
+    categoryId = 0;
+}
+
+Transaction::Transaction(int id, double amount, string dateTime, string note, int walletId, int categoryId) {
+    this->id = id;
+    this->amount = amount;
+    this->dateTime = dateTime.empty() ? DateUtils::getCurrentDateTime() : dateTime;
+    this->note = note;
+    this->walletId = walletId;
+    this->categoryId = categoryId;
+}
+
+int Transaction::getId() const {
+    return id;
+}
+
+double Transaction::getAmount() const {
+    return amount;
+}
+
+string Transaction::getDateTime() const {
+    return dateTime;
+}
+
+string Transaction::getNote() const {
+    return note;
+}
+
+int Transaction::getWalletId() const {
+    return walletId;
+}
+
+int Transaction::getCategoryId() const {
+    return categoryId;
+}
+
+string Transaction::getTypeString() const {
+    return getType() == TransactionType::INCOME ? "Thu nhap" : "Chi tieu";
+}
+
+
+================================================================================
+FILE: model/transaction.h
+================================================================================
+#pragma once
+
+#include <string>
+using namespace std;
+
+enum class TransactionType {
+    INCOME,
+    EXPENSE
+};
+
+string transactionTypeToString(TransactionType type);
+
+class Transaction {
+private:
+    int id;
+    double amount;
+    string dateTime;
+    string note;
+    int walletId;
+    int categoryId;
+
+protected:
+    Transaction();
+    Transaction(int id, double amount, string dateTime, string note, int walletId, int categoryId);
+
+public:
+    virtual ~Transaction() = default;
+
+    int getId() const;
+    double getAmount() const;
+    string getDateTime() const;
+    string getNote() const;
+    int getWalletId() const;
+    int getCategoryId() const;
+
+    virtual TransactionType getType() const = 0;
+    virtual double getSignedAmount() const = 0;
+
+    string getTypeString() const;
+};
+
+
+================================================================================
+FILE: model/user.cpp
+================================================================================
+#include "user.h"
+
+User::User() {
+    username = "";
+    password = "";
+    name = "";
+    loggedIn = false;
+}
+
+User::User(string username, string password, string name) {
+    this->username = username;
+    this->password = password;
+    this->name = name;
+    loggedIn = false;
+}
+
+string User::getUsername() const { return username; }
+string User::getPassword() const { return password; }
+string User::getName() const { return name; }
+
+bool User::login(string username, string password) {
+    loggedIn = (this->username == username && this->password == password);
+    return loggedIn;
+}
+
+void User::logout() {
+    loggedIn = false;
+}
+
+bool User::isLoggedIn() const {
+    return loggedIn;
+}
+
+
+================================================================================
+FILE: model/user.h
+================================================================================
+#pragma once
+
+#include <string>
+using namespace std;
+
+class User {
+private:
+    string username;
+    string password;
+    string name;
+    bool loggedIn;
+
+public:
+    User();
+    User(string username, string password, string name);
+
+    string getUsername() const;
+    string getPassword() const;
+    string getName() const;
+
+    bool login(string username, string password);
+    void logout();
+    bool isLoggedIn() const;
+};
+
+
+================================================================================
+FILE: model/wallet.cpp
+================================================================================
+#include "wallet.h"
+
+string walletTypeToString(WalletType type) {
+    switch (type) {
+        case WalletType::CASH: return "CASH";
+        case WalletType::BANK: return "BANK";
+        case WalletType::EWALLET: return "EWALLET";
+        default: return "OTHER";
+    }
+}
+
+WalletType walletTypeFromString(const string& value) {
+    if (value == "CASH") return WalletType::CASH;
+    if (value == "BANK") return WalletType::BANK;
+    if (value == "EWALLET") return WalletType::EWALLET;
+    return WalletType::OTHER;
+}
+
+Wallet::Wallet() {
+    id = 0;
+    name = "";
+    type = WalletType::OTHER;
+    balance = 0;
+}
+
+Wallet::Wallet(int id, string name, WalletType type, double balance) {
+    this->id = id;
+    this->name = name;
+    this->type = type;
+    this->balance = balance;
+}
+
+int Wallet::getId() const {
+    return id;
+}
+
+string Wallet::getName() const {
+    return name;
+}
+
+WalletType Wallet::getType() const {
+    return type;
+}
+
+double Wallet::getBalance() const {
+    return balance;
+}
+
+void Wallet::setName(string name) {
+    this->name = name;
+}
+
+void Wallet::setType(WalletType type) {
+    this->type = type;
+}
+
+bool Wallet::deposit(double amount) {
+    if (amount <= 0) {
+        return false;
+    }
+    balance += amount;
+    return true;
+}
+
+bool Wallet::withdraw(double amount) {
+    if (amount <= 0) {
+        return false;
+    }
+    // Cho phep so du am de viec sua/xoa giao dich cu khong lam hong lich su.
+    balance -= amount;
+    return true;
+}
+
+
+================================================================================
+FILE: model/wallet.h
+================================================================================
+#pragma once
+
+#include <string>
+using namespace std;
+
+enum class WalletType {
+    CASH,
+    BANK,
+    EWALLET,
+    OTHER
+};
+
+string walletTypeToString(WalletType type);
+WalletType walletTypeFromString(const string& value);
+
+class Wallet {
+private:
+    int id;
+    string name;
+    WalletType type;
+    double balance;
+
+public:
+    Wallet();
+    Wallet(int id, string name, WalletType type, double balance);
+
+    int getId() const;
+    string getName() const;
+    WalletType getType() const;
+    double getBalance() const;
+
+    void setName(string name);
+    void setType(WalletType type);
+
+    bool deposit(double amount);
+    bool withdraw(double amount);
+};
+
+
+================================================================================
+FILE: storage/file_manager.cpp
+================================================================================
+#include "file_manager.h"
+
+#include <filesystem>
+#include <fstream>
+#include <sstream>
+#include <vector>
+
+#include "../model/income.h"
+#include "../model/expense.h"
+
+namespace {
+    vector<string> splitLine(const string& line, char delimiter = '|') {
+        vector<string> parts;
+        string item;
+        stringstream ss(line);
+        while (getline(ss, item, delimiter)) {
+            parts.push_back(item);
+        }
+        return parts;
+    }
+}
+
+string FileManager::sanitize(const string& value) {
+    string result = value;
+    for (char& c : result) {
+        if (c == '|' || c == '\n' || c == '\r') c = ' ';
+    }
+    return result;
+}
+
+void FileManager::ensureDataDirectory(const string& directory) {
+    filesystem::create_directories(directory);
+}
+
+bool FileManager::loadUser(const string& path, User& user) {
+    ifstream file(path);
+    if (!file) return false;
+
+    string line;
+    if (!getline(file, line)) return false;
+    vector<string> p = splitLine(line);
+    if (p.size() < 3) return false;
+
+    user = User(p[0], p[1], p[2]);
+    return true;
+}
+
+bool FileManager::saveUser(const string& path, const User& user) {
+    ofstream file(path);
+    if (!file) return false;
+    file << sanitize(user.getUsername()) << '|'
+         << sanitize(user.getPassword()) << '|'
+         << sanitize(user.getName()) << '\n';
+    return true;
+}
+
+bool FileManager::loadCategories(const string& path, CategoryManager& manager) {
+    ifstream file(path);
+    if (!file) return false;
+    manager.clear();
+
+    string line;
+    while (getline(file, line)) {
+        if (line.empty()) continue;
+        vector<string> p = splitLine(line);
+        if (p.size() < 3) continue;
+        try {
+            int id = stoi(p[0]);
+            manager.addCategory(Category(id, p[1], categoryTypeFromString(p[2])));
+        } catch (...) {}
+    }
+    return true;
+}
+
+bool FileManager::saveCategories(const string& path, const CategoryManager& manager) {
+    ofstream file(path);
+    if (!file) return false;
+
+    manager.getCategories().forEach([&](const Category& c) {
+        file << c.getId() << '|'
+             << sanitize(c.getName()) << '|'
+             << categoryTypeToString(c.getType()) << '\n';
+    });
+    return true;
+}
+
+bool FileManager::loadWallets(const string& path, WalletManager& manager) {
+    ifstream file(path);
+    if (!file) return false;
+    manager.clear();
+
+    string line;
+    while (getline(file, line)) {
+        if (line.empty()) continue;
+        vector<string> p = splitLine(line);
+        if (p.size() < 4) continue;
+        try {
+            int id = stoi(p[0]);
+            double balance = stod(p[3]);
+            manager.addWallet(Wallet(id, p[1], walletTypeFromString(p[2]), balance));
+        } catch (...) {}
+    }
+    return true;
+}
+
+bool FileManager::saveWallets(const string& path, const WalletManager& manager) {
+    ofstream file(path);
+    if (!file) return false;
+
+    manager.getWallets().forEach([&](const Wallet& w) {
+        file << w.getId() << '|'
+             << sanitize(w.getName()) << '|'
+             << walletTypeToString(w.getType()) << '|'
+             << w.getBalance() << '\n';
+    });
+    return true;
+}
+
+bool FileManager::loadTransactions(const string& path, TransactionManager& manager) {
+    ifstream file(path);
+    if (!file) return false;
+    manager.clear();
+
+    string line;
+    while (getline(file, line)) {
+        if (line.empty()) continue;
+        vector<string> p = splitLine(line);
+        if (p.size() < 7) continue;
+
+        try {
+            int id = stoi(p[0]);
+            double amount = stod(p[2]);
+            int walletId = stoi(p[3]);
+            int categoryId = stoi(p[4]);
+
+            Transaction* t = nullptr;
+            if (p[1] == "INCOME") {
+                t = new Income(id, amount, p[5], p[6], walletId, categoryId);
+            } else if (p[1] == "EXPENSE") {
+                t = new Expense(id, amount, p[5], p[6], walletId, categoryId);
+            }
+
+            if (t != nullptr && !manager.addLoadedTransaction(t)) {
+                delete t;
+            }
+        } catch (...) {}
+    }
+    return true;
+}
+
+bool FileManager::saveTransactions(const string& path, const TransactionManager& manager) {
+    ofstream file(path);
+    if (!file) return false;
+
+    manager.getTransactions().forEach([&](Transaction* const& t) {
+        if (t == nullptr) return;
+        file << t->getId() << '|'
+             << transactionTypeToString(t->getType()) << '|'
+             << t->getAmount() << '|'
+             << t->getWalletId() << '|'
+             << t->getCategoryId() << '|'
+             << sanitize(t->getDateTime()) << '|'
+             << sanitize(t->getNote()) << '\n';
+    });
+    return true;
+}
+
+bool FileManager::loadBudgets(const string& path, BudgetManager& manager) {
+    ifstream file(path);
+    if (!file) return false;
+    manager.clear();
+
+    string line;
+    while (getline(file, line)) {
+        if (line.empty()) continue;
+        vector<string> p = splitLine(line);
+        if (p.size() < 5) continue;
+        try {
+            manager.addBudget(Budget(stoi(p[0]), stod(p[1]), p[2], p[3], stoi(p[4])));
+        } catch (...) {}
+    }
+    return true;
+}
+
+bool FileManager::saveBudgets(const string& path, const BudgetManager& manager) {
+    ofstream file(path);
+    if (!file) return false;
+
+    manager.getBudgets().forEach([&](const Budget& b) {
+        file << b.getId() << '|'
+             << b.getAmount() << '|'
+             << b.getStartDate() << '|'
+             << b.getEndDate() << '|'
+             << b.getCategoryId() << '\n';
+    });
+    return true;
+}
+
+
+================================================================================
+FILE: storage/file_manager.h
+================================================================================
+#pragma once
+
+#include <string>
+#include "../model/user.h"
+#include "../manager/category_manager.h"
+#include "../manager/wallet_manager.h"
+#include "../manager/transaction_manager.h"
+#include "../manager/budget_manager.h"
+using namespace std;
+
+class FileManager {
+private:
+    static string sanitize(const string& value);
+
+public:
+    static void ensureDataDirectory(const string& directory = "data");
+
+    static bool loadUser(const string& path, User& user);
+    static bool saveUser(const string& path, const User& user);
+
+    static bool loadCategories(const string& path, CategoryManager& manager);
+    static bool saveCategories(const string& path, const CategoryManager& manager);
+
+    static bool loadWallets(const string& path, WalletManager& manager);
+    static bool saveWallets(const string& path, const WalletManager& manager);
+
+    static bool loadTransactions(const string& path, TransactionManager& manager);
+    static bool saveTransactions(const string& path, const TransactionManager& manager);
+
+    static bool loadBudgets(const string& path, BudgetManager& manager);
+    static bool saveBudgets(const string& path, const BudgetManager& manager);
+};
+
+
+================================================================================
+FILE: structure/linked_list.h
+================================================================================
+#pragma once
+
+#include <cstddef>
+#include "node.h"
+using namespace std;
+
+template <typename T>
+class LinkedList {
+private:
+    Node<T>* head;
+    Node<T>* tail;
+    size_t size;
+
+public:
+    LinkedList() {
+        head = nullptr;
+        tail = nullptr;
+        size = 0;
+    }
+
+    ~LinkedList() {
+        clear();
+    }
+
+    LinkedList(const LinkedList&) = delete;
+    LinkedList& operator=(const LinkedList&) = delete;
+
+    bool isEmpty() const {
+        return size == 0;
+    }
+
+    size_t getSize() const {
+        return size;
+    }
+
+    void pushBack(const T& value) {
+        Node<T>* node = new Node<T>(value);
+        if (tail == nullptr) {
+            head = tail = node;
+        } else {
+            tail->next = node;
+            tail = node;
+        }
+        size++;
+    }
+
+    template <typename Predicate>
+    bool removeIf(Predicate predicate) {
+        Node<T>* current = head;
+        Node<T>* previous = nullptr;
+
+        while (current != nullptr) {
+            if (predicate(current->data)) {
+                if (previous == nullptr) {
+                    head = current->next;
+                } else {
+                    previous->next = current->next;
+                }
+
+                if (current == tail) {
+                    tail = previous;
+                }
+
+                delete current;
+                size--;
+                return true;
+            }
+
+            previous = current;
+            current = current->next;
+        }
+        return false;
+    }
+
+    template <typename Predicate>
+    T* findIf(Predicate predicate) {
+        Node<T>* current = head;
+        while (current != nullptr) {
+            if (predicate(current->data)) {
+                return &current->data;
+            }
+            current = current->next;
+        }
+        return nullptr;
+    }
+
+    template <typename Predicate>
+    const T* findIf(Predicate predicate) const {
+        Node<T>* current = head;
+        while (current != nullptr) {
+            if (predicate(current->data)) {
+                return &current->data;
+            }
+            current = current->next;
+        }
+        return nullptr;
+    }
+
+    template <typename Func>
+    void forEach(Func func) {
+        Node<T>* current = head;
+        while (current != nullptr) {
+            func(current->data);
+            current = current->next;
+        }
+    }
+
+    template <typename Func>
+    void forEach(Func func) const {
+        Node<T>* current = head;
+        while (current != nullptr) {
+            func(current->data);
+            current = current->next;
+        }
+    }
+
+    void clear() {
+        Node<T>* current = head;
+        while (current != nullptr) {
+            Node<T>* nextNode = current->next;
+            delete current;
+            current = nextNode;
+        }
+        head = tail = nullptr;
+        size = 0;
+    }
+};
+
+
+================================================================================
+FILE: structure/node.h
+================================================================================
+#pragma once
+
+template <typename T>
+struct Node {
+    T data;
+    Node<T>* next;
+
+    Node(const T& data) {
+        this->data = data;
+        next = nullptr;
+    }
+};
+
+
+================================================================================
+FILE: ui/budget_dialog.cpp
+================================================================================
+#include "budget_dialog.h"
+
+#include "../manager/category_manager.h"
+#include "../model/budget.h"
+
+#include <QComboBox>
+#include <QDate>
+#include <QDateEdit>
+#include <QDialogButtonBox>
+#include <QDoubleSpinBox>
+#include <QFormLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QMessageBox>
+#include <QVBoxLayout>
+#include <QWidget>
+
+BudgetDialog::BudgetDialog(CategoryManager* categories,
+                           const Budget* existing,
+                           QWidget* parent)
+    : QDialog(parent),
+      categories(categories),
+      existing(existing) {
+
+    setWindowTitle(existing ? "Sửa ngân sách" : "Tạo ngân sách");
+    setMinimumWidth(480);
+
+    amountInput = new QDoubleSpinBox();
+    amountInput->setRange(1, 1000000000000.0);
+    amountInput->setDecimals(0);
+    amountInput->setSingleStep(100000);
+    amountInput->setSuffix(" đ");
+
+    categoryCombo = new QComboBox();
+    populateCategories();
+
+    periodCombo = new QComboBox();
+    periodCombo->addItem("Theo tuần", 0);
+    periodCombo->addItem("Theo tháng", 1);
+    periodCombo->addItem("Theo năm", 2);
+    periodCombo->addItem("Tùy chọn", 3);
+
+    referenceDate = new QDateEdit(QDate::currentDate());
+    referenceDate->setCalendarPopup(true);
+    referenceDate->setDisplayFormat("dd/MM/yyyy");
+
+    customStart = new QDateEdit(QDate::currentDate());
+    customStart->setCalendarPopup(true);
+    customStart->setDisplayFormat("dd/MM/yyyy");
+
+    customEnd = new QDateEdit(QDate::currentDate().addDays(6));
+    customEnd->setCalendarPopup(true);
+    customEnd->setDisplayFormat("dd/MM/yyyy");
+
+    referenceRow = new QWidget();
+    QHBoxLayout* referenceLayout = new QHBoxLayout(referenceRow);
+    referenceLayout->setContentsMargins(0, 0, 0, 0);
+    referenceLayout->addWidget(referenceDate);
+
+    customRow = new QWidget();
+    QHBoxLayout* customLayout = new QHBoxLayout(customRow);
+    customLayout->setContentsMargins(0, 0, 0, 0);
+    customLayout->addWidget(customStart);
+    customLayout->addWidget(new QLabel("đến"));
+    customLayout->addWidget(customEnd);
+
+    if (existing) {
+        amountInput->setValue(existing->getAmount());
+
+        int categoryIndex = categoryCombo->findData(existing->getCategoryId());
+        if (categoryIndex >= 0) categoryCombo->setCurrentIndex(categoryIndex);
+
+        periodCombo->setCurrentIndex(3);
+        customStart->setDate(QDate::fromString(
+            QString::fromStdString(existing->getStartDate()), "yyyy-MM-dd"
+        ));
+        customEnd->setDate(QDate::fromString(
+            QString::fromStdString(existing->getEndDate()), "yyyy-MM-dd"
+        ));
+    }
+
+    QFormLayout* form = new QFormLayout();
+    form->addRow("Số tiền", amountInput);
+    form->addRow("Danh mục", categoryCombo);
+    form->addRow("Chu kỳ", periodCombo);
+    form->addRow("Mốc thời gian", referenceRow);
+    form->addRow("Khoảng tùy chọn", customRow);
+
+    QDialogButtonBox* buttons = new QDialogButtonBox(
+        QDialogButtonBox::Save | QDialogButtonBox::Cancel
+    );
+
+    QVBoxLayout* root = new QVBoxLayout(this);
+    root->addLayout(form);
+    root->addSpacing(8);
+    root->addWidget(buttons);
+
+    connect(periodCombo, &QComboBox::currentIndexChanged, this, [this]() {
+        updatePeriodUi();
+    });
+    connect(buttons, &QDialogButtonBox::accepted, this, [this]() {
+        validateAndAccept();
+    });
+    connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+
+    updatePeriodUi();
+}
+
+void BudgetDialog::populateCategories() {
+    categoryCombo->clear();
+    categoryCombo->addItem("Tất cả chi tiêu", 0);
+
+    categories->getCategories().forEach([&](const Category& category) {
+        if (category.getType() != CategoryType::EXPENSE) return;
+        categoryCombo->addItem(
+            QString::fromStdString(category.getName()),
+            category.getId()
+        );
+    });
+}
+
+void BudgetDialog::updatePeriodUi() {
+    bool custom = periodCombo->currentData().toInt() == 3;
+    referenceRow->setVisible(!custom);
+    customRow->setVisible(custom);
+}
+
+void BudgetDialog::validateAndAccept() {
+    if (startDate() > endDate()) {
+        QMessageBox::warning(this, "Ngày không hợp lệ", "Ngày bắt đầu phải trước ngày kết thúc.");
+        return;
+    }
+    accept();
+}
+
+double BudgetDialog::amount() const {
+    return amountInput->value();
+}
+
+int BudgetDialog::categoryId() const {
+    return categoryCombo->currentData().toInt();
+}
+
+QString BudgetDialog::startDate() const {
+    int mode = periodCombo->currentData().toInt();
+    QDate ref = referenceDate->date();
+
+    if (mode == 0) {
+        int dayOfWeek = ref.dayOfWeek();
+        return ref.addDays(1 - dayOfWeek).toString("yyyy-MM-dd");
+    }
+    if (mode == 1) {
+        return QDate(ref.year(), ref.month(), 1).toString("yyyy-MM-dd");
+    }
+    if (mode == 2) {
+        return QDate(ref.year(), 1, 1).toString("yyyy-MM-dd");
+    }
+    return customStart->date().toString("yyyy-MM-dd");
+}
+
+QString BudgetDialog::endDate() const {
+    int mode = periodCombo->currentData().toInt();
+    QDate ref = referenceDate->date();
+
+    if (mode == 0) {
+        int dayOfWeek = ref.dayOfWeek();
+        return ref.addDays(7 - dayOfWeek).toString("yyyy-MM-dd");
+    }
+    if (mode == 1) {
+        return QDate(ref.year(), ref.month(), 1)
+            .addMonths(1).addDays(-1)
+            .toString("yyyy-MM-dd");
+    }
+    if (mode == 2) {
+        return QDate(ref.year(), 12, 31).toString("yyyy-MM-dd");
+    }
+    return customEnd->date().toString("yyyy-MM-dd");
+}
+
+
+================================================================================
+FILE: ui/budget_dialog.h
+================================================================================
+#pragma once
+
+#include <QDialog>
+
+class QComboBox;
+class QDoubleSpinBox;
+class QDateEdit;
+class QWidget;
+
+class Budget;
+class CategoryManager;
+
+class BudgetDialog : public QDialog {
+private:
+    CategoryManager* categories;
+    const Budget* existing;
+
+    QDoubleSpinBox* amountInput;
+    QComboBox* categoryCombo;
+    QComboBox* periodCombo;
+    QDateEdit* referenceDate;
+    QDateEdit* customStart;
+    QDateEdit* customEnd;
+    QWidget* referenceRow;
+    QWidget* customRow;
+
+    void populateCategories();
+    void updatePeriodUi();
+    void validateAndAccept();
+
+public:
+    BudgetDialog(CategoryManager* categories,
+                 const Budget* existing = nullptr,
+                 QWidget* parent = nullptr);
+
+    double amount() const;
+    int categoryId() const;
+    QString startDate() const;
+    QString endDate() const;
+};
+
+
+================================================================================
+FILE: ui/budget_page.cpp
+================================================================================
+#include "budget_page.h"
+
+#include "budget_dialog.h"
+#include "ui_helpers.h"
+
+#include "../manager/budget_manager.h"
+#include "../manager/transaction_manager.h"
+#include "../manager/category_manager.h"
+
+#include <QAbstractItemView>
+#include <QColor>
+#include <QDate>
+#include <QFrame>
+#include <QHeaderView>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QTableWidget>
+#include <QVBoxLayout>
+
+BudgetPage::BudgetPage(BudgetManager* budgets,
+                       TransactionManager* transactions,
+                       CategoryManager* categories,
+                       std::function<void()> onChanged,
+                       QWidget* parent)
+    : QWidget(parent),
+      budgets(budgets),
+      transactions(transactions),
+      categories(categories),
+      onChanged(std::move(onChanged)) {
+
+    QVBoxLayout* root = new QVBoxLayout(this);
+    root->setContentsMargins(28, 24, 28, 28);
+    root->setSpacing(16);
+
+    QHBoxLayout* header = new QHBoxLayout();
+    QLabel* title = new QLabel("Ngân sách");
+    title->setObjectName("pageTitle");
+    QPushButton* addButton = new QPushButton("+ Tạo ngân sách");
+    addButton->setObjectName("primaryButton");
+    header->addWidget(title);
+    header->addStretch();
+    header->addWidget(addButton);
+
+    QFrame* card = new QFrame();
+    card->setObjectName("card");
+    QVBoxLayout* cardLayout = new QVBoxLayout(card);
+    cardLayout->setContentsMargins(18, 18, 18, 18);
+
+    QHBoxLayout* actions = new QHBoxLayout();
+    QLabel* section = new QLabel("Danh sách ngân sách");
+    section->setObjectName("sectionTitle");
+    QPushButton* editButton = new QPushButton("Sửa");
+    QPushButton* deleteButton = new QPushButton("Xóa");
+    deleteButton->setObjectName("dangerButton");
+    actions->addWidget(section);
+    actions->addStretch();
+    actions->addWidget(editButton);
+    actions->addWidget(deleteButton);
+
+    table = new QTableWidget(0, 7);
+    table->setHorizontalHeaderLabels({
+        "Danh mục", "Chu kỳ", "Khoảng thời gian",
+        "Ngân sách", "Đã chi", "Còn lại", "Trạng thái"
+    });
+    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+    table->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setSelectionMode(QAbstractItemView::SingleSelection);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->verticalHeader()->setVisible(false);
+
+    cardLayout->addLayout(actions);
+    cardLayout->addWidget(table);
+
+    root->addLayout(header);
+    root->addWidget(card);
+
+    connect(addButton, &QPushButton::clicked, this, [this]() { addBudget(); });
+    connect(editButton, &QPushButton::clicked, this, [this]() { editBudget(); });
+    connect(deleteButton, &QPushButton::clicked, this, [this]() { deleteBudget(); });
+    connect(table, &QTableWidget::cellDoubleClicked, this, [this](int, int) { editBudget(); });
+
+    refresh();
+}
+
+int BudgetPage::selectedId() const {
+    int row = table->currentRow();
+    if (row < 0 || table->item(row, 0) == nullptr) return -1;
+    return table->item(row, 0)->data(Qt::UserRole).toInt();
+}
+
+QString BudgetPage::periodLabel(const std::string& start, const std::string& end) const {
+    QDate s = QDate::fromString(QString::fromStdString(start), "yyyy-MM-dd");
+    QDate e = QDate::fromString(QString::fromStdString(end), "yyyy-MM-dd");
+
+    if (!s.isValid() || !e.isValid()) return "Tùy chọn";
+    if (s.daysTo(e) == 6 && s.dayOfWeek() == 1) return "Tuần";
+    if (s.day() == 1 && e == s.addMonths(1).addDays(-1)) return "Tháng";
+    if (s.month() == 1 && s.day() == 1 && e.month() == 12 && e.day() == 31 &&
+        s.year() == e.year()) return "Năm";
+    return "Tùy chọn";
+}
+
+void BudgetPage::refresh() {
+    table->setRowCount(0);
+
+    budgets->getBudgets().forEach([&](const Budget& budget) {
+        double spent = budgets->calculateSpent(budget, *transactions);
+        double remaining = budgets->calculateRemaining(budget, *transactions);
+        bool over = budgets->isOverBudget(budget, *transactions);
+
+        const Category* category = budget.getCategoryId() == 0
+            ? nullptr
+            : categories->findById(budget.getCategoryId());
+
+        QString categoryName = budget.getCategoryId() == 0
+            ? "Tất cả chi tiêu"
+            : (category ? QString::fromStdString(category->getName()) : "Không rõ");
+
+        int row = table->rowCount();
+        table->insertRow(row);
+
+        QTableWidgetItem* first = new QTableWidgetItem(categoryName);
+        first->setData(Qt::UserRole, budget.getId());
+
+        table->setItem(row, 0, first);
+        table->setItem(row, 1, new QTableWidgetItem(
+            periodLabel(budget.getStartDate(), budget.getEndDate())
+        ));
+        table->setItem(row, 2, new QTableWidgetItem(
+            UiHelpers::dateDisplay(budget.getStartDate()) + " - " +
+            UiHelpers::dateDisplay(budget.getEndDate())
+        ));
+        table->setItem(row, 3, new QTableWidgetItem(UiHelpers::money(budget.getAmount())));
+        table->setItem(row, 4, new QTableWidgetItem(UiHelpers::money(spent)));
+        table->setItem(row, 5, new QTableWidgetItem(UiHelpers::money(remaining)));
+        table->setItem(row, 6, new QTableWidgetItem(over ? "Vượt ngân sách" : "Trong giới hạn"));
+
+        if (over) {
+            table->item(row, 6)->setForeground(QColor("#b42318"));
+        }
+    });
+}
+
+void BudgetPage::addBudget() {
+    BudgetDialog dialog(categories, nullptr, this);
+    if (dialog.exec() != QDialog::Accepted) return;
+
+    budgets->createBudget(
+        dialog.amount(),
+        dialog.startDate().toStdString(),
+        dialog.endDate().toStdString(),
+        dialog.categoryId()
+    );
+
+    if (onChanged) onChanged();
+}
+
+void BudgetPage::editBudget() {
+    int id = selectedId();
+    Budget* budget = budgets->findById(id);
+    if (budget == nullptr) {
+        QMessageBox::information(this, "Ngân sách", "Vui lòng chọn một ngân sách.");
+        return;
+    }
+
+    BudgetDialog dialog(categories, budget, this);
+    if (dialog.exec() != QDialog::Accepted) return;
+
+    budget->setAmount(dialog.amount());
+    budget->setDateRange(
+        dialog.startDate().toStdString(),
+        dialog.endDate().toStdString()
+    );
+    budget->setCategoryId(dialog.categoryId());
+
+    if (onChanged) onChanged();
+}
+
+void BudgetPage::deleteBudget() {
+    int id = selectedId();
+    if (budgets->findById(id) == nullptr) {
+        QMessageBox::information(this, "Ngân sách", "Vui lòng chọn một ngân sách.");
+        return;
+    }
+
+    if (QMessageBox::question(
+            this,
+            "Xóa ngân sách",
+            "Bạn có chắc muốn xóa ngân sách đã chọn?"
+        ) != QMessageBox::Yes) {
+        return;
+    }
+
+    budgets->deleteBudget(id);
+    if (onChanged) onChanged();
+}
+
+
+================================================================================
+FILE: ui/budget_page.h
+================================================================================
+#pragma once
+
+#include <QWidget>
+#include <functional>
+
+class QTableWidget;
+
+class BudgetManager;
+class TransactionManager;
+class CategoryManager;
+
+class BudgetPage : public QWidget {
+private:
+    BudgetManager* budgets;
+    TransactionManager* transactions;
+    CategoryManager* categories;
+    std::function<void()> onChanged;
+
+    QTableWidget* table;
+
+    int selectedId() const;
+    QString periodLabel(const std::string& start, const std::string& end) const;
+
+    void addBudget();
+    void editBudget();
+    void deleteBudget();
+
+public:
+    BudgetPage(BudgetManager* budgets,
+               TransactionManager* transactions,
+               CategoryManager* categories,
+               std::function<void()> onChanged,
+               QWidget* parent = nullptr);
+
+    void refresh();
+};
+
+
+================================================================================
+FILE: ui/category_dialog.cpp
+================================================================================
+#include "category_dialog.h"
+
+#include <QComboBox>
+#include <QDialogButtonBox>
+#include <QFormLayout>
+#include <QLineEdit>
+#include <QMessageBox>
+#include <QVBoxLayout>
+
+CategoryDialog::CategoryDialog(const Category* category, QWidget* parent)
+    : QDialog(parent), editing(category != nullptr) {
+
+    setWindowTitle(editing ? "Sửa danh mục" : "Thêm danh mục");
+    setMinimumWidth(380);
+
+    nameInput = new QLineEdit();
+    nameInput->setPlaceholderText("Ví dụ: Ăn uống");
+
+    typeCombo = new QComboBox();
+    typeCombo->addItem("Chi tiêu", static_cast<int>(CategoryType::EXPENSE));
+    typeCombo->addItem("Thu nhập", static_cast<int>(CategoryType::INCOME));
+
+    if (category != nullptr) {
+        nameInput->setText(QString::fromStdString(category->getName()));
+        int target = static_cast<int>(category->getType());
+        int index = typeCombo->findData(target);
+        if (index >= 0) typeCombo->setCurrentIndex(index);
+        typeCombo->setEnabled(false);
+    }
+
+    QFormLayout* form = new QFormLayout();
+    form->addRow("Tên danh mục", nameInput);
+    form->addRow("Loại", typeCombo);
+
+    QDialogButtonBox* buttons = new QDialogButtonBox(
+        QDialogButtonBox::Save | QDialogButtonBox::Cancel
+    );
+
+    QVBoxLayout* root = new QVBoxLayout(this);
+    root->addLayout(form);
+    root->addSpacing(10);
+    root->addWidget(buttons);
+
+    connect(buttons, &QDialogButtonBox::accepted, this, [this]() {
+        validateAndAccept();
+    });
+    connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+}
+
+void CategoryDialog::validateAndAccept() {
+    if (nameInput->text().trimmed().isEmpty()) {
+        QMessageBox::warning(this, "Thiếu dữ liệu", "Vui lòng nhập tên danh mục.");
+        return;
+    }
+    accept();
+}
+
+QString CategoryDialog::categoryName() const {
+    return nameInput->text().trimmed();
+}
+
+CategoryType CategoryDialog::categoryType() const {
+    return static_cast<CategoryType>(typeCombo->currentData().toInt());
+}
+
+
+================================================================================
+FILE: ui/category_dialog.h
+================================================================================
+#pragma once
+
+#include <QDialog>
+#include "../model/category.h"
+
+class QLineEdit;
+class QComboBox;
+
+class CategoryDialog : public QDialog {
+private:
+    QLineEdit* nameInput;
+    QComboBox* typeCombo;
+    bool editing;
+
+    void validateAndAccept();
+
+public:
+    explicit CategoryDialog(const Category* category = nullptr, QWidget* parent = nullptr);
+
+    QString categoryName() const;
+    CategoryType categoryType() const;
+};
+
+
+================================================================================
+FILE: ui/category_page.cpp
+================================================================================
+#include "category_page.h"
+
+#include "category_dialog.h"
+#include "ui_helpers.h"
+
+#include "../manager/category_manager.h"
+#include "../manager/transaction_manager.h"
+#include "../manager/budget_manager.h"
+
+#include <QAbstractItemView>
+#include <QComboBox>
+#include <QFrame>
+#include <QHeaderView>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QTableWidget>
+#include <QVBoxLayout>
+
+CategoryPage::CategoryPage(CategoryManager* categories,
+                           TransactionManager* transactions,
+                           BudgetManager* budgets,
+                           std::function<void()> onChanged,
+                           QWidget* parent)
+    : QWidget(parent),
+      categories(categories),
+      transactions(transactions),
+      budgets(budgets),
+      onChanged(std::move(onChanged)) {
+
+    QVBoxLayout* root = new QVBoxLayout(this);
+    root->setContentsMargins(28, 24, 28, 28);
+    root->setSpacing(16);
+
+    QHBoxLayout* header = new QHBoxLayout();
+    QLabel* title = new QLabel("Danh mục");
+    title->setObjectName("pageTitle");
+
+    QPushButton* addButton = new QPushButton("+ Thêm danh mục");
+    addButton->setObjectName("primaryButton");
+
+    header->addWidget(title);
+    header->addStretch();
+    header->addWidget(addButton);
+
+    QFrame* card = new QFrame();
+    card->setObjectName("card");
+    QVBoxLayout* cardLayout = new QVBoxLayout(card);
+    cardLayout->setContentsMargins(18, 18, 18, 18);
+
+    QHBoxLayout* tools = new QHBoxLayout();
+    QLabel* filterLabel = new QLabel("Hiển thị");
+    filterCombo = new QComboBox();
+    filterCombo->addItem("Tất cả", -1);
+    filterCombo->addItem("Chi tiêu", static_cast<int>(CategoryType::EXPENSE));
+    filterCombo->addItem("Thu nhập", static_cast<int>(CategoryType::INCOME));
+
+    QPushButton* editButton = new QPushButton("Sửa");
+    QPushButton* deleteButton = new QPushButton("Xóa");
+    deleteButton->setObjectName("dangerButton");
+
+    tools->addWidget(filterLabel);
+    tools->addWidget(filterCombo);
+    tools->addStretch();
+    tools->addWidget(editButton);
+    tools->addWidget(deleteButton);
+
+    table = new QTableWidget(0, 3);
+    table->setHorizontalHeaderLabels({"ID", "Tên danh mục", "Loại"});
+    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setSelectionMode(QAbstractItemView::SingleSelection);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->verticalHeader()->setVisible(false);
+
+    cardLayout->addLayout(tools);
+    cardLayout->addWidget(table);
+
+    root->addLayout(header);
+    root->addWidget(card);
+
+    connect(addButton, &QPushButton::clicked, this, [this]() { addCategory(); });
+    connect(editButton, &QPushButton::clicked, this, [this]() { editCategory(); });
+    connect(deleteButton, &QPushButton::clicked, this, [this]() { deleteCategory(); });
+    connect(filterCombo, &QComboBox::currentIndexChanged, this, [this]() { refresh(); });
+    connect(table, &QTableWidget::cellDoubleClicked, this, [this](int, int) { editCategory(); });
+
+    refresh();
+}
+
+int CategoryPage::selectedId() const {
+    int row = table->currentRow();
+    if (row < 0 || table->item(row, 0) == nullptr) return -1;
+    return table->item(row, 0)->data(Qt::UserRole).toInt();
+}
+
+void CategoryPage::refresh() {
+    table->setRowCount(0);
+    int filter = filterCombo->currentData().toInt();
+
+    categories->getCategories().forEach([&](const Category& category) {
+        if (filter != -1 && static_cast<int>(category.getType()) != filter) return;
+
+        int row = table->rowCount();
+        table->insertRow(row);
+
+        QTableWidgetItem* idItem = new QTableWidgetItem(QString::number(category.getId()));
+        idItem->setData(Qt::UserRole, category.getId());
+
+        table->setItem(row, 0, idItem);
+        table->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(category.getName())));
+        table->setItem(row, 2, new QTableWidgetItem(UiHelpers::categoryTypeLabel(category.getType())));
+    });
+}
+
+void CategoryPage::addCategory() {
+    CategoryDialog dialog(nullptr, this);
+    if (dialog.exec() != QDialog::Accepted) return;
+
+    categories->createCategory(
+        dialog.categoryName().toStdString(),
+        dialog.categoryType()
+    );
+
+    if (onChanged) onChanged();
+}
+
+void CategoryPage::editCategory() {
+    int id = selectedId();
+    Category* category = categories->findById(id);
+    if (category == nullptr) {
+        QMessageBox::information(this, "Danh mục", "Vui lòng chọn một danh mục.");
+        return;
+    }
+
+    CategoryDialog dialog(category, this);
+    if (dialog.exec() != QDialog::Accepted) return;
+
+    categories->updateCategoryName(id, dialog.categoryName().toStdString());
+    if (onChanged) onChanged();
+}
+
+void CategoryPage::deleteCategory() {
+    int id = selectedId();
+    Category* category = categories->findById(id);
+    if (category == nullptr) {
+        QMessageBox::information(this, "Danh mục", "Vui lòng chọn một danh mục.");
+        return;
+    }
+
+    if (transactions->hasCategoryTransactions(id) || budgets->hasCategoryBudget(id)) {
+        QMessageBox::warning(
+            this,
+            "Không thể xóa",
+            "Danh mục đang được sử dụng bởi giao dịch hoặc ngân sách."
+        );
+        return;
+    }
+
+    if (QMessageBox::question(
+            this,
+            "Xóa danh mục",
+            "Bạn có chắc muốn xóa danh mục \"" +
+                QString::fromStdString(category->getName()) + "\"?"
+        ) != QMessageBox::Yes) {
+        return;
+    }
+
+    categories->deleteCategory(id);
+    if (onChanged) onChanged();
+}
+
+
+================================================================================
+FILE: ui/category_page.h
+================================================================================
+#pragma once
+
+#include <QWidget>
+#include <functional>
+
+class QComboBox;
+class QTableWidget;
+
+class CategoryManager;
+class TransactionManager;
+class BudgetManager;
+
+class CategoryPage : public QWidget {
+private:
+    CategoryManager* categories;
+    TransactionManager* transactions;
+    BudgetManager* budgets;
+    std::function<void()> onChanged;
+
+    QComboBox* filterCombo;
+    QTableWidget* table;
+
+    int selectedId() const;
+    void addCategory();
+    void editCategory();
+    void deleteCategory();
+
+public:
+    CategoryPage(CategoryManager* categories,
+                 TransactionManager* transactions,
+                 BudgetManager* budgets,
+                 std::function<void()> onChanged,
+                 QWidget* parent = nullptr);
+
+    void refresh();
+};
+
+
+================================================================================
+FILE: ui/chart_widgets.cpp
+================================================================================
+#include "chart_widgets.h"
+
+#include <QPainter>
+#include <QPaintEvent>
+#include <QtMath>
+#include <algorithm>
+
+DonutChartWidget::DonutChartWidget(QWidget* parent)
+    : QWidget(parent) {
+    setMinimumHeight(250);
+}
+
+QSize DonutChartWidget::minimumSizeHint() const {
+    return QSize(360, 250);
+}
+
+void DonutChartWidget::setData(const QVector<ChartSlice>& data) {
+    slices = data;
+    update();
+}
+
+void DonutChartWidget::paintEvent(QPaintEvent*) {
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    QRectF area = rect().adjusted(16, 16, -16, -16);
+    double legendWidth = qMin(180.0, area.width() * 0.42);
+    QRectF chartArea(area.left(), area.top(), area.width() - legendWidth - 12, area.height());
+
+    double diameter = qMin(chartArea.width(), chartArea.height()) * 0.82;
+    QRectF pieRect(
+        chartArea.center().x() - diameter / 2,
+        chartArea.center().y() - diameter / 2,
+        diameter,
+        diameter
+    );
+
+    double total = 0;
+    for (const auto& slice : slices) {
+        if (slice.value > 0) total += slice.value;
+    }
+
+    if (total <= 0) {
+        painter.setPen(QColor("#8b8e96"));
+        painter.drawText(area, Qt::AlignCenter, "Chưa có dữ liệu chi tiêu");
+        return;
+    }
+
+    int startAngle = 90 * 16;
+    for (const auto& slice : slices) {
+        if (slice.value <= 0) continue;
+        int span = -qRound((slice.value / total) * 360.0 * 16.0);
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(slice.color);
+        painter.drawPie(pieRect, startAngle, span);
+        startAngle += span;
+    }
+
+    double hole = diameter * 0.54;
+    QRectF holeRect(
+        pieRect.center().x() - hole / 2,
+        pieRect.center().y() - hole / 2,
+        hole,
+        hole
+    );
+    painter.setBrush(QColor("#ffffff"));
+    painter.setPen(Qt::NoPen);
+    painter.drawEllipse(holeRect);
+
+    painter.setPen(QColor("#202124"));
+    QFont totalFont = painter.font();
+    totalFont.setPointSize(12);
+    totalFont.setBold(true);
+    painter.setFont(totalFont);
+    painter.drawText(holeRect, Qt::AlignCenter, "Chi tiêu");
+
+    double x = area.right() - legendWidth;
+    double y = area.top() + 8;
+    QFont legendFont = painter.font();
+    legendFont.setPointSize(9);
+    legendFont.setBold(false);
+    painter.setFont(legendFont);
+
+    int shown = 0;
+    for (const auto& slice : slices) {
+        if (slice.value <= 0 || shown >= 7) continue;
+
+        painter.setBrush(slice.color);
+        painter.setPen(Qt::NoPen);
+        painter.drawRoundedRect(QRectF(x, y + 4, 10, 10), 2, 2);
+
+        painter.setPen(QColor("#33353a"));
+        QString text = QString("%1  %2%")
+            .arg(slice.label)
+            .arg(QString::number(slice.value * 100.0 / total, 'f', 0));
+        painter.drawText(QRectF(x + 18, y, legendWidth - 18, 20),
+                         Qt::AlignLeft | Qt::AlignVCenter, text);
+
+        y += 28;
+        shown++;
+    }
+}
+
+BarChartWidget::BarChartWidget(QWidget* parent)
+    : QWidget(parent) {
+    setMinimumHeight(250);
+}
+
+QSize BarChartWidget::minimumSizeHint() const {
+    return QSize(420, 250);
+}
+
+void BarChartWidget::setData(const QStringList& newLabels, const QVector<double>& newValues) {
+    labels = newLabels;
+    values = newValues;
+    update();
+}
+
+void BarChartWidget::paintEvent(QPaintEvent*) {
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    QRectF area = rect().adjusted(24, 20, -18, -36);
+    if (values.isEmpty()) {
+        painter.setPen(QColor("#8b8e96"));
+        painter.drawText(area, Qt::AlignCenter, "Chưa có dữ liệu");
+        return;
+    }
+
+    double maxValue = 0;
+    for (double value : values) maxValue = qMax(maxValue, value);
+    if (maxValue <= 0) maxValue = 1;
+
+    painter.setPen(QPen(QColor("#e6e8ed"), 1));
+    for (int i = 0; i <= 4; ++i) {
+        double y = area.bottom() - area.height() * i / 4.0;
+        painter.drawLine(QPointF(area.left(), y), QPointF(area.right(), y));
+    }
+
+    int n = values.size();
+    double slot = area.width() / qMax(1, n);
+    double barWidth = qMin(44.0, slot * 0.56);
+
+    for (int i = 0; i < n; ++i) {
+        double ratio = qBound(0.0, values[i] / maxValue, 1.0);
+        double h = area.height() * ratio;
+        double x = area.left() + slot * i + (slot - barWidth) / 2;
+        QRectF bar(x, area.bottom() - h, barWidth, h);
+
+        painter.setBrush(QColor("#6c4ed9"));
+        painter.setPen(Qt::NoPen);
+        painter.drawRoundedRect(bar, 6, 6);
+
+        painter.setPen(QColor("#6f727a"));
+        QString label = i < labels.size() ? labels[i] : QString::number(i + 1);
+        painter.drawText(
+            QRectF(area.left() + slot * i, area.bottom() + 8, slot, 22),
+            Qt::AlignHCenter | Qt::AlignTop,
+            label
+        );
+    }
+}
+
+
+================================================================================
+FILE: ui/chart_widgets.h
+================================================================================
+#pragma once
+
+#include <QWidget>
+#include <QVector>
+#include <QString>
+#include <QStringList>
+#include <QColor>
+
+struct ChartSlice {
+    QString label;
+    double value;
+    QColor color;
+};
+
+class DonutChartWidget : public QWidget {
+private:
+    QVector<ChartSlice> slices;
+
+protected:
+    void paintEvent(QPaintEvent* event) override;
+
+public:
+    explicit DonutChartWidget(QWidget* parent = nullptr);
+    void setData(const QVector<ChartSlice>& data);
+    QSize minimumSizeHint() const override;
+};
+
+class BarChartWidget : public QWidget {
+private:
+    QStringList labels;
+    QVector<double> values;
+
+protected:
+    void paintEvent(QPaintEvent* event) override;
+
+public:
+    explicit BarChartWidget(QWidget* parent = nullptr);
+    void setData(const QStringList& labels, const QVector<double>& values);
+    QSize minimumSizeHint() const override;
+};
+
+
+================================================================================
+FILE: ui/dashboard_page.cpp
+================================================================================
+#include "dashboard_page.h"
+
+#include "chart_widgets.h"
+#include "ui_helpers.h"
+
+#include "../manager/transaction_manager.h"
+#include "../manager/wallet_manager.h"
+#include "../manager/category_manager.h"
+#include "../manager/budget_manager.h"
+
+#include <QAbstractItemView>
+#include <QDate>
+#include <QFrame>
+#include <QGridLayout>
+#include <QHeaderView>
+#include <QLabel>
+#include <QProgressBar>
+#include <QTableWidget>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+
+#include <algorithm>
+#include <map>
+#include <vector>
+
+namespace {
+    QFrame* makeMetricCard(const QString& caption, QLabel*& valueLabel) {
+        QFrame* card = new QFrame();
+        card->setObjectName("card");
+
+        QVBoxLayout* layout = new QVBoxLayout(card);
+        layout->setContentsMargins(18, 16, 18, 16);
+
+        QLabel* captionLabel = new QLabel(caption);
+        captionLabel->setObjectName("mutedLabel");
+
+        valueLabel = new QLabel("0 đ");
+        valueLabel->setStyleSheet("font-size: 23px; font-weight: 800;");
+
+        layout->addWidget(captionLabel);
+        layout->addWidget(valueLabel);
+        return card;
+    }
+}
+
+DashboardPage::DashboardPage(TransactionManager* transactions,
+                             WalletManager* wallets,
+                             CategoryManager* categories,
+                             BudgetManager* budgets,
+                             QWidget* parent)
+    : QWidget(parent),
+      transactions(transactions),
+      wallets(wallets),
+      categories(categories),
+      budgets(budgets) {
+
+    QVBoxLayout* root = new QVBoxLayout(this);
+    root->setContentsMargins(28, 24, 28, 28);
+    root->setSpacing(16);
+
+    QHBoxLayout* header = new QHBoxLayout();
+    QLabel* title = new QLabel("Tổng quan");
+    title->setObjectName("pageTitle");
+    QLabel* date = new QLabel(QDate::currentDate().toString("'Hôm nay,' dd/MM/yyyy"));
+    date->setObjectName("mutedLabel");
+    header->addWidget(title);
+    header->addStretch();
+    header->addWidget(date);
+
+    QGridLayout* metrics = new QGridLayout();
+    metrics->setHorizontalSpacing(14);
+    metrics->addWidget(makeMetricCard("Tổng tài sản", totalBalanceLabel), 0, 0);
+    metrics->addWidget(makeMetricCard("Thu tháng này", incomeLabel), 0, 1);
+    metrics->addWidget(makeMetricCard("Chi tháng này", expenseLabel), 0, 2);
+    metrics->addWidget(makeMetricCard("Chênh lệch", differenceLabel), 0, 3);
+
+    QGridLayout* middle = new QGridLayout();
+    middle->setHorizontalSpacing(14);
+
+    QFrame* chartCard = new QFrame();
+    chartCard->setObjectName("card");
+    QVBoxLayout* chartLayout = new QVBoxLayout(chartCard);
+    chartLayout->setContentsMargins(18, 16, 18, 16);
+    QLabel* chartTitle = new QLabel("Chi tiêu tháng này");
+    chartTitle->setObjectName("sectionTitle");
+    donutChart = new DonutChartWidget();
+    chartLayout->addWidget(chartTitle);
+    chartLayout->addWidget(donutChart);
+
+    QFrame* budgetCard = new QFrame();
+    budgetCard->setObjectName("card");
+    QVBoxLayout* budgetLayout = new QVBoxLayout(budgetCard);
+    budgetLayout->setContentsMargins(18, 16, 18, 16);
+    QLabel* budgetTitle = new QLabel("Ngân sách đang áp dụng");
+    budgetTitle->setObjectName("sectionTitle");
+    budgetDetailLabel = new QLabel("Chưa có ngân sách đang áp dụng.");
+    budgetDetailLabel->setWordWrap(true);
+    budgetDetailLabel->setObjectName("mutedLabel");
+    budgetProgress = new QProgressBar();
+    budgetProgress->setRange(0, 100);
+    budgetProgress->setValue(0);
+    budgetLayout->addWidget(budgetTitle);
+    budgetLayout->addSpacing(12);
+    budgetLayout->addWidget(budgetDetailLabel);
+    budgetLayout->addSpacing(8);
+    budgetLayout->addWidget(budgetProgress);
+    budgetLayout->addStretch();
+
+    middle->addWidget(chartCard, 0, 0);
+    middle->addWidget(budgetCard, 0, 1);
+    middle->setColumnStretch(0, 2);
+    middle->setColumnStretch(1, 1);
+
+    QFrame* recentCard = new QFrame();
+    recentCard->setObjectName("card");
+    QVBoxLayout* recentLayout = new QVBoxLayout(recentCard);
+    recentLayout->setContentsMargins(18, 16, 18, 16);
+    QLabel* recentTitle = new QLabel("Giao dịch gần đây");
+    recentTitle->setObjectName("sectionTitle");
+
+    recentTable = new QTableWidget(0, 5);
+    recentTable->setHorizontalHeaderLabels({"Thời gian", "Loại", "Danh mục", "Ví", "Số tiền"});
+    recentTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    recentTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    recentTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+    recentTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    recentTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    recentTable->verticalHeader()->setVisible(false);
+    recentTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    recentTable->setSelectionMode(QAbstractItemView::NoSelection);
+    recentTable->setMaximumHeight(245);
+
+    recentLayout->addWidget(recentTitle);
+    recentLayout->addWidget(recentTable);
+
+    root->addLayout(header);
+    root->addLayout(metrics);
+    root->addLayout(middle);
+    root->addWidget(recentCard);
+
+    refresh();
+}
+
+void DashboardPage::refresh() {
+    QDate now = QDate::currentDate();
+    QDate first(now.year(), now.month(), 1);
+    QDate last = first.addMonths(1).addDays(-1);
+
+    string monthStart = first.toString("yyyy-MM-dd").toStdString();
+    string monthEnd = last.toString("yyyy-MM-dd").toStdString();
+
+    double income = transactions->getTotalIncome(monthStart, monthEnd);
+    double expense = transactions->getTotalExpense(monthStart, monthEnd);
+
+    totalBalanceLabel->setText(UiHelpers::money(wallets->getTotalBalance()));
+    incomeLabel->setText(UiHelpers::money(income));
+    expenseLabel->setText(UiHelpers::money(expense));
+    differenceLabel->setText(UiHelpers::money(income - expense));
+
+    std::map<int, double> categoryTotals;
+    transactions->getTransactions().forEach([&](Transaction* const& t) {
+        if (t == nullptr || t->getType() != TransactionType::EXPENSE) return;
+        QString date = QString::fromStdString(t->getDateTime()).left(10);
+        if (date < first.toString("yyyy-MM-dd") || date > last.toString("yyyy-MM-dd")) return;
+        categoryTotals[t->getCategoryId()] += t->getAmount();
+    });
+
+    QVector<QColor> palette = {
+        QColor("#6c4ed9"), QColor("#f09a58"), QColor("#51a8a2"),
+        QColor("#d56486"), QColor("#5c85d6"), QColor("#d1a83d"),
+        QColor("#8d6ab8"), QColor("#7c9a50")
+    };
+
+    QVector<ChartSlice> slices;
+    int colorIndex = 0;
+    for (const auto& [categoryId, value] : categoryTotals) {
+        const Category* category = categories->findById(categoryId);
+        slices.push_back({
+            category ? QString::fromStdString(category->getName()) : "Không rõ",
+            value,
+            palette[colorIndex % palette.size()]
+        });
+        colorIndex++;
+    }
+    donutChart->setData(slices);
+
+    string today = now.toString("yyyy-MM-dd").toStdString();
+    double totalBudget = 0;
+    double totalSpent = 0;
+    int activeCount = 0;
+
+    budgets->getBudgets().forEach([&](const Budget& budget) {
+        if (today < budget.getStartDate() || today > budget.getEndDate()) return;
+        totalBudget += budget.getAmount();
+        totalSpent += budgets->calculateSpent(budget, *transactions);
+        activeCount++;
+    });
+
+    if (activeCount == 0 || totalBudget <= 0) {
+        budgetDetailLabel->setText("Chưa có ngân sách đang áp dụng.");
+        budgetProgress->setValue(0);
+        budgetProgress->setFormat("0%");
+    } else {
+        int percent = qRound(totalSpent * 100.0 / totalBudget);
+        budgetDetailLabel->setText(
+            QString("%1 ngân sách • Đã chi %2 / %3")
+                .arg(activeCount)
+                .arg(UiHelpers::money(totalSpent))
+                .arg(UiHelpers::money(totalBudget))
+        );
+        budgetProgress->setValue(qMin(percent, 100));
+        budgetProgress->setFormat(QString::number(percent) + "%");
+    }
+
+    std::vector<const Transaction*> items;
+    transactions->getTransactions().forEach([&](Transaction* const& t) {
+        if (t != nullptr) items.push_back(t);
+    });
+
+    std::sort(items.begin(), items.end(), [](const Transaction* a, const Transaction* b) {
+        return a->getDateTime() > b->getDateTime();
+    });
+
+    recentTable->setRowCount(0);
+    int limit = qMin(6, static_cast<int>(items.size()));
+
+    for (int i = 0; i < limit; ++i) {
+        const Transaction* t = items[i];
+        const Category* category = categories->findById(t->getCategoryId());
+        const Wallet* wallet = wallets->findById(t->getWalletId());
+
+        int row = recentTable->rowCount();
+        recentTable->insertRow(row);
+
+        recentTable->setItem(row, 0, new QTableWidgetItem(
+            UiHelpers::dateTimeDisplay(t->getDateTime())
+        ));
+        recentTable->setItem(row, 1, new QTableWidgetItem(
+            t->getType() == TransactionType::INCOME ? "Thu nhập" : "Chi tiêu"
+        ));
+        recentTable->setItem(row, 2, new QTableWidgetItem(
+            category ? QString::fromStdString(category->getName()) : "Không rõ"
+        ));
+        recentTable->setItem(row, 3, new QTableWidgetItem(
+            wallet ? QString::fromStdString(wallet->getName()) : "Không rõ"
+        ));
+        recentTable->setItem(row, 4, new QTableWidgetItem(
+            UiHelpers::money(t->getSignedAmount())
+        ));
+    }
+}
+
+
+================================================================================
+FILE: ui/dashboard_page.h
+================================================================================
+#pragma once
+
+#include <QWidget>
+
+class QLabel;
+class QProgressBar;
+class QTableWidget;
+class DonutChartWidget;
+
+class TransactionManager;
+class WalletManager;
+class CategoryManager;
+class BudgetManager;
+
+class DashboardPage : public QWidget {
+private:
+    TransactionManager* transactions;
+    WalletManager* wallets;
+    CategoryManager* categories;
+    BudgetManager* budgets;
+
+    QLabel* totalBalanceLabel;
+    QLabel* incomeLabel;
+    QLabel* expenseLabel;
+    QLabel* differenceLabel;
+    QLabel* budgetDetailLabel;
+    QProgressBar* budgetProgress;
+    QTableWidget* recentTable;
+    DonutChartWidget* donutChart;
+
+public:
+    DashboardPage(TransactionManager* transactions,
+                  WalletManager* wallets,
+                  CategoryManager* categories,
+                  BudgetManager* budgets,
+                  QWidget* parent = nullptr);
+
+    void refresh();
+};
+
+
+================================================================================
+FILE: ui/data_paths.h
+================================================================================
+#pragma once
+
+#include <QCoreApplication>
+#include <QString>
+
+namespace DataPaths {
+    inline QString dataDir() {
+        return QCoreApplication::applicationDirPath() + "/data";
+    }
+
+    inline std::string userFile() {
+        return (dataDir() + "/user.txt").toStdString();
+    }
+
+    inline std::string categoryFile() {
+        return (dataDir() + "/categories.txt").toStdString();
+    }
+
+    inline std::string walletFile() {
+        return (dataDir() + "/wallets.txt").toStdString();
+    }
+
+    inline std::string transactionFile() {
+        return (dataDir() + "/transactions.txt").toStdString();
+    }
+
+    inline std::string budgetFile() {
+        return (dataDir() + "/budgets.txt").toStdString();
+    }
+}
+
+
+================================================================================
+FILE: ui/login_window.cpp
+================================================================================
+#include "login_window.h"
+
+#include "main_window.h"
+#include "data_paths.h"
+
+#include "../model/user.h"
+#include "../storage/file_manager.h"
+
+#include <QApplication>
+#include <QCheckBox>
+#include <QFrame>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+
+LoginWindow::LoginWindow(QWidget* parent)
+    : QWidget(parent) {
+
+    setWindowTitle("MoneyManager - Đăng nhập");
+    setMinimumSize(760, 520);
+    resize(900, 580);
+
+    FileManager::ensureDataDirectory(DataPaths::dataDir().toStdString());
+    ensureDefaultUser();
+
+    QHBoxLayout* root = new QHBoxLayout(this);
+    root->setContentsMargins(0, 0, 0, 0);
+    root->setSpacing(0);
+
+    QFrame* brandPanel = new QFrame();
+    brandPanel->setStyleSheet(
+        "QFrame { background: #17181d; }"
+        "QLabel { color: white; background: transparent; }"
+    );
+    brandPanel->setMinimumWidth(330);
+
+    QVBoxLayout* brandLayout = new QVBoxLayout(brandPanel);
+    brandLayout->setContentsMargins(44, 44, 44, 44);
+
+    QLabel* brand = new QLabel("MONEY\nMANAGER");
+    brand->setStyleSheet("font-size: 34px; font-weight: 800; color: white;");
+
+    QLabel* slogan = new QLabel(
+        "Ghi chép thu chi hằng ngày,\n"
+        "theo dõi ví và ngân sách\n"
+        "ngay trên máy tính của bạn."
+    );
+    slogan->setStyleSheet("font-size: 15px; color: #b9bcc5; line-height: 1.5;");
+
+    brandLayout->addStretch();
+    brandLayout->addWidget(brand);
+    brandLayout->addSpacing(18);
+    brandLayout->addWidget(slogan);
+    brandLayout->addStretch();
+
+    QWidget* formPanel = new QWidget();
+    QVBoxLayout* formLayout = new QVBoxLayout(formPanel);
+    formLayout->setContentsMargins(70, 54, 70, 54);
+
+    QLabel* title = new QLabel("Chào mừng trở lại");
+    title->setObjectName("pageTitle");
+
+    QLabel* subtitle = new QLabel("Đăng nhập để tiếp tục vào MoneyManager.");
+    subtitle->setObjectName("mutedLabel");
+
+    QLabel* usernameLabel = new QLabel("Tên đăng nhập");
+    usernameInput = new QLineEdit();
+    usernameInput->setPlaceholderText("Nhập tên đăng nhập");
+
+    QLabel* passwordLabel = new QLabel("Mật khẩu");
+    passwordInput = new QLineEdit();
+    passwordInput->setPlaceholderText("Nhập mật khẩu");
+    passwordInput->setEchoMode(QLineEdit::Password);
+
+    showPasswordCheck = new QCheckBox("Hiện mật khẩu");
+
+    QPushButton* loginButton = new QPushButton("Đăng nhập");
+    loginButton->setObjectName("primaryButton");
+
+    messageLabel = new QLabel();
+    messageLabel->setStyleSheet("color: #b42318;");
+    messageLabel->setWordWrap(true);
+
+    QLabel* hint = new QLabel("Tài khoản mặc định lần đầu: admin / 123456");
+    hint->setObjectName("mutedLabel");
+    hint->setStyleSheet("color: #8b8e96; font-size: 12px;");
+
+    formLayout->addStretch();
+    formLayout->addWidget(title);
+    formLayout->addWidget(subtitle);
+    formLayout->addSpacing(28);
+    formLayout->addWidget(usernameLabel);
+    formLayout->addWidget(usernameInput);
+    formLayout->addSpacing(12);
+    formLayout->addWidget(passwordLabel);
+    formLayout->addWidget(passwordInput);
+    formLayout->addWidget(showPasswordCheck);
+    formLayout->addSpacing(12);
+    formLayout->addWidget(loginButton);
+    formLayout->addWidget(messageLabel);
+    formLayout->addSpacing(12);
+    formLayout->addWidget(hint);
+    formLayout->addStretch();
+
+    root->addWidget(brandPanel, 4);
+    root->addWidget(formPanel, 6);
+
+    connect(loginButton, &QPushButton::clicked, this, [this]() {
+        handleLogin();
+    });
+
+    connect(passwordInput, &QLineEdit::returnPressed, this, [this]() {
+        handleLogin();
+    });
+
+    connect(showPasswordCheck, &QCheckBox::toggled, this, [this](bool checked) {
+        passwordInput->setEchoMode(checked ? QLineEdit::Normal : QLineEdit::Password);
+    });
+}
+
+void LoginWindow::ensureDefaultUser() {
+    User user;
+    if (!FileManager::loadUser(DataPaths::userFile(), user)) {
+        user = User("admin", "123456", "Người dùng");
+        FileManager::saveUser(DataPaths::userFile(), user);
+    }
+}
+
+void LoginWindow::handleLogin() {
+    User user;
+    if (!FileManager::loadUser(DataPaths::userFile(), user)) {
+        messageLabel->setText("Không thể đọc dữ liệu người dùng.");
+        return;
+    }
+
+    string username = usernameInput->text().trimmed().toStdString();
+    string password = passwordInput->text().toStdString();
+
+    if (!user.login(username, password)) {
+        messageLabel->setText("Tên đăng nhập hoặc mật khẩu không đúng.");
+        return;
+    }
+
+    messageLabel->clear();
+
+    MainWindow* mainWindow = new MainWindow(
+        QString::fromStdString(user.getName()),
+        [this]() {
+            usernameInput->clear();
+            passwordInput->clear();
+            messageLabel->clear();
+            this->show();
+            this->raise();
+            this->activateWindow();
+        }
+    );
+
+    mainWindow->setAttribute(Qt::WA_DeleteOnClose);
+    mainWindow->show();
+    hide();
+}
+
+
+================================================================================
+FILE: ui/login_window.h
+================================================================================
+#pragma once
+
+#include <QWidget>
+
+class QLineEdit;
+class QLabel;
+class QCheckBox;
+
+class LoginWindow : public QWidget {
+private:
+    QLineEdit* usernameInput;
+    QLineEdit* passwordInput;
+    QLabel* messageLabel;
+    QCheckBox* showPasswordCheck;
+
+    void handleLogin();
+    void ensureDefaultUser();
+
+public:
+    explicit LoginWindow(QWidget* parent = nullptr);
+};
+
+
+================================================================================
+FILE: ui/main_window.cpp
+================================================================================
+#include "main_window.h"
+
+#include "data_paths.h"
+#include "dashboard_page.h"
+#include "transaction_page.h"
+#include "wallet_page.h"
+#include "budget_page.h"
+#include "statistics_page.h"
+#include "category_page.h"
+
+#include "../storage/file_manager.h"
+
+#include <QButtonGroup>
+#include <QCloseEvent>
+#include <QFrame>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QStackedWidget>
+#include <QVBoxLayout>
+#include <QWidget>
+
+MainWindow::MainWindow(QString userName,
+                       std::function<void()> onLogout,
+                       QWidget* parent)
+    : QMainWindow(parent),
+      userName(std::move(userName)),
+      onLogout(std::move(onLogout)) {
+
+    setWindowTitle("MoneyManager");
+    setMinimumSize(1080, 700);
+    resize(1320, 820);
+
+    loadData();
+    initializeDefaults();
+    saveAll();
+    buildUi();
+    refreshAll();
+}
+
+void MainWindow::loadData() {
+    FileManager::ensureDataDirectory(DataPaths::dataDir().toStdString());
+
+    FileManager::loadCategories(DataPaths::categoryFile(), categories);
+    FileManager::loadWallets(DataPaths::walletFile(), wallets);
+    FileManager::loadTransactions(DataPaths::transactionFile(), transactions);
+    FileManager::loadBudgets(DataPaths::budgetFile(), budgets);
+}
+
+void MainWindow::initializeDefaults() {
+    if (categories.getCategories().isEmpty()) {
+        categories.createCategory("Ăn uống", CategoryType::EXPENSE);
+        categories.createCategory("Đi lại", CategoryType::EXPENSE);
+        categories.createCategory("Mua sắm", CategoryType::EXPENSE);
+        categories.createCategory("Giải trí", CategoryType::EXPENSE);
+        categories.createCategory("Học tập", CategoryType::EXPENSE);
+        categories.createCategory("Sức khỏe", CategoryType::EXPENSE);
+        categories.createCategory("Nhà ở", CategoryType::EXPENSE);
+        categories.createCategory("Hóa đơn", CategoryType::EXPENSE);
+        categories.createCategory("Khác", CategoryType::EXPENSE);
+
+        categories.createCategory("Lương", CategoryType::INCOME);
+        categories.createCategory("Thưởng", CategoryType::INCOME);
+        categories.createCategory("Làm thêm", CategoryType::INCOME);
+        categories.createCategory("Đầu tư", CategoryType::INCOME);
+        categories.createCategory("Thu nhập khác", CategoryType::INCOME);
+    }
+
+    if (wallets.getWallets().isEmpty()) {
+        wallets.createWallet("Tiền mặt", WalletType::CASH, 0);
+    }
+}
+
+void MainWindow::saveAll() {
+    FileManager::saveCategories(DataPaths::categoryFile(), categories);
+    FileManager::saveWallets(DataPaths::walletFile(), wallets);
+    FileManager::saveTransactions(DataPaths::transactionFile(), transactions);
+    FileManager::saveBudgets(DataPaths::budgetFile(), budgets);
+}
+
+void MainWindow::refreshAll() {
+    if (dashboardPage) dashboardPage->refresh();
+    if (transactionPage) transactionPage->refresh();
+    if (walletPage) walletPage->refresh();
+    if (budgetPage) budgetPage->refresh();
+    if (statisticsPage) statisticsPage->refresh();
+    if (categoryPage) categoryPage->refresh();
+}
+
+void MainWindow::buildUi() {
+    QWidget* central = new QWidget();
+    QHBoxLayout* root = new QHBoxLayout(central);
+    root->setContentsMargins(0, 0, 0, 0);
+    root->setSpacing(0);
+
+    QFrame* sidebar = new QFrame();
+    sidebar->setObjectName("sidebar");
+    sidebar->setFixedWidth(230);
+
+    QVBoxLayout* sideLayout = new QVBoxLayout(sidebar);
+    sideLayout->setContentsMargins(18, 22, 18, 22);
+    sideLayout->setSpacing(6);
+
+    QLabel* brand = new QLabel("MONEY\nMANAGER");
+    brand->setObjectName("brand");
+
+    QLabel* userLabel = new QLabel("Xin chào, " + userName);
+    userLabel->setObjectName("sidebarUser");
+
+    sideLayout->addWidget(brand);
+    sideLayout->addWidget(userLabel);
+    sideLayout->addSpacing(22);
+
+    navigationGroup = new QButtonGroup(this);
+    navigationGroup->setExclusive(true);
+
+    QStringList labels = {
+        "Tổng quan",
+        "Giao dịch",
+        "Ví",
+        "Ngân sách",
+        "Thống kê",
+        "Danh mục"
+    };
+
+    for (int i = 0; i < labels.size(); ++i) {
+        QPushButton* button = new QPushButton(labels[i]);
+        button->setObjectName("sidebarButton");
+        button->setCheckable(true);
+        navigationGroup->addButton(button, i);
+        sideLayout->addWidget(button);
+
+        connect(button, &QPushButton::clicked, this, [this, i]() {
+            pageStack->setCurrentIndex(i);
+        });
+
+        if (i == 0) button->setChecked(true);
+    }
+
+    sideLayout->addStretch();
+
+    QPushButton* logoutButton = new QPushButton("Đăng xuất");
+    logoutButton->setObjectName("sidebarButton");
+    sideLayout->addWidget(logoutButton);
+
+    connect(logoutButton, &QPushButton::clicked, this, [this]() {
+        handleLogout();
+    });
+
+    pageStack = new QStackedWidget();
+
+    auto changed = [this]() {
+        saveAll();
+        refreshAll();
+    };
+
+    dashboardPage = new DashboardPage(
+        &transactions, &wallets, &categories, &budgets
+    );
+    transactionPage = new TransactionPage(
+        &transactions, &wallets, &categories, changed
+    );
+    walletPage = new WalletPage(
+        &wallets, &transactions, changed
+    );
+    budgetPage = new BudgetPage(
+        &budgets, &transactions, &categories, changed
+    );
+    statisticsPage = new StatisticsPage(
+        &transactions, &categories
+    );
+    categoryPage = new CategoryPage(
+        &categories, &transactions, &budgets, changed
+    );
+
+    pageStack->addWidget(dashboardPage);
+    pageStack->addWidget(transactionPage);
+    pageStack->addWidget(walletPage);
+    pageStack->addWidget(budgetPage);
+    pageStack->addWidget(statisticsPage);
+    pageStack->addWidget(categoryPage);
+
+    root->addWidget(sidebar);
+    root->addWidget(pageStack, 1);
+
+    setCentralWidget(central);
+}
+
+void MainWindow::handleLogout() {
+    if (QMessageBox::question(
+            this,
+            "Đăng xuất",
+            "Bạn có chắc muốn đăng xuất?"
+        ) != QMessageBox::Yes) {
+        return;
+    }
+
+    saveAll();
+
+    if (onLogout) onLogout();
+    close();
+}
+
+void MainWindow::closeEvent(QCloseEvent* event) {
+    saveAll();
+    QMainWindow::closeEvent(event);
+}
+
+
+================================================================================
+FILE: ui/main_window.h
+================================================================================
+#pragma once
+
+#include <QMainWindow>
+#include <functional>
+
+#include "../manager/category_manager.h"
+#include "../manager/wallet_manager.h"
+#include "../manager/transaction_manager.h"
+#include "../manager/budget_manager.h"
+
+class QStackedWidget;
+class QButtonGroup;
+
+class DashboardPage;
+class TransactionPage;
+class WalletPage;
+class BudgetPage;
+class StatisticsPage;
+class CategoryPage;
+
+class MainWindow : public QMainWindow {
+private:
+    QString userName;
+    std::function<void()> onLogout;
+
+    CategoryManager categories;
+    WalletManager wallets;
+    TransactionManager transactions;
+    BudgetManager budgets;
+
+    QStackedWidget* pageStack;
+    QButtonGroup* navigationGroup;
+
+    DashboardPage* dashboardPage;
+    TransactionPage* transactionPage;
+    WalletPage* walletPage;
+    BudgetPage* budgetPage;
+    StatisticsPage* statisticsPage;
+    CategoryPage* categoryPage;
+
+    void loadData();
+    void initializeDefaults();
+    void saveAll();
+    void refreshAll();
+    void buildUi();
+    void handleLogout();
+
+protected:
+    void closeEvent(QCloseEvent* event) override;
+
+public:
+    MainWindow(QString userName,
+               std::function<void()> onLogout,
+               QWidget* parent = nullptr);
+};
+
+
+================================================================================
+FILE: ui/statistics_page.cpp
+================================================================================
+#include "statistics_page.h"
+
+#include "chart_widgets.h"
+#include "ui_helpers.h"
+
+#include "../manager/transaction_manager.h"
+#include "../manager/category_manager.h"
+
+#include <QComboBox>
+#include <QDate>
+#include <QDateEdit>
+#include <QFrame>
+#include <QGridLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QVBoxLayout>
+
+#include <map>
+
+namespace {
+    QFrame* makeSummaryCard(const QString& caption, QLabel*& valueLabel) {
+        QFrame* card = new QFrame();
+        card->setObjectName("card");
+        QVBoxLayout* layout = new QVBoxLayout(card);
+        layout->setContentsMargins(18, 16, 18, 16);
+
+        QLabel* title = new QLabel(caption);
+        title->setObjectName("mutedLabel");
+
+        valueLabel = new QLabel("0 đ");
+        valueLabel->setStyleSheet("font-size: 23px; font-weight: 800;");
+
+        layout->addWidget(title);
+        layout->addWidget(valueLabel);
+        return card;
+    }
+}
+
+StatisticsPage::StatisticsPage(TransactionManager* transactions,
+                               CategoryManager* categories,
+                               QWidget* parent)
+    : QWidget(parent),
+      transactions(transactions),
+      categories(categories) {
+
+    QVBoxLayout* root = new QVBoxLayout(this);
+    root->setContentsMargins(28, 24, 28, 28);
+    root->setSpacing(16);
+
+    QHBoxLayout* header = new QHBoxLayout();
+    QLabel* title = new QLabel("Thống kê");
+    title->setObjectName("pageTitle");
+
+    periodCombo = new QComboBox();
+    periodCombo->addItem("Tuần này", 0);
+    periodCombo->addItem("Tháng này", 1);
+    periodCombo->addItem("Năm nay", 2);
+    periodCombo->addItem("Tùy chọn", 3);
+    periodCombo->setCurrentIndex(1);
+
+    referenceDate = new QDateEdit(QDate::currentDate());
+    referenceDate->setCalendarPopup(true);
+    referenceDate->setDisplayFormat("dd/MM/yyyy");
+
+    customStart = new QDateEdit(QDate::currentDate().addMonths(-1));
+    customStart->setCalendarPopup(true);
+    customStart->setDisplayFormat("dd/MM/yyyy");
+
+    customEnd = new QDateEdit(QDate::currentDate());
+    customEnd->setCalendarPopup(true);
+    customEnd->setDisplayFormat("dd/MM/yyyy");
+
+    header->addWidget(title);
+    header->addStretch();
+    header->addWidget(periodCombo);
+    header->addWidget(referenceDate);
+    header->addWidget(customStart);
+    header->addWidget(customEnd);
+
+    QGridLayout* summaryGrid = new QGridLayout();
+    summaryGrid->setHorizontalSpacing(14);
+    summaryGrid->addWidget(makeSummaryCard("Thu nhập", incomeLabel), 0, 0);
+    summaryGrid->addWidget(makeSummaryCard("Chi tiêu", expenseLabel), 0, 1);
+    summaryGrid->addWidget(makeSummaryCard("Chênh lệch", differenceLabel), 0, 2);
+
+    QGridLayout* charts = new QGridLayout();
+    charts->setHorizontalSpacing(14);
+
+    QFrame* donutCard = new QFrame();
+    donutCard->setObjectName("card");
+    QVBoxLayout* donutLayout = new QVBoxLayout(donutCard);
+    donutLayout->setContentsMargins(18, 16, 18, 16);
+    QLabel* donutTitle = new QLabel("Chi tiêu theo danh mục");
+    donutTitle->setObjectName("sectionTitle");
+    donutChart = new DonutChartWidget();
+    donutLayout->addWidget(donutTitle);
+    donutLayout->addWidget(donutChart);
+
+    QFrame* barCard = new QFrame();
+    barCard->setObjectName("card");
+    QVBoxLayout* barLayout = new QVBoxLayout(barCard);
+    barLayout->setContentsMargins(18, 16, 18, 16);
+    QLabel* barTitle = new QLabel("Chi tiêu 6 tháng gần nhất");
+    barTitle->setObjectName("sectionTitle");
+    barChart = new BarChartWidget();
+    barLayout->addWidget(barTitle);
+    barLayout->addWidget(barChart);
+
+    charts->addWidget(donutCard, 0, 0);
+    charts->addWidget(barCard, 0, 1);
+    charts->setColumnStretch(0, 1);
+    charts->setColumnStretch(1, 1);
+
+    root->addLayout(header);
+    root->addLayout(summaryGrid);
+    root->addLayout(charts);
+
+    auto refreshFn = [this]() { refresh(); };
+    connect(periodCombo, &QComboBox::currentIndexChanged, this, [this]() {
+        updatePeriodUi();
+        refresh();
+    });
+    connect(referenceDate, &QDateEdit::dateChanged, this, refreshFn);
+    connect(customStart, &QDateEdit::dateChanged, this, refreshFn);
+    connect(customEnd, &QDateEdit::dateChanged, this, refreshFn);
+
+    updatePeriodUi();
+    refresh();
+}
+
+QString StatisticsPage::startDate() const {
+    QDate ref = referenceDate->date();
+    int mode = periodCombo->currentData().toInt();
+
+    if (mode == 0) return ref.addDays(1 - ref.dayOfWeek()).toString("yyyy-MM-dd");
+    if (mode == 1) return QDate(ref.year(), ref.month(), 1).toString("yyyy-MM-dd");
+    if (mode == 2) return QDate(ref.year(), 1, 1).toString("yyyy-MM-dd");
+    return customStart->date().toString("yyyy-MM-dd");
+}
+
+QString StatisticsPage::endDate() const {
+    QDate ref = referenceDate->date();
+    int mode = periodCombo->currentData().toInt();
+
+    if (mode == 0) return ref.addDays(7 - ref.dayOfWeek()).toString("yyyy-MM-dd");
+    if (mode == 1) {
+        return QDate(ref.year(), ref.month(), 1)
+            .addMonths(1).addDays(-1)
+            .toString("yyyy-MM-dd");
+    }
+    if (mode == 2) return QDate(ref.year(), 12, 31).toString("yyyy-MM-dd");
+    return customEnd->date().toString("yyyy-MM-dd");
+}
+
+void StatisticsPage::updatePeriodUi() {
+    bool custom = periodCombo->currentData().toInt() == 3;
+    referenceDate->setVisible(!custom);
+    customStart->setVisible(custom);
+    customEnd->setVisible(custom);
+}
+
+void StatisticsPage::refresh() {
+    string start = startDate().toStdString();
+    string end = endDate().toStdString();
+
+    double income = transactions->getTotalIncome(start, end);
+    double expense = transactions->getTotalExpense(start, end);
+
+    incomeLabel->setText(UiHelpers::money(income));
+    expenseLabel->setText(UiHelpers::money(expense));
+    differenceLabel->setText(UiHelpers::money(income - expense));
+
+    std::map<int, double> totals;
+    transactions->getTransactions().forEach([&](Transaction* const& t) {
+        if (t == nullptr || t->getType() != TransactionType::EXPENSE) return;
+        QString date = QString::fromStdString(t->getDateTime()).left(10);
+        if (date < QString::fromStdString(start) || date > QString::fromStdString(end)) return;
+        totals[t->getCategoryId()] += t->getAmount();
+    });
+
+    QVector<QColor> palette = {
+        QColor("#6c4ed9"), QColor("#f09a58"), QColor("#51a8a2"),
+        QColor("#d56486"), QColor("#5c85d6"), QColor("#d1a83d"),
+        QColor("#8d6ab8"), QColor("#7c9a50")
+    };
+
+    QVector<ChartSlice> slices;
+    int colorIndex = 0;
+    for (const auto& [categoryId, value] : totals) {
+        const Category* category = categories->findById(categoryId);
+        slices.push_back({
+            category ? QString::fromStdString(category->getName()) : "Không rõ",
+            value,
+            palette[colorIndex % palette.size()]
+        });
+        colorIndex++;
+    }
+    donutChart->setData(slices);
+
+    QStringList monthLabels;
+    QVector<double> monthValues;
+    QDate now = QDate::currentDate();
+
+    for (int offset = 5; offset >= 0; --offset) {
+        QDate month = QDate(now.year(), now.month(), 1).addMonths(-offset);
+        QDate last = month.addMonths(1).addDays(-1);
+
+        string monthStart = month.toString("yyyy-MM-dd").toStdString();
+        string monthEnd = last.toString("yyyy-MM-dd").toStdString();
+
+        monthLabels << month.toString("MM/yy");
+        monthValues << transactions->getTotalExpense(monthStart, monthEnd);
+    }
+
+    barChart->setData(monthLabels, monthValues);
+}
+
+
+================================================================================
+FILE: ui/statistics_page.h
+================================================================================
+#pragma once
+
+#include <QWidget>
+
+class QComboBox;
+class QDateEdit;
+class QLabel;
+class DonutChartWidget;
+class BarChartWidget;
+
+class TransactionManager;
+class CategoryManager;
+
+class StatisticsPage : public QWidget {
+private:
+    TransactionManager* transactions;
+    CategoryManager* categories;
+
+    QComboBox* periodCombo;
+    QDateEdit* referenceDate;
+    QDateEdit* customStart;
+    QDateEdit* customEnd;
+    QLabel* incomeLabel;
+    QLabel* expenseLabel;
+    QLabel* differenceLabel;
+    DonutChartWidget* donutChart;
+    BarChartWidget* barChart;
+
+    QString startDate() const;
+    QString endDate() const;
+    void updatePeriodUi();
+
+public:
+    StatisticsPage(TransactionManager* transactions,
+                   CategoryManager* categories,
+                   QWidget* parent = nullptr);
+
+    void refresh();
+};
+
+
+================================================================================
+FILE: ui/theme.h
+================================================================================
+#pragma once
+
+#include <QString>
+
+namespace Theme {
+    inline QString appStyleSheet() {
+        return R"(
+            * {
+                font-family: "Segoe UI", "Arial";
+                font-size: 14px;
+                color: #202124;
+            }
+
+            QMainWindow, QWidget {
+                background: #f6f7fb;
+            }
+
+            QLabel#pageTitle {
+                font-size: 28px;
+                font-weight: 700;
+                color: #17181c;
+            }
+
+            QLabel#sectionTitle {
+                font-size: 17px;
+                font-weight: 650;
+                color: #26272c;
+            }
+
+            QLabel#mutedLabel {
+                color: #73757c;
+            }
+
+            QFrame#card {
+                background: white;
+                border: 1px solid #e7e8ed;
+                border-radius: 14px;
+            }
+
+            QFrame#sidebar {
+                background: #16171b;
+                border: none;
+            }
+
+            QLabel#brand {
+                color: white;
+                font-size: 20px;
+                font-weight: 800;
+                padding: 6px;
+            }
+
+            QLabel#sidebarUser {
+                color: #aeb1ba;
+                font-size: 12px;
+            }
+
+            QPushButton {
+                min-height: 38px;
+                border: 1px solid #dfe1e7;
+                border-radius: 9px;
+                padding: 0 14px;
+                background: white;
+                font-weight: 600;
+            }
+
+            QPushButton:hover {
+                background: #f0f1f5;
+            }
+
+            QPushButton#primaryButton {
+                color: white;
+                background: #6c4ed9;
+                border: 1px solid #6c4ed9;
+            }
+
+            QPushButton#primaryButton:hover {
+                background: #5d41c8;
+            }
+
+            QPushButton#dangerButton {
+                color: #b42318;
+                background: #fff7f6;
+                border-color: #f2c8c3;
+            }
+
+            QPushButton#sidebarButton {
+                color: #d9dbe2;
+                background: transparent;
+                border: none;
+                text-align: left;
+                padding-left: 18px;
+                min-height: 44px;
+                border-radius: 9px;
+                font-weight: 600;
+            }
+
+            QPushButton#sidebarButton:hover {
+                background: #24262c;
+                color: white;
+            }
+
+            QPushButton#sidebarButton:checked {
+                background: #6c4ed9;
+                color: white;
+            }
+
+            QLineEdit, QComboBox, QDateEdit, QDoubleSpinBox, QSpinBox, QTextEdit {
+                min-height: 38px;
+                background: white;
+                border: 1px solid #d9dbe2;
+                border-radius: 8px;
+                padding: 0 10px;
+            }
+
+            QTextEdit {
+                padding: 8px 10px;
+            }
+
+            QLineEdit:focus, QComboBox:focus, QDateEdit:focus,
+            QDoubleSpinBox:focus, QSpinBox:focus, QTextEdit:focus {
+                border: 1px solid #6c4ed9;
+            }
+
+            QTableWidget {
+                background: white;
+                border: 1px solid #e3e4e9;
+                border-radius: 10px;
+                gridline-color: #eceef2;
+                selection-background-color: #eeeafd;
+                selection-color: #202124;
+            }
+
+            QHeaderView::section {
+                background: #f3f4f7;
+                border: none;
+                border-bottom: 1px solid #e3e4e9;
+                padding: 9px;
+                font-weight: 700;
+            }
+
+            QProgressBar {
+                border: none;
+                border-radius: 7px;
+                background: #eceef3;
+                text-align: center;
+                height: 14px;
+            }
+
+            QProgressBar::chunk {
+                background: #6c4ed9;
+                border-radius: 7px;
+            }
+
+            QDialog {
+                background: #f8f9fb;
+            }
+        )";
+    }
+}
+
+
+================================================================================
+FILE: ui/transaction_dialog.cpp
+================================================================================
+#include "transaction_dialog.h"
+
+#include "../manager/wallet_manager.h"
+#include "../manager/category_manager.h"
+#include "../model/transaction.h"
+#include "../model/income.h"
+#include "../model/expense.h"
+#include "../utils/date_utils.h"
+
+#include <QComboBox>
+#include <QDialogButtonBox>
+#include <QDoubleSpinBox>
+#include <QFormLayout>
+#include <QLabel>
+#include <QMessageBox>
+#include <QTextEdit>
+#include <QVBoxLayout>
+
+TransactionDialog::TransactionDialog(WalletManager* wallets,
+                                     CategoryManager* categories,
+                                     const Transaction* existing,
+                                     QWidget* parent)
+    : QDialog(parent),
+      wallets(wallets),
+      categories(categories),
+      existing(existing) {
+
+    setWindowTitle(existing ? "Sửa giao dịch" : "Thêm giao dịch");
+    setMinimumWidth(470);
+
+    typeCombo = new QComboBox();
+    typeCombo->addItem("Chi tiêu", static_cast<int>(TransactionType::EXPENSE));
+    typeCombo->addItem("Thu nhập", static_cast<int>(TransactionType::INCOME));
+
+    amountInput = new QDoubleSpinBox();
+    amountInput->setRange(1, 1000000000000.0);
+    amountInput->setDecimals(0);
+    amountInput->setSingleStep(10000);
+    amountInput->setSuffix(" đ");
+
+    categoryCombo = new QComboBox();
+    walletCombo = new QComboBox();
+
+    noteInput = new QTextEdit();
+    noteInput->setPlaceholderText("Ghi chú cho giao dịch");
+    noteInput->setMaximumHeight(90);
+
+    timeLabel = new QLabel();
+    timeLabel->setObjectName("mutedLabel");
+
+    populateWallets();
+
+    if (existing) {
+        int typeIndex = typeCombo->findData(static_cast<int>(existing->getType()));
+        if (typeIndex >= 0) typeCombo->setCurrentIndex(typeIndex);
+        populateCategories();
+
+        amountInput->setValue(existing->getAmount());
+
+        int walletIndex = walletCombo->findData(existing->getWalletId());
+        if (walletIndex >= 0) walletCombo->setCurrentIndex(walletIndex);
+
+        int categoryIndex = categoryCombo->findData(existing->getCategoryId());
+        if (categoryIndex >= 0) categoryCombo->setCurrentIndex(categoryIndex);
+
+        noteInput->setPlainText(QString::fromStdString(existing->getNote()));
+        timeLabel->setText(QString::fromStdString(existing->getDateTime()) + " (giữ nguyên)");
+    } else {
+        populateCategories();
+        timeLabel->setText(QString::fromStdString(DateUtils::getCurrentDateTime()) + " (tự động)");
+    }
+
+    QFormLayout* form = new QFormLayout();
+    form->addRow("Loại giao dịch", typeCombo);
+    form->addRow("Số tiền", amountInput);
+    form->addRow("Danh mục", categoryCombo);
+    form->addRow("Ví", walletCombo);
+    form->addRow("Thời gian", timeLabel);
+    form->addRow("Ghi chú", noteInput);
+
+    QDialogButtonBox* buttons = new QDialogButtonBox(
+        QDialogButtonBox::Save | QDialogButtonBox::Cancel
+    );
+
+    QVBoxLayout* root = new QVBoxLayout(this);
+    root->addLayout(form);
+    root->addSpacing(8);
+    root->addWidget(buttons);
+
+    connect(typeCombo, &QComboBox::currentIndexChanged, this, [this]() {
+        populateCategories();
+    });
+
+    connect(buttons, &QDialogButtonBox::accepted, this, [this]() {
+        validateAndAccept();
+    });
+    connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+}
+
+void TransactionDialog::populateWallets() {
+    int previous = walletCombo->currentData().toInt();
+    walletCombo->clear();
+
+    wallets->getWallets().forEach([&](const Wallet& wallet) {
+        walletCombo->addItem(
+            QString::fromStdString(wallet.getName()),
+            wallet.getId()
+        );
+    });
+
+    int index = walletCombo->findData(previous);
+    if (index >= 0) walletCombo->setCurrentIndex(index);
+}
+
+void TransactionDialog::populateCategories() {
+    int previous = categoryCombo->currentData().toInt();
+    categoryCombo->clear();
+
+    TransactionType type = static_cast<TransactionType>(typeCombo->currentData().toInt());
+    CategoryType wanted = type == TransactionType::INCOME
+        ? CategoryType::INCOME
+        : CategoryType::EXPENSE;
+
+    categories->getCategories().forEach([&](const Category& category) {
+        if (category.getType() != wanted) return;
+        categoryCombo->addItem(
+            QString::fromStdString(category.getName()),
+            category.getId()
+        );
+    });
+
+    int index = categoryCombo->findData(previous);
+    if (index >= 0) categoryCombo->setCurrentIndex(index);
+}
+
+void TransactionDialog::validateAndAccept() {
+    if (walletCombo->currentIndex() < 0) {
+        QMessageBox::warning(this, "Thiếu ví", "Vui lòng tạo ít nhất một ví.");
+        return;
+    }
+
+    if (categoryCombo->currentIndex() < 0) {
+        QMessageBox::warning(this, "Thiếu danh mục", "Không có danh mục phù hợp.");
+        return;
+    }
+
+    QString categoryName = categoryCombo->currentText().toLower();
+    if ((categoryName.contains("khác") || categoryName.contains("khac")) &&
+        noteInput->toPlainText().trimmed().isEmpty()) {
+        QMessageBox::warning(
+            this,
+            "Cần ghi chú",
+            "Với danh mục Khác, vui lòng ghi rõ nội dung giao dịch."
+        );
+        return;
+    }
+
+    accept();
+}
+
+Transaction* TransactionDialog::createTransaction(int id) const {
+    TransactionType type = static_cast<TransactionType>(typeCombo->currentData().toInt());
+    double amount = amountInput->value();
+    int walletId = walletCombo->currentData().toInt();
+    int categoryId = categoryCombo->currentData().toInt();
+    string note = noteInput->toPlainText().trimmed().toStdString();
+
+    string dateTime = existing
+        ? existing->getDateTime()
+        : DateUtils::getCurrentDateTime();
+
+    if (type == TransactionType::INCOME) {
+        return new Income(id, amount, dateTime, note, walletId, categoryId);
+    }
+
+    return new Expense(id, amount, dateTime, note, walletId, categoryId);
+}
+
+
+================================================================================
+FILE: ui/transaction_dialog.h
+================================================================================
+#pragma once
+
+#include <QDialog>
+
+class QComboBox;
+class QDoubleSpinBox;
+class QTextEdit;
+class QLabel;
+
+class Transaction;
+class WalletManager;
+class CategoryManager;
+
+class TransactionDialog : public QDialog {
+private:
+    WalletManager* wallets;
+    CategoryManager* categories;
+    const Transaction* existing;
+
+    QComboBox* typeCombo;
+    QDoubleSpinBox* amountInput;
+    QComboBox* categoryCombo;
+    QComboBox* walletCombo;
+    QTextEdit* noteInput;
+    QLabel* timeLabel;
+
+    void populateWallets();
+    void populateCategories();
+    void validateAndAccept();
+
+public:
+    TransactionDialog(WalletManager* wallets,
+                      CategoryManager* categories,
+                      const Transaction* existing = nullptr,
+                      QWidget* parent = nullptr);
+
+    Transaction* createTransaction(int id) const;
+};
+
+
+================================================================================
+FILE: ui/transaction_page.cpp
+================================================================================
+#include "transaction_page.h"
+
+#include "transaction_dialog.h"
+#include "ui_helpers.h"
+
+#include "../manager/transaction_manager.h"
+#include "../manager/wallet_manager.h"
+#include "../manager/category_manager.h"
+#include "../model/transaction.h"
+
+#include <QAbstractItemView>
+#include <QComboBox>
+#include <QDate>
+#include <QDateEdit>
+#include <QFrame>
+#include <QHeaderView>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QTableWidget>
+#include <QVBoxLayout>
+
+#include <algorithm>
+#include <vector>
+
+TransactionPage::TransactionPage(TransactionManager* transactions,
+                                 WalletManager* wallets,
+                                 CategoryManager* categories,
+                                 std::function<void()> onChanged,
+                                 QWidget* parent)
+    : QWidget(parent),
+      transactions(transactions),
+      wallets(wallets),
+      categories(categories),
+      onChanged(std::move(onChanged)) {
+
+    QVBoxLayout* root = new QVBoxLayout(this);
+    root->setContentsMargins(28, 24, 28, 28);
+    root->setSpacing(16);
+
+    QHBoxLayout* header = new QHBoxLayout();
+    QLabel* title = new QLabel("Giao dịch");
+    title->setObjectName("pageTitle");
+    QPushButton* addButton = new QPushButton("+ Thêm giao dịch");
+    addButton->setObjectName("primaryButton");
+    header->addWidget(title);
+    header->addStretch();
+    header->addWidget(addButton);
+
+    QFrame* card = new QFrame();
+    card->setObjectName("card");
+    QVBoxLayout* cardLayout = new QVBoxLayout(card);
+    cardLayout->setContentsMargins(16, 16, 16, 16);
+
+    QHBoxLayout* filterRow1 = new QHBoxLayout();
+
+    searchInput = new QLineEdit();
+    searchInput->setPlaceholderText("Tìm theo ghi chú, danh mục, ví...");
+    searchInput->setClearButtonEnabled(true);
+
+    typeFilter = new QComboBox();
+    typeFilter->addItem("Tất cả loại", -1);
+    typeFilter->addItem("Chi tiêu", static_cast<int>(TransactionType::EXPENSE));
+    typeFilter->addItem("Thu nhập", static_cast<int>(TransactionType::INCOME));
+
+    walletFilter = new QComboBox();
+    categoryFilter = new QComboBox();
+
+    filterRow1->addWidget(searchInput, 2);
+    filterRow1->addWidget(typeFilter);
+    filterRow1->addWidget(walletFilter);
+    filterRow1->addWidget(categoryFilter);
+
+    QHBoxLayout* filterRow2 = new QHBoxLayout();
+    periodFilter = new QComboBox();
+    periodFilter->addItem("Tất cả thời gian", 0);
+    periodFilter->addItem("Tháng này", 1);
+    periodFilter->addItem("Tùy chọn", 2);
+
+    fromDate = new QDateEdit(QDate::currentDate().addMonths(-1));
+    fromDate->setCalendarPopup(true);
+    fromDate->setDisplayFormat("dd/MM/yyyy");
+
+    toDate = new QDateEdit(QDate::currentDate());
+    toDate->setCalendarPopup(true);
+    toDate->setDisplayFormat("dd/MM/yyyy");
+
+    QPushButton* editButton = new QPushButton("Sửa");
+    QPushButton* deleteButton = new QPushButton("Xóa");
+    deleteButton->setObjectName("dangerButton");
+
+    filterRow2->addWidget(periodFilter);
+    filterRow2->addWidget(fromDate);
+    filterRow2->addWidget(toDate);
+    filterRow2->addStretch();
+    filterRow2->addWidget(editButton);
+    filterRow2->addWidget(deleteButton);
+
+    table = new QTableWidget(0, 6);
+    table->setHorizontalHeaderLabels(
+        {"Thời gian", "Loại", "Danh mục", "Ví", "Ghi chú", "Số tiền"}
+    );
+    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Stretch);
+    table->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setSelectionMode(QAbstractItemView::SingleSelection);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->verticalHeader()->setVisible(false);
+
+    cardLayout->addLayout(filterRow1);
+    cardLayout->addLayout(filterRow2);
+    cardLayout->addWidget(table);
+
+    root->addLayout(header);
+    root->addWidget(card);
+
+    connect(addButton, &QPushButton::clicked, this, [this]() { addTransaction(); });
+    connect(editButton, &QPushButton::clicked, this, [this]() { editTransaction(); });
+    connect(deleteButton, &QPushButton::clicked, this, [this]() { deleteTransaction(); });
+    connect(table, &QTableWidget::cellDoubleClicked, this, [this](int, int) { editTransaction(); });
+
+    auto refreshFn = [this]() { refresh(); };
+    connect(searchInput, &QLineEdit::textChanged, this, refreshFn);
+    connect(typeFilter, &QComboBox::currentIndexChanged, this, refreshFn);
+    connect(walletFilter, &QComboBox::currentIndexChanged, this, refreshFn);
+    connect(categoryFilter, &QComboBox::currentIndexChanged, this, refreshFn);
+    connect(periodFilter, &QComboBox::currentIndexChanged, this, [this]() {
+        updatePeriodControls();
+        refresh();
+    });
+    connect(fromDate, &QDateEdit::dateChanged, this, refreshFn);
+    connect(toDate, &QDateEdit::dateChanged, this, refreshFn);
+
+    rebuildFilters();
+    updatePeriodControls();
+    refresh();
+}
+
+int TransactionPage::selectedId() const {
+    int row = table->currentRow();
+    if (row < 0 || table->item(row, 0) == nullptr) return -1;
+    return table->item(row, 0)->data(Qt::UserRole).toInt();
+}
+
+void TransactionPage::rebuildFilters() {
+    int oldWallet = walletFilter->currentData().toInt();
+    int oldCategory = categoryFilter->currentData().toInt();
+
+    walletFilter->blockSignals(true);
+    categoryFilter->blockSignals(true);
+
+    walletFilter->clear();
+    walletFilter->addItem("Tất cả ví", 0);
+    wallets->getWallets().forEach([&](const Wallet& wallet) {
+        walletFilter->addItem(QString::fromStdString(wallet.getName()), wallet.getId());
+    });
+
+    categoryFilter->clear();
+    categoryFilter->addItem("Tất cả danh mục", 0);
+    categories->getCategories().forEach([&](const Category& category) {
+        categoryFilter->addItem(QString::fromStdString(category.getName()), category.getId());
+    });
+
+    int walletIndex = walletFilter->findData(oldWallet);
+    if (walletIndex >= 0) walletFilter->setCurrentIndex(walletIndex);
+
+    int categoryIndex = categoryFilter->findData(oldCategory);
+    if (categoryIndex >= 0) categoryFilter->setCurrentIndex(categoryIndex);
+
+    walletFilter->blockSignals(false);
+    categoryFilter->blockSignals(false);
+}
+
+void TransactionPage::updatePeriodControls() {
+    bool custom = periodFilter->currentData().toInt() == 2;
+    fromDate->setVisible(custom);
+    toDate->setVisible(custom);
+}
+
+bool TransactionPage::passesDateFilter(const std::string& dateTime) const {
+    int mode = periodFilter->currentData().toInt();
+    if (mode == 0) return true;
+
+    QDate date = QDate::fromString(
+        QString::fromStdString(dateTime).left(10),
+        "yyyy-MM-dd"
+    );
+    if (!date.isValid()) return false;
+
+    if (mode == 1) {
+        QDate now = QDate::currentDate();
+        return date.year() == now.year() && date.month() == now.month();
+    }
+
+    return date >= fromDate->date() && date <= toDate->date();
+}
+
+void TransactionPage::refresh() {
+    rebuildFilters();
+    table->setRowCount(0);
+
+    QString query = searchInput->text().trimmed().toLower();
+    int type = typeFilter->currentData().toInt();
+    int walletId = walletFilter->currentData().toInt();
+    int categoryId = categoryFilter->currentData().toInt();
+
+    std::vector<const Transaction*> items;
+    transactions->getTransactions().forEach([&](Transaction* const& t) {
+        if (t != nullptr) items.push_back(t);
+    });
+
+    std::sort(items.begin(), items.end(), [](const Transaction* a, const Transaction* b) {
+        return a->getDateTime() > b->getDateTime();
+    });
+
+    for (const Transaction* t : items) {
+        if (type != -1 && static_cast<int>(t->getType()) != type) continue;
+        if (walletId != 0 && t->getWalletId() != walletId) continue;
+        if (categoryId != 0 && t->getCategoryId() != categoryId) continue;
+        if (!passesDateFilter(t->getDateTime())) continue;
+
+        const Category* category = categories->findById(t->getCategoryId());
+        const Wallet* wallet = wallets->findById(t->getWalletId());
+
+        QString categoryName = category
+            ? QString::fromStdString(category->getName())
+            : "Không rõ";
+        QString walletName = wallet
+            ? QString::fromStdString(wallet->getName())
+            : "Không rõ";
+
+        QString searchable = (
+            QString::fromStdString(t->getNote()) + " " +
+            categoryName + " " + walletName
+        ).toLower();
+
+        if (!query.isEmpty() && !searchable.contains(query)) continue;
+
+        int row = table->rowCount();
+        table->insertRow(row);
+
+        QTableWidgetItem* timeItem = new QTableWidgetItem(
+            UiHelpers::dateTimeDisplay(t->getDateTime())
+        );
+        timeItem->setData(Qt::UserRole, t->getId());
+
+        table->setItem(row, 0, timeItem);
+        table->setItem(row, 1, new QTableWidgetItem(
+            t->getType() == TransactionType::INCOME ? "Thu nhập" : "Chi tiêu"
+        ));
+        table->setItem(row, 2, new QTableWidgetItem(categoryName));
+        table->setItem(row, 3, new QTableWidgetItem(walletName));
+        table->setItem(row, 4, new QTableWidgetItem(QString::fromStdString(t->getNote())));
+        table->setItem(row, 5, new QTableWidgetItem(UiHelpers::money(t->getSignedAmount())));
+    }
+}
+
+void TransactionPage::addTransaction() {
+    if (wallets->getWallets().isEmpty()) {
+        QMessageBox::warning(this, "Chưa có ví", "Hãy tạo ví trước khi thêm giao dịch.");
+        return;
+    }
+
+    TransactionDialog dialog(wallets, categories, nullptr, this);
+    if (dialog.exec() != QDialog::Accepted) return;
+
+    int id = transactions->getNextId();
+    Transaction* transaction = dialog.createTransaction(id);
+
+    if (!transactions->addTransaction(transaction, *wallets, *categories)) {
+        delete transaction;
+        QMessageBox::warning(this, "Không thể thêm", "Dữ liệu giao dịch không hợp lệ.");
+        return;
+    }
+
+    if (onChanged) onChanged();
+}
+
+void TransactionPage::editTransaction() {
+    int id = selectedId();
+    Transaction* oldTransaction = transactions->findById(id);
+    if (oldTransaction == nullptr) {
+        QMessageBox::information(this, "Giao dịch", "Vui lòng chọn một giao dịch.");
+        return;
+    }
+
+    TransactionDialog dialog(wallets, categories, oldTransaction, this);
+    if (dialog.exec() != QDialog::Accepted) return;
+
+    Transaction* replacement = dialog.createTransaction(id);
+
+    if (!transactions->updateTransaction(
+            id, replacement, *wallets, *categories
+        )) {
+        delete replacement;
+        QMessageBox::warning(this, "Không thể sửa", "Không thể cập nhật giao dịch.");
+        return;
+    }
+
+    if (onChanged) onChanged();
+}
+
+void TransactionPage::deleteTransaction() {
+    int id = selectedId();
+    const Transaction* transaction = transactions->findById(id);
+    if (transaction == nullptr) {
+        QMessageBox::information(this, "Giao dịch", "Vui lòng chọn một giao dịch.");
+        return;
+    }
+
+    if (QMessageBox::question(
+            this,
+            "Xóa giao dịch",
+            "Bạn có chắc muốn xóa giao dịch đã chọn?"
+        ) != QMessageBox::Yes) {
+        return;
+    }
+
+    if (!transactions->deleteTransaction(id, *wallets)) {
+        QMessageBox::warning(this, "Lỗi", "Không thể xóa giao dịch.");
+        return;
+    }
+
+    if (onChanged) onChanged();
+}
+
+
+================================================================================
+FILE: ui/transaction_page.h
+================================================================================
+#pragma once
+
+#include <QWidget>
+#include <functional>
+
+class QComboBox;
+class QDateEdit;
+class QLineEdit;
+class QTableWidget;
+
+class TransactionManager;
+class WalletManager;
+class CategoryManager;
+
+class TransactionPage : public QWidget {
+private:
+    TransactionManager* transactions;
+    WalletManager* wallets;
+    CategoryManager* categories;
+    std::function<void()> onChanged;
+
+    QLineEdit* searchInput;
+    QComboBox* typeFilter;
+    QComboBox* walletFilter;
+    QComboBox* categoryFilter;
+    QComboBox* periodFilter;
+    QDateEdit* fromDate;
+    QDateEdit* toDate;
+    QTableWidget* table;
+
+    int selectedId() const;
+    void rebuildFilters();
+    void updatePeriodControls();
+    bool passesDateFilter(const std::string& dateTime) const;
+
+    void addTransaction();
+    void editTransaction();
+    void deleteTransaction();
+
+public:
+    TransactionPage(TransactionManager* transactions,
+                    WalletManager* wallets,
+                    CategoryManager* categories,
+                    std::function<void()> onChanged,
+                    QWidget* parent = nullptr);
+
+    void refresh();
+};
+
+
+================================================================================
+FILE: ui/ui_helpers.h
+================================================================================
+#pragma once
+
+#include <QString>
+#include <QLocale>
+#include <QDate>
+#include <QDateTime>
+
+#include "../model/wallet.h"
+#include "../model/category.h"
+
+namespace UiHelpers {
+    inline QString money(double value) {
+        QLocale locale(QLocale::Vietnamese, QLocale::Vietnam);
+        return locale.toString(value, 'f', 0) + " đ";
+    }
+
+    inline QString walletTypeLabel(WalletType type) {
+        switch (type) {
+            case WalletType::CASH: return "Tiền mặt";
+            case WalletType::BANK: return "Ngân hàng";
+            case WalletType::EWALLET: return "Ví điện tử";
+            default: return "Khác";
+        }
+    }
+
+    inline QString categoryTypeLabel(CategoryType type) {
+        return type == CategoryType::INCOME ? "Thu nhập" : "Chi tiêu";
+    }
+
+    inline QDate parseDate(const std::string& value) {
+        return QDate::fromString(QString::fromStdString(value), "yyyy-MM-dd");
+    }
+
+    inline QString dateDisplay(const std::string& value) {
+        QDate date = parseDate(value);
+        return date.isValid() ? date.toString("dd/MM/yyyy") : QString::fromStdString(value);
+    }
+
+    inline QString dateTimeDisplay(const std::string& value) {
+        QString raw = QString::fromStdString(value);
+        QDateTime dt = QDateTime::fromString(raw, "yyyy-MM-dd HH:mm:ss");
+        return dt.isValid() ? dt.toString("dd/MM/yyyy HH:mm:ss") : raw;
+    }
+}
+
+
+================================================================================
+FILE: ui/wallet_dialog.cpp
+================================================================================
+#include "wallet_dialog.h"
+
+#include <QComboBox>
+#include <QDialogButtonBox>
+#include <QDoubleSpinBox>
+#include <QFormLayout>
+#include <QLineEdit>
+#include <QMessageBox>
+#include <QVBoxLayout>
+
+WalletDialog::WalletDialog(const Wallet* wallet, QWidget* parent)
+    : QDialog(parent), editing(wallet != nullptr) {
+
+    setWindowTitle(editing ? "Sửa ví" : "Thêm ví");
+    setMinimumWidth(400);
+
+    nameInput = new QLineEdit();
+    nameInput->setPlaceholderText("Ví dụ: Tiền mặt");
+
+    typeCombo = new QComboBox();
+    typeCombo->addItem("Tiền mặt", static_cast<int>(WalletType::CASH));
+    typeCombo->addItem("Ngân hàng", static_cast<int>(WalletType::BANK));
+    typeCombo->addItem("Ví điện tử", static_cast<int>(WalletType::EWALLET));
+    typeCombo->addItem("Khác", static_cast<int>(WalletType::OTHER));
+
+    balanceInput = new QDoubleSpinBox();
+    balanceInput->setRange(-1000000000000.0, 1000000000000.0);
+    balanceInput->setDecimals(0);
+    balanceInput->setSingleStep(50000);
+    balanceInput->setSuffix(" đ");
+
+    if (wallet != nullptr) {
+        nameInput->setText(QString::fromStdString(wallet->getName()));
+        int index = typeCombo->findData(static_cast<int>(wallet->getType()));
+        if (index >= 0) typeCombo->setCurrentIndex(index);
+        balanceInput->setValue(wallet->getBalance());
+        balanceInput->setEnabled(false);
+        balanceInput->setToolTip("Số dư chỉ thay đổi thông qua giao dịch.");
+    }
+
+    QFormLayout* form = new QFormLayout();
+    form->addRow("Tên ví", nameInput);
+    form->addRow("Loại ví", typeCombo);
+    form->addRow(editing ? "Số dư hiện tại" : "Số dư ban đầu", balanceInput);
+
+    QDialogButtonBox* buttons = new QDialogButtonBox(
+        QDialogButtonBox::Save | QDialogButtonBox::Cancel
+    );
+
+    QVBoxLayout* root = new QVBoxLayout(this);
+    root->addLayout(form);
+    root->addSpacing(10);
+    root->addWidget(buttons);
+
+    connect(buttons, &QDialogButtonBox::accepted, this, [this]() {
+        validateAndAccept();
+    });
+    connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+}
+
+void WalletDialog::validateAndAccept() {
+    if (nameInput->text().trimmed().isEmpty()) {
+        QMessageBox::warning(this, "Thiếu dữ liệu", "Vui lòng nhập tên ví.");
+        return;
+    }
+    accept();
+}
+
+QString WalletDialog::walletName() const {
+    return nameInput->text().trimmed();
+}
+
+WalletType WalletDialog::walletType() const {
+    return static_cast<WalletType>(typeCombo->currentData().toInt());
+}
+
+double WalletDialog::initialBalance() const {
+    return balanceInput->value();
+}
+
+
+================================================================================
+FILE: ui/wallet_dialog.h
+================================================================================
+#pragma once
+
+#include <QDialog>
+#include "../model/wallet.h"
+
+class QLineEdit;
+class QComboBox;
+class QDoubleSpinBox;
+
+class WalletDialog : public QDialog {
+private:
+    QLineEdit* nameInput;
+    QComboBox* typeCombo;
+    QDoubleSpinBox* balanceInput;
+    bool editing;
+
+    void validateAndAccept();
+
+public:
+    explicit WalletDialog(const Wallet* wallet = nullptr, QWidget* parent = nullptr);
+
+    QString walletName() const;
+    WalletType walletType() const;
+    double initialBalance() const;
+};
+
+
+================================================================================
+FILE: ui/wallet_page.cpp
+================================================================================
+#include "wallet_page.h"
+
+#include "wallet_dialog.h"
+#include "ui_helpers.h"
+
+#include "../manager/wallet_manager.h"
+#include "../manager/transaction_manager.h"
+
+#include <QAbstractItemView>
+#include <QFrame>
+#include <QHeaderView>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QTableWidget>
+#include <QVBoxLayout>
+
+WalletPage::WalletPage(WalletManager* wallets,
+                       TransactionManager* transactions,
+                       std::function<void()> onChanged,
+                       QWidget* parent)
+    : QWidget(parent),
+      wallets(wallets),
+      transactions(transactions),
+      onChanged(std::move(onChanged)) {
+
+    QVBoxLayout* root = new QVBoxLayout(this);
+    root->setContentsMargins(28, 24, 28, 28);
+    root->setSpacing(16);
+
+    QHBoxLayout* header = new QHBoxLayout();
+    QLabel* title = new QLabel("Ví");
+    title->setObjectName("pageTitle");
+    QPushButton* addButton = new QPushButton("+ Thêm ví");
+    addButton->setObjectName("primaryButton");
+    header->addWidget(title);
+    header->addStretch();
+    header->addWidget(addButton);
+
+    QFrame* summary = new QFrame();
+    summary->setObjectName("card");
+    QVBoxLayout* summaryLayout = new QVBoxLayout(summary);
+    QLabel* caption = new QLabel("Tổng tài sản");
+    caption->setObjectName("mutedLabel");
+    totalLabel = new QLabel("0 đ");
+    totalLabel->setStyleSheet("font-size: 30px; font-weight: 800;");
+    summaryLayout->addWidget(caption);
+    summaryLayout->addWidget(totalLabel);
+
+    QFrame* card = new QFrame();
+    card->setObjectName("card");
+    QVBoxLayout* cardLayout = new QVBoxLayout(card);
+    cardLayout->setContentsMargins(18, 18, 18, 18);
+
+    QHBoxLayout* actions = new QHBoxLayout();
+    QLabel* section = new QLabel("Danh sách ví");
+    section->setObjectName("sectionTitle");
+    QPushButton* editButton = new QPushButton("Sửa");
+    QPushButton* deleteButton = new QPushButton("Xóa");
+    deleteButton->setObjectName("dangerButton");
+    actions->addWidget(section);
+    actions->addStretch();
+    actions->addWidget(editButton);
+    actions->addWidget(deleteButton);
+
+    table = new QTableWidget(0, 4);
+    table->setHorizontalHeaderLabels({"ID", "Tên ví", "Loại", "Số dư"});
+    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setSelectionMode(QAbstractItemView::SingleSelection);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->verticalHeader()->setVisible(false);
+
+    cardLayout->addLayout(actions);
+    cardLayout->addWidget(table);
+
+    root->addLayout(header);
+    root->addWidget(summary);
+    root->addWidget(card, 1);
+
+    connect(addButton, &QPushButton::clicked, this, [this]() { addWallet(); });
+    connect(editButton, &QPushButton::clicked, this, [this]() { editWallet(); });
+    connect(deleteButton, &QPushButton::clicked, this, [this]() { deleteWallet(); });
+    connect(table, &QTableWidget::cellDoubleClicked, this, [this](int, int) { editWallet(); });
+
+    refresh();
+}
+
+int WalletPage::selectedId() const {
+    int row = table->currentRow();
+    if (row < 0 || table->item(row, 0) == nullptr) return -1;
+    return table->item(row, 0)->data(Qt::UserRole).toInt();
+}
+
+void WalletPage::refresh() {
+    totalLabel->setText(UiHelpers::money(wallets->getTotalBalance()));
+    table->setRowCount(0);
+
+    wallets->getWallets().forEach([&](const Wallet& wallet) {
+        int row = table->rowCount();
+        table->insertRow(row);
+
+        QTableWidgetItem* idItem = new QTableWidgetItem(QString::number(wallet.getId()));
+        idItem->setData(Qt::UserRole, wallet.getId());
+
+        table->setItem(row, 0, idItem);
+        table->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(wallet.getName())));
+        table->setItem(row, 2, new QTableWidgetItem(UiHelpers::walletTypeLabel(wallet.getType())));
+        table->setItem(row, 3, new QTableWidgetItem(UiHelpers::money(wallet.getBalance())));
+    });
+}
+
+void WalletPage::addWallet() {
+    WalletDialog dialog(nullptr, this);
+    if (dialog.exec() != QDialog::Accepted) return;
+
+    wallets->createWallet(
+        dialog.walletName().toStdString(),
+        dialog.walletType(),
+        dialog.initialBalance()
+    );
+
+    if (onChanged) onChanged();
+}
+
+void WalletPage::editWallet() {
+    int id = selectedId();
+    Wallet* wallet = wallets->findById(id);
+    if (wallet == nullptr) {
+        QMessageBox::information(this, "Ví", "Vui lòng chọn một ví.");
+        return;
+    }
+
+    WalletDialog dialog(wallet, this);
+    if (dialog.exec() != QDialog::Accepted) return;
+
+    wallets->updateWalletName(id, dialog.walletName().toStdString());
+    wallet->setType(dialog.walletType());
+
+    if (onChanged) onChanged();
+}
+
+void WalletPage::deleteWallet() {
+    int id = selectedId();
+    Wallet* wallet = wallets->findById(id);
+    if (wallet == nullptr) {
+        QMessageBox::information(this, "Ví", "Vui lòng chọn một ví.");
+        return;
+    }
+
+    if (transactions->hasWalletTransactions(id)) {
+        QMessageBox::warning(this, "Không thể xóa", "Ví đang có giao dịch.");
+        return;
+    }
+
+    if (QMessageBox::question(
+            this,
+            "Xóa ví",
+            "Bạn có chắc muốn xóa ví \"" + QString::fromStdString(wallet->getName()) + "\"?"
+        ) != QMessageBox::Yes) {
+        return;
+    }
+
+    wallets->deleteWallet(id);
+    if (onChanged) onChanged();
+}
+
+
+================================================================================
+FILE: ui/wallet_page.h
+================================================================================
+#pragma once
+
+#include <QWidget>
+#include <functional>
+
+class QLabel;
+class QTableWidget;
+
+class WalletManager;
+class TransactionManager;
+
+class WalletPage : public QWidget {
+private:
+    WalletManager* wallets;
+    TransactionManager* transactions;
+    std::function<void()> onChanged;
+
+    QLabel* totalLabel;
+    QTableWidget* table;
+
+    int selectedId() const;
+    void addWallet();
+    void editWallet();
+    void deleteWallet();
+
+public:
+    WalletPage(WalletManager* wallets,
+               TransactionManager* transactions,
+               std::function<void()> onChanged,
+               QWidget* parent = nullptr);
+
+    void refresh();
+};
+
+
+================================================================================
+FILE: utils/date_utils.cpp
+================================================================================
+#include "date_utils.h"
+
+#include <ctime>
+#include <iomanip>
+#include <sstream>
+
+namespace {
+    bool isLeapYear(int year) {
+        return (year % 400 == 0) || (year % 4 == 0 && year % 100 != 0);
+    }
+
+    int daysInMonth(int year, int month) {
+        static int days[] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+        if (month == 2 && isLeapYear(year)) return 29;
+        if (month < 1 || month > 12) return 0;
+        return days[month];
+    }
+
+    bool parseDate(const string& date, int& year, int& month, int& day) {
+        if (date.size() != 10 || date[4] != '-' || date[7] != '-') return false;
+        try {
+            year = stoi(date.substr(0,4));
+            month = stoi(date.substr(5,2));
+            day = stoi(date.substr(8,2));
+        } catch (...) {
+            return false;
+        }
+        if (year < 1900 || month < 1 || month > 12) return false;
+        if (day < 1 || day > daysInMonth(year, month)) return false;
+        return true;
+    }
+}
+
+string DateUtils::getCurrentDateTime() {
+    time_t now = time(nullptr);
+    tm localTime{};
+#ifdef _WIN32
+    localtime_s(&localTime, &now);
+#else
+    localtime_r(&now, &localTime);
+#endif
+    ostringstream out;
+    out << put_time(&localTime, "%Y-%m-%d %H:%M:%S");
+    return out.str();
+}
+
+string DateUtils::getCurrentDate() {
+    return getCurrentDateTime().substr(0, 10);
+}
+
+bool DateUtils::isValidDate(const string& date) {
+    int year, month, day;
+    return parseDate(date, year, month, day);
+}
+
+string DateUtils::addDays(const string& date, int days) {
+    int year, month, day;
+    if (!parseDate(date, year, month, day)) return "";
+
+    tm value{};
+    value.tm_year = year - 1900;
+    value.tm_mon = month - 1;
+    value.tm_mday = day + days;
+    value.tm_hour = 12;
+
+    time_t t = mktime(&value);
+    if (t == -1) return "";
+
+    tm result{};
+#ifdef _WIN32
+    localtime_s(&result, &t);
+#else
+    localtime_r(&t, &result);
+#endif
+    ostringstream out;
+    out << put_time(&result, "%Y-%m-%d");
+    return out.str();
+}
+
+void DateUtils::getMonthRange(int year, int month, string& startDate, string& endDate) {
+    ostringstream start, end;
+    start << setw(4) << setfill('0') << year << "-"
+          << setw(2) << month << "-01";
+    end << setw(4) << setfill('0') << year << "-"
+        << setw(2) << month << "-"
+        << setw(2) << daysInMonth(year, month);
+    startDate = start.str();
+    endDate = end.str();
+}
+
+void DateUtils::getYearRange(int year, string& startDate, string& endDate) {
+    startDate = to_string(year) + "-01-01";
+    endDate = to_string(year) + "-12-31";
+}
+
+bool DateUtils::isDateInRange(const string& dateTime, const string& startDate, const string& endDate) {
+    if (dateTime.size() < 10) return false;
+    string date = dateTime.substr(0,10);
+    return date >= startDate && date <= endDate;
+}
+
+
+================================================================================
+FILE: utils/date_utils.h
+================================================================================
+#pragma once
+
+#include <string>
+using namespace std;
+
+class DateUtils {
+public:
+    static string getCurrentDateTime();
+    static string getCurrentDate();
+    static bool isValidDate(const string& date);
+    static string addDays(const string& date, int days);
+    static void getMonthRange(int year, int month, string& startDate, string& endDate);
+    static void getYearRange(int year, string& startDate, string& endDate);
+    static bool isDateInRange(const string& dateTime, const string& startDate, const string& endDate);
+};

@@ -10,9 +10,13 @@ private:
 
 public:
     bool addBudget(const Budget& budget);
-    int createBudget(double amount, string startDate, string endDate, int categoryId);
+    int createBudget(double amount, string startDate, string endDate, int categoryId,
+                     const CategoryManager& categories);
     bool deleteBudget(int id);
     bool updateBudgetAmount(int id, double amount);
+    bool updateBudget(int id, double amount, string startDate, string endDate, int categoryId,
+                      const CategoryManager& categories);
+    bool hasValidReferences(const CategoryManager& categories) const;
 
     Budget* findById(int id);
     const Budget* findById(int id) const;
@@ -25,6 +29,6 @@ public:
     int getNextId() const;
     void clear();
 
-    LinkedList<Budget>& getBudgets();
+    void swap(BudgetManager& other);
     const LinkedList<Budget>& getBudgets() const;
 };

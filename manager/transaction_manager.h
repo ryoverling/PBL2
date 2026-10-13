@@ -26,6 +26,7 @@ public:
     TransactionManager(const TransactionManager&) = delete;
     TransactionManager& operator=(const TransactionManager&) = delete;
 
+    // Ownership transfers to this manager only when add/update succeeds.
     bool addTransaction(Transaction* transaction,
                         WalletManager& walletManager,
                         const CategoryManager& categoryManager,
@@ -45,6 +46,10 @@ public:
 
     double getTotalIncome(string startDate = "", string endDate = "") const;
     double getTotalExpense(string startDate = "", string endDate = "") const;
+    double getCategoryExpense(int categoryId, string startDate = "", string endDate = "") const;
+    void getTransactionsByDate(LinkedList<const Transaction*>& result) const;
+    bool hasValidReferences(const WalletManager& wallets, const CategoryManager& categories) const;
+    void swap(TransactionManager& other);
 
     bool hasWalletTransactions(int walletId) const;
     bool hasCategoryTransactions(int categoryId) const;
@@ -52,6 +57,5 @@ public:
     int getNextId() const;
     void clear();
 
-    LinkedList<Transaction*>& getTransactions();
     const LinkedList<Transaction*>& getTransactions() const;
 };

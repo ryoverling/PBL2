@@ -15,7 +15,6 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-#include <map>
 
 namespace {
     QFrame* makeSummaryCard(const QString& caption, QLabel*& valueLabel) {
@@ -170,14 +169,6 @@ void StatisticsPage::refresh() {
     expenseLabel->setText(UiHelpers::money(expense));
     differenceLabel->setText(UiHelpers::money(income - expense));
 
-    std::map<int, double> totals;
-    transactions->getTransactions().forEach([&](Transaction* const& t) {
-        if (t == nullptr || t->getType() != TransactionType::EXPENSE) return;
-        QString date = QString::fromStdString(t->getDateTime()).left(10);
-        if (date < QString::fromStdString(start) || date > QString::fromStdString(end)) return;
-        totals[t->getCategoryId()] += t->getAmount();
-    });
-
     QVector<QColor> palette = {
         QColor("#6c4ed9"), QColor("#f09a58"), QColor("#51a8a2"),
         QColor("#d56486"), QColor("#5c85d6"), QColor("#d1a83d"),
@@ -186,15 +177,16 @@ void StatisticsPage::refresh() {
 
     QVector<ChartSlice> slices;
     int colorIndex = 0;
-    for (const auto& [categoryId, value] : totals) {
-        const Category* category = categories->findById(categoryId);
+    categories->getCategories().forEach([&](const Category& category) {
+        double value = transactions->getCategoryExpense(category.getId(), start, end);
+        if (value <= 0) return;
         slices.push_back({
-            category ? QString::fromStdString(category->getName()) : "Không rõ",
+            QString::fromStdString(category.getName()),
             value,
             palette[colorIndex % palette.size()]
         });
         colorIndex++;
-    }
+    });
     donutChart->setData(slices);
 
     QStringList monthLabels;

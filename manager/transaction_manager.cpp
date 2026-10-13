@@ -1,5 +1,16 @@
 #include "transaction_manager.h"
 #include "../utils/date_utils.h"
+#include <cmath>
+#include <climits>
+
+namespace {
+    bool isValidRecord(const Transaction* transaction) {
+        return transaction != nullptr && transaction->getId() > 0 &&
+            std::isfinite(transaction->getAmount()) && transaction->getAmount() > 0 &&
+            transaction->getWalletId() > 0 && transaction->getCategoryId() > 0 &&
+            DateUtils::isValidDateTime(transaction->getDateTime());
+    }
+}
 
 TransactionManager::~TransactionManager() {
     clear();
@@ -8,7 +19,7 @@ TransactionManager::~TransactionManager() {
 bool TransactionManager::validateTransaction(const Transaction* transaction,
                                                const WalletManager& walletManager,
                                                const CategoryManager& categoryManager) const {
-    if (transaction == nullptr || transaction->getAmount() <= 0) return false;
+    if (!isValidRecord(transaction)) return false;
 
     const Wallet* wallet = walletManager.findById(transaction->getWalletId());
     const Category* category = categoryManager.findById(transaction->getCategoryId());
@@ -30,20 +41,10 @@ bool TransactionManager::applyWalletEffect(const Transaction* transaction,
     Wallet* wallet = walletManager.findById(transaction->getWalletId());
     if (wallet == nullptr) return false;
 
-    double amount = transaction->getAmount();
-
-    if (!reverse) {
-        if (transaction->getType() == TransactionType::INCOME) {
-            return wallet->deposit(amount);
-        }
-        return wallet->withdraw(amount);
-    }
-
-    // Hoan tac giao dich cu.
-    if (transaction->getType() == TransactionType::INCOME) {
-        return wallet->withdraw(amount);
-    }
-    return wallet->deposit(amount);
+    // Dynamic dispatch: Income adds money, Expense subtracts money.
+    double change = transaction->getSignedAmount();
+    if (reverse) change = -change;
+    return change > 0 ? wallet->deposit(change) : wallet->withdraw(-change);
 }
 
 bool TransactionManager::addTransaction(Transaction* transaction,
@@ -63,7 +64,7 @@ bool TransactionManager::addTransaction(Transaction* transaction,
 }
 
 bool TransactionManager::addLoadedTransaction(Transaction* transaction) {
-    if (transaction == nullptr || findById(transaction->getId()) != nullptr) return false;
+    if (!isValidRecord(transaction) || findById(transaction->getId()) != nullptr) return false;
     transactions.pushBack(transaction);
     return true;
 }
@@ -94,6 +95,7 @@ bool TransactionManager::updateTransaction(int id,
     if (oldTransaction == nullptr || replacement == nullptr) return false;
     if (replacement->getId() != id) return false;
     if (!validateTransaction(replacement, walletManager, categoryManager)) return false;
+    if (replacement == oldTransaction) return true;
 
     if (!applyWalletEffect(oldTransaction, walletManager, true)) return false;
 
@@ -102,19 +104,11 @@ bool TransactionManager::updateTransaction(int id,
         return false;
     }
 
-    Transaction* oldPointer = oldTransaction;
-    bool removed = transactions.removeIf([id](Transaction* const& t) {
+    Transaction** slot = transactions.findIf([id](Transaction* const& t) {
         return t != nullptr && t->getId() == id;
     });
-
-    if (!removed) {
-        applyWalletEffect(replacement, walletManager, true);
-        applyWalletEffect(oldTransaction, walletManager, false);
-        return false;
-    }
-
-    delete oldPointer;
-    transactions.pushBack(replacement);
+    *slot = replacement;
+    delete oldTransaction;
     return true;
 }
 
@@ -136,8 +130,7 @@ double TransactionManager::getTotalIncome(string startDate, string endDate) cons
     double total = 0;
     transactions.forEach([&](Transaction* const& t) {
         if (t == nullptr || t->getType() != TransactionType::INCOME) return;
-        if (!startDate.empty() && !endDate.empty() &&
-            !DateUtils::isDateInRange(t->getDateTime(), startDate, endDate)) return;
+        if (!DateUtils::isDateInRange(t->getDateTime(), startDate, endDate)) return;
         total += t->getAmount();
     });
     return total;
@@ -147,8 +140,7 @@ double TransactionManager::getTotalExpense(string startDate, string endDate) con
     double total = 0;
     transactions.forEach([&](Transaction* const& t) {
         if (t == nullptr || t->getType() != TransactionType::EXPENSE) return;
-        if (!startDate.empty() && !endDate.empty() &&
-            !DateUtils::isDateInRange(t->getDateTime(), startDate, endDate)) return;
+        if (!DateUtils::isDateInRange(t->getDateTime(), startDate, endDate)) return;
         total += t->getAmount();
     });
     return total;
@@ -175,7 +167,7 @@ int TransactionManager::getNextId() const {
     transactions.forEach([&](Transaction* const& t) {
         if (t != nullptr && t->getId() > maxId) maxId = t->getId();
     });
-    return maxId + 1;
+    return maxId == INT_MAX ? -1 : maxId + 1;
 }
 
 void TransactionManager::clear() {
@@ -186,8 +178,34 @@ void TransactionManager::clear() {
     transactions.clear();
 }
 
-LinkedList<Transaction*>& TransactionManager::getTransactions() {
-    return transactions;
+double TransactionManager::getCategoryExpense(int categoryId, string startDate, string endDate) const {
+    double total = 0;
+    transactions.forEach([&](Transaction* const& t) {
+        if (t->getType() == TransactionType::EXPENSE && t->getCategoryId() == categoryId &&
+            DateUtils::isDateInRange(t->getDateTime(), startDate, endDate)) total += t->getAmount();
+    });
+    return total;
+}
+
+void TransactionManager::getTransactionsByDate(LinkedList<const Transaction*>& result) const {
+    result.clear();
+    transactions.forEach([&](Transaction* const& t) { result.pushBack(t); });
+    result.sort([](const Transaction* a, const Transaction* b) {
+        if (a->getDateTime() == b->getDateTime()) return a->getId() > b->getId();
+        return a->getDateTime() > b->getDateTime();
+    });
+}
+
+bool TransactionManager::hasValidReferences(const WalletManager& wallets, const CategoryManager& categories) const {
+    bool valid = true;
+    transactions.forEach([&](Transaction* const& t) {
+        if (!validateTransaction(t, wallets, categories)) valid = false;
+    });
+    return valid;
+}
+
+void TransactionManager::swap(TransactionManager& other) {
+    transactions.swap(other.transactions);
 }
 
 const LinkedList<Transaction*>& TransactionManager::getTransactions() const {

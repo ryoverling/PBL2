@@ -153,12 +153,17 @@ void BudgetPage::addBudget() {
     BudgetDialog dialog(categories, nullptr, this);
     if (dialog.exec() != QDialog::Accepted) return;
 
-    budgets->createBudget(
+    int id = budgets->createBudget(
         dialog.amount(),
         dialog.startDate().toStdString(),
         dialog.endDate().toStdString(),
-        dialog.categoryId()
+        dialog.categoryId(), *categories
     );
+
+    if (id < 0) {
+        QMessageBox::warning(this, "Không thể thêm", "Dữ liệu ngân sách không hợp lệ.");
+        return;
+    }
 
     if (onChanged) onChanged();
 }
@@ -174,12 +179,11 @@ void BudgetPage::editBudget() {
     BudgetDialog dialog(categories, budget, this);
     if (dialog.exec() != QDialog::Accepted) return;
 
-    budget->setAmount(dialog.amount());
-    budget->setDateRange(
-        dialog.startDate().toStdString(),
-        dialog.endDate().toStdString()
-    );
-    budget->setCategoryId(dialog.categoryId());
+    if (!budgets->updateBudget(id, dialog.amount(), dialog.startDate().toStdString(),
+                              dialog.endDate().toStdString(), dialog.categoryId(), *categories)) {
+        QMessageBox::warning(this, "Không thể sửa", "Dữ liệu ngân sách không hợp lệ.");
+        return;
+    }
 
     if (onChanged) onChanged();
 }

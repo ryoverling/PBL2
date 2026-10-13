@@ -27,20 +27,23 @@ private:
     WalletManager wallets;
     TransactionManager transactions;
     BudgetManager budgets;
+    bool dataReady = false;
+    bool unsavedChanges = false;
+    bool loggingOut = false;
 
-    QStackedWidget* pageStack;
-    QButtonGroup* navigationGroup;
+    QStackedWidget* pageStack = nullptr;
+    QButtonGroup* navigationGroup = nullptr;
 
-    DashboardPage* dashboardPage;
-    TransactionPage* transactionPage;
-    WalletPage* walletPage;
-    BudgetPage* budgetPage;
-    StatisticsPage* statisticsPage;
-    CategoryPage* categoryPage;
+    DashboardPage* dashboardPage = nullptr;
+    TransactionPage* transactionPage = nullptr;
+    WalletPage* walletPage = nullptr;
+    BudgetPage* budgetPage = nullptr;
+    StatisticsPage* statisticsPage = nullptr;
+    CategoryPage* categoryPage = nullptr;
 
-    void loadData();
+    bool loadData();
     void initializeDefaults();
-    void saveAll();
+    bool saveAll();
     void refreshAll();
     void buildUi();
     void handleLogout();
@@ -49,6 +52,7 @@ protected:
     void closeEvent(QCloseEvent* event) override;
 
 public:
+    bool isReady() const { return dataReady; }
     MainWindow(QString userName,
                std::function<void()> onLogout,
                QWidget* parent = nullptr);

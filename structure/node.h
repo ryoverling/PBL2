@@ -5,8 +5,5 @@ struct Node {
     T data;
     Node<T>* next;
 
-    Node(const T& data) {
-        this->data = data;
-        next = nullptr;
-    }
+    explicit Node(const T& data) : data(data), next(nullptr) {}
 };

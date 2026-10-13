@@ -18,6 +18,9 @@ namespace {
 
     bool parseDate(const string& date, int& year, int& month, int& day) {
         if (date.size() != 10 || date[4] != '-' || date[7] != '-') return false;
+        for (size_t i = 0; i < date.size(); ++i) {
+            if (i != 4 && i != 7 && (date[i] < '0' || date[i] > '9')) return false;
+        }
         try {
             year = stoi(date.substr(0,4));
             month = stoi(date.substr(5,2));
@@ -25,7 +28,7 @@ namespace {
         } catch (...) {
             return false;
         }
-        if (year < 1900 || month < 1 || month > 12) return false;
+        if (year < 1900 || year > 9999 || month < 1 || month > 12) return false;
         if (day < 1 || day > daysInMonth(year, month)) return false;
         return true;
     }
@@ -51,6 +54,18 @@ string DateUtils::getCurrentDate() {
 bool DateUtils::isValidDate(const string& date) {
     int year, month, day;
     return parseDate(date, year, month, day);
+}
+
+bool DateUtils::isValidDateTime(const string& value) {
+    if (!isValidDate(value.substr(0, 10))) return false;
+    // Accept old files containing only a date as well as full timestamps.
+    if (value.size() == 10) return true;
+    if (value.size() != 19 || value[10] != ' ' || value[13] != ':' || value[16] != ':') return false;
+    for (size_t i = 11; i < value.size(); ++i) {
+        if (i != 13 && i != 16 && (value[i] < '0' || value[i] > '9')) return false;
+    }
+    return stoi(value.substr(11, 2)) < 24 && stoi(value.substr(14, 2)) < 60 &&
+           stoi(value.substr(17, 2)) < 60;
 }
 
 string DateUtils::addDays(const string& date, int days) {
@@ -94,7 +109,9 @@ void DateUtils::getYearRange(int year, string& startDate, string& endDate) {
 }
 
 bool DateUtils::isDateInRange(const string& dateTime, const string& startDate, const string& endDate) {
-    if (dateTime.size() < 10) return false;
+    if (!isValidDateTime(dateTime)) return false;
+    if (!startDate.empty() && !isValidDate(startDate)) return false;
+    if (!endDate.empty() && !isValidDate(endDate)) return false;
     string date = dateTime.substr(0,10);
-    return date >= startDate && date <= endDate;
+    return (startDate.empty() || date >= startDate) && (endDate.empty() || date <= endDate);
 }

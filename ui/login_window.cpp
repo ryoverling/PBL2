@@ -9,6 +9,7 @@
 #include <QApplication>
 #include <QCheckBox>
 #include <QFrame>
+#include <QFileInfo>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -21,9 +22,6 @@ LoginWindow::LoginWindow(QWidget* parent)
     setWindowTitle("MoneyManager - Đăng nhập");
     setMinimumSize(760, 520);
     resize(900, 580);
-
-    FileManager::ensureDataDirectory(DataPaths::dataDir().toStdString());
-    ensureDefaultUser();
 
     QHBoxLayout* root = new QHBoxLayout(this);
     root->setContentsMargins(0, 0, 0, 0);
@@ -118,19 +116,24 @@ LoginWindow::LoginWindow(QWidget* parent)
     connect(showPasswordCheck, &QCheckBox::toggled, this, [this](bool checked) {
         passwordInput->setEchoMode(checked ? QLineEdit::Normal : QLineEdit::Password);
     });
+    if (!ensureDefaultUser()) {
+        messageLabel->setText("Không thể đọc hoặc tạo tài khoản. Hãy kiểm tra thư mục dữ liệu.");
+    }
 }
 
-void LoginWindow::ensureDefaultUser() {
+bool LoginWindow::ensureDefaultUser() {
+    if (!FileManager::ensureDataDirectory(DataPaths::dataDir().toStdString()) ||
+        QFileInfo::exists(QString::fromStdString(DataPaths::userFile() + ".bak"))) return false;
     User user;
-    if (!FileManager::loadUser(DataPaths::userFile(), user)) {
-        user = User("admin", "123456", "Người dùng");
-        FileManager::saveUser(DataPaths::userFile(), user);
+    if (QFileInfo::exists(QString::fromStdString(DataPaths::userFile()))) {
+        return FileManager::loadUser(DataPaths::userFile(), user);
     }
+    return FileManager::saveUser(DataPaths::userFile(), User("admin", "123456", "Người dùng"));
 }
 
 void LoginWindow::handleLogin() {
     User user;
-    if (!FileManager::loadUser(DataPaths::userFile(), user)) {
+    if (!ensureDefaultUser() || !FileManager::loadUser(DataPaths::userFile(), user)) {
         messageLabel->setText("Không thể đọc dữ liệu người dùng.");
         return;
     }
@@ -157,6 +160,11 @@ void LoginWindow::handleLogin() {
         }
     );
 
+    if (!mainWindow->isReady()) {
+        delete mainWindow;
+        messageLabel->setText("Chưa mở được dữ liệu ứng dụng. Các file hiện có được giữ nguyên.");
+        return;
+    }
     mainWindow->setAttribute(Qt::WA_DeleteOnClose);
     mainWindow->show();
     hide();

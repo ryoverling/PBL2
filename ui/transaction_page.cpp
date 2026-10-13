@@ -22,8 +22,6 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 
-#include <algorithm>
-#include <vector>
 
 TransactionPage::TransactionPage(TransactionManager* transactions,
                                  WalletManager* wallets,
@@ -210,20 +208,14 @@ void TransactionPage::refresh() {
     int walletId = walletFilter->currentData().toInt();
     int categoryId = categoryFilter->currentData().toInt();
 
-    std::vector<const Transaction*> items;
-    transactions->getTransactions().forEach([&](Transaction* const& t) {
-        if (t != nullptr) items.push_back(t);
-    });
+    LinkedList<const Transaction*> items;
+    transactions->getTransactionsByDate(items);
 
-    std::sort(items.begin(), items.end(), [](const Transaction* a, const Transaction* b) {
-        return a->getDateTime() > b->getDateTime();
-    });
-
-    for (const Transaction* t : items) {
-        if (type != -1 && static_cast<int>(t->getType()) != type) continue;
-        if (walletId != 0 && t->getWalletId() != walletId) continue;
-        if (categoryId != 0 && t->getCategoryId() != categoryId) continue;
-        if (!passesDateFilter(t->getDateTime())) continue;
+    items.forEach([&](const Transaction* t) {
+        if (type != -1 && static_cast<int>(t->getType()) != type) return;
+        if (walletId != 0 && t->getWalletId() != walletId) return;
+        if (categoryId != 0 && t->getCategoryId() != categoryId) return;
+        if (!passesDateFilter(t->getDateTime())) return;
 
         const Category* category = categories->findById(t->getCategoryId());
         const Wallet* wallet = wallets->findById(t->getWalletId());
@@ -240,7 +232,7 @@ void TransactionPage::refresh() {
             categoryName + " " + walletName
         ).toLower();
 
-        if (!query.isEmpty() && !searchable.contains(query)) continue;
+        if (!query.isEmpty() && !searchable.contains(query)) return;
 
         int row = table->rowCount();
         table->insertRow(row);
@@ -258,7 +250,7 @@ void TransactionPage::refresh() {
         table->setItem(row, 3, new QTableWidgetItem(walletName));
         table->setItem(row, 4, new QTableWidgetItem(QString::fromStdString(t->getNote())));
         table->setItem(row, 5, new QTableWidgetItem(UiHelpers::money(t->getSignedAmount())));
-    }
+    });
 }
 
 void TransactionPage::addTransaction() {

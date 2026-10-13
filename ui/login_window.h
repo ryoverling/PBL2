@@ -14,7 +14,7 @@ private:
     QCheckBox* showPasswordCheck;
 
     void handleLogin();
-    void ensureDefaultUser();
+    bool ensureDefaultUser();
 
 public:
     explicit LoginWindow(QWidget* parent = nullptr);

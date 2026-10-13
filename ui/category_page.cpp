@@ -120,10 +120,15 @@ void CategoryPage::addCategory() {
     CategoryDialog dialog(nullptr, this);
     if (dialog.exec() != QDialog::Accepted) return;
 
-    categories->createCategory(
+    int id = categories->createCategory(
         dialog.categoryName().toStdString(),
         dialog.categoryType()
     );
+
+    if (id < 0) {
+        QMessageBox::warning(this, "Không thể thêm", "Dữ liệu danh mục không hợp lệ.");
+        return;
+    }
 
     if (onChanged) onChanged();
 }
@@ -139,7 +144,10 @@ void CategoryPage::editCategory() {
     CategoryDialog dialog(category, this);
     if (dialog.exec() != QDialog::Accepted) return;
 
-    categories->updateCategoryName(id, dialog.categoryName().toStdString());
+    if (!categories->updateCategoryName(id, dialog.categoryName().toStdString())) {
+        QMessageBox::warning(this, "Không thể sửa", "Tên danh mục không hợp lệ.");
+        return;
+    }
     if (onChanged) onChanged();
 }
 
@@ -148,15 +156,6 @@ void CategoryPage::deleteCategory() {
     Category* category = categories->findById(id);
     if (category == nullptr) {
         QMessageBox::information(this, "Danh mục", "Vui lòng chọn một danh mục.");
-        return;
-    }
-
-    if (transactions->hasCategoryTransactions(id) || budgets->hasCategoryBudget(id)) {
-        QMessageBox::warning(
-            this,
-            "Không thể xóa",
-            "Danh mục đang được sử dụng bởi giao dịch hoặc ngân sách."
-        );
         return;
     }
 
@@ -169,6 +168,9 @@ void CategoryPage::deleteCategory() {
         return;
     }
 
-    categories->deleteCategory(id);
+    if (!categories->deleteCategory(id, *transactions, *budgets)) {
+        QMessageBox::warning(this, "Không thể xóa", "Danh mục đang được sử dụng bởi giao dịch hoặc ngân sách.");
+        return;
+    }
     if (onChanged) onChanged();
 }

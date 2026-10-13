@@ -13,6 +13,7 @@
 #include <QButtonGroup>
 #include <QCloseEvent>
 #include <QFrame>
+#include <QFileInfo>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMessageBox>
@@ -32,20 +33,42 @@ MainWindow::MainWindow(QString userName,
     setMinimumSize(1080, 700);
     resize(1320, 820);
 
-    loadData();
-    initializeDefaults();
-    saveAll();
+    dataReady = loadData();
+    if (!dataReady) return;
     buildUi();
     refreshAll();
+    if (unsavedChanges) saveAll();
 }
 
-void MainWindow::loadData() {
-    FileManager::ensureDataDirectory(DataPaths::dataDir().toStdString());
+bool MainWindow::loadData() {
+    auto failed = [this]() {
+        QMessageBox::critical(this, "Không thể đọc dữ liệu",
+            "Dữ liệu bị thiếu, không hợp lệ hoặc không thể truy cập. Các file hiện có được giữ nguyên.\n"
+            "Hãy kiểm tra thư mục: " + DataPaths::dataDir());
+        return false;
+    };
+    if (!FileManager::ensureDataDirectory(DataPaths::dataDir().toStdString())) return failed();
 
-    FileManager::loadCategories(DataPaths::categoryFile(), categories);
-    FileManager::loadWallets(DataPaths::walletFile(), wallets);
-    FileManager::loadTransactions(DataPaths::transactionFile(), transactions);
-    FileManager::loadBudgets(DataPaths::budgetFile(), budgets);
+    const string paths[] = {DataPaths::categoryFile(), DataPaths::walletFile(),
+                            DataPaths::transactionFile(), DataPaths::budgetFile()};
+    int existing = 0;
+    for (const string& path : paths) {
+        if (QFileInfo::exists(QString::fromStdString(path + ".bak"))) return failed();
+        if (QFileInfo::exists(QString::fromStdString(path))) ++existing;
+    }
+    if (existing == 0) {
+        initializeDefaults();
+        unsavedChanges = true;
+        return true;
+    }
+    if (existing != 4 ||
+        !FileManager::loadCategories(DataPaths::categoryFile(), categories) ||
+        !FileManager::loadWallets(DataPaths::walletFile(), wallets) ||
+        !FileManager::loadTransactions(DataPaths::transactionFile(), transactions) ||
+        !FileManager::loadBudgets(DataPaths::budgetFile(), budgets) ||
+        !transactions.hasValidReferences(wallets, categories) ||
+        !budgets.hasValidReferences(categories)) return failed();
+    return true;
 }
 
 void MainWindow::initializeDefaults() {
@@ -72,11 +95,19 @@ void MainWindow::initializeDefaults() {
     }
 }
 
-void MainWindow::saveAll() {
-    FileManager::saveCategories(DataPaths::categoryFile(), categories);
-    FileManager::saveWallets(DataPaths::walletFile(), wallets);
-    FileManager::saveTransactions(DataPaths::transactionFile(), transactions);
-    FileManager::saveBudgets(DataPaths::budgetFile(), budgets);
+bool MainWindow::saveAll() {
+    if (!dataReady) return false;
+    bool saved = FileManager::saveCategories(DataPaths::categoryFile(), categories);
+    saved = FileManager::saveWallets(DataPaths::walletFile(), wallets) && saved;
+    saved = FileManager::saveTransactions(DataPaths::transactionFile(), transactions) && saved;
+    saved = FileManager::saveBudgets(DataPaths::budgetFile(), budgets) && saved;
+    unsavedChanges = !saved;
+    if (!saved) {
+        QMessageBox::warning(this, "Chưa lưu được dữ liệu",
+            "Không thể lưu đầy đủ thay đổi. Hãy kiểm tra dung lượng và quyền ghi thư mục:\n" +
+            DataPaths::dataDir() + "\nGiữ ứng dụng mở và thử lại sau khi khắc phục.");
+    }
+    return saved;
 }
 
 void MainWindow::refreshAll() {
@@ -151,6 +182,7 @@ void MainWindow::buildUi() {
     pageStack = new QStackedWidget();
 
     auto changed = [this]() {
+        unsavedChanges = true;
         saveAll();
         refreshAll();
     };
@@ -196,13 +228,16 @@ void MainWindow::handleLogout() {
         return;
     }
 
-    saveAll();
-
-    if (onLogout) onLogout();
+    loggingOut = true;
     close();
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {
-    saveAll();
+    if (dataReady && unsavedChanges && !saveAll()) {
+        loggingOut = false;
+        event->ignore();
+        return;
+    }
+    if (loggingOut && onLogout) onLogout();
     QMainWindow::closeEvent(event);
 }

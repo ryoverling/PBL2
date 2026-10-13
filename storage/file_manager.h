@@ -13,7 +13,7 @@ private:
     static string sanitize(const string& value);
 
 public:
-    static void ensureDataDirectory(const string& directory = "data");
+    static bool ensureDataDirectory(const string& directory = "data");
 
     static bool loadUser(const string& path, User& user);
     static bool saveUser(const string& path, const User& user);

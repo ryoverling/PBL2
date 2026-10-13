@@ -1,4 +1,5 @@
 #include "wallet.h"
+#include <cmath>
 
 string walletTypeToString(WalletType type) {
     switch (type) {
@@ -55,7 +56,7 @@ void Wallet::setType(WalletType type) {
 }
 
 bool Wallet::deposit(double amount) {
-    if (amount <= 0) {
+    if (!std::isfinite(amount) || amount <= 0 || !std::isfinite(balance + amount)) {
         return false;
     }
     balance += amount;
@@ -63,7 +64,7 @@ bool Wallet::deposit(double amount) {
 }
 
 bool Wallet::withdraw(double amount) {
-    if (amount <= 0) {
+    if (!std::isfinite(amount) || amount <= 0 || !std::isfinite(balance - amount)) {
         return false;
     }
     // Cho phep so du am de viec sua/xoa giao dich cu khong lam hong lich su.

@@ -25,6 +25,37 @@ public:
     LinkedList(const LinkedList&) = delete;
     LinkedList& operator=(const LinkedList&) = delete;
 
+    void swap(LinkedList& other) {
+        Node<T>* oldHead = head;
+        Node<T>* oldTail = tail;
+        size_t oldSize = size;
+        head = other.head;
+        tail = other.tail;
+        size = other.size;
+        other.head = oldHead;
+        other.tail = oldTail;
+        other.size = oldSize;
+    }
+
+    // Stable insertion sort: move nodes, without copying or owning their data.
+    template <typename Compare>
+    void sort(Compare comesBefore) {
+        Node<T>* sorted = nullptr;
+        while (head != nullptr) {
+            Node<T>* node = head;
+            head = head->next;
+            Node<T>** position = &sorted;
+            while (*position != nullptr && !comesBefore(node->data, (*position)->data)) {
+                position = &((*position)->next);
+            }
+            node->next = *position;
+            *position = node;
+        }
+        head = sorted;
+        tail = head;
+        while (tail != nullptr && tail->next != nullptr) tail = tail->next;
+    }
+
     bool isEmpty() const {
         return size == 0;
     }
@@ -107,7 +138,7 @@ public:
 
     template <typename Func>
     void forEach(Func func) const {
-        Node<T>* current = head;
+        const Node<T>* current = head;
         while (current != nullptr) {
             func(current->data);
             current = current->next;

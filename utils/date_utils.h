@@ -8,6 +8,7 @@ public:
     static string getCurrentDateTime();
     static string getCurrentDate();
     static bool isValidDate(const string& date);
+    static bool isValidDateTime(const string& dateTime);
     static string addDays(const string& date, int days);
     static void getMonthRange(int year, int month, string& startDate, string& endDate);
     static void getYearRange(int year, string& startDate, string& endDate);

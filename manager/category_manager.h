@@ -3,6 +3,9 @@
 #include "../model/category.h"
 #include "../structure/linked_list.h"
 
+class TransactionManager;
+class BudgetManager;
+
 class CategoryManager {
 private:
     LinkedList<Category> categories;
@@ -10,7 +13,7 @@ private:
 public:
     bool addCategory(const Category& category);
     int createCategory(string name, CategoryType type);
-    bool deleteCategory(int id);
+    bool deleteCategory(int id, const TransactionManager& transactions, const BudgetManager& budgets);
     bool updateCategoryName(int id, string newName);
 
     Category* findById(int id);
@@ -19,6 +22,6 @@ public:
     int getNextId() const;
     void clear();
 
-    LinkedList<Category>& getCategories();
+    void swap(CategoryManager& other);
     const LinkedList<Category>& getCategories() const;
 };

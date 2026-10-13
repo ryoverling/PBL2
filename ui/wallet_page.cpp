@@ -118,11 +118,16 @@ void WalletPage::addWallet() {
     WalletDialog dialog(nullptr, this);
     if (dialog.exec() != QDialog::Accepted) return;
 
-    wallets->createWallet(
+    int id = wallets->createWallet(
         dialog.walletName().toStdString(),
         dialog.walletType(),
         dialog.initialBalance()
     );
+
+    if (id < 0) {
+        QMessageBox::warning(this, "Không thể thêm", "Dữ liệu ví không hợp lệ.");
+        return;
+    }
 
     if (onChanged) onChanged();
 }
@@ -138,8 +143,10 @@ void WalletPage::editWallet() {
     WalletDialog dialog(wallet, this);
     if (dialog.exec() != QDialog::Accepted) return;
 
-    wallets->updateWalletName(id, dialog.walletName().toStdString());
-    wallet->setType(dialog.walletType());
+    if (!wallets->updateWallet(id, dialog.walletName().toStdString(), dialog.walletType())) {
+        QMessageBox::warning(this, "Không thể sửa", "Dữ liệu ví không hợp lệ.");
+        return;
+    }
 
     if (onChanged) onChanged();
 }
@@ -152,11 +159,6 @@ void WalletPage::deleteWallet() {
         return;
     }
 
-    if (transactions->hasWalletTransactions(id)) {
-        QMessageBox::warning(this, "Không thể xóa", "Ví đang có giao dịch.");
-        return;
-    }
-
     if (QMessageBox::question(
             this,
             "Xóa ví",
@@ -165,6 +167,9 @@ void WalletPage::deleteWallet() {
         return;
     }
 
-    wallets->deleteWallet(id);
+    if (!wallets->deleteWallet(id, *transactions)) {
+        QMessageBox::warning(this, "Không thể xóa", "Ví đang có giao dịch.");
+        return;
+    }
     if (onChanged) onChanged();
 }

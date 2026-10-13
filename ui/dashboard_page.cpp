@@ -19,9 +19,6 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
-#include <algorithm>
-#include <map>
-#include <vector>
 
 namespace {
     QFrame* makeMetricCard(const QString& caption, QLabel*& valueLabel) {
@@ -157,14 +154,6 @@ void DashboardPage::refresh() {
     expenseLabel->setText(UiHelpers::money(expense));
     differenceLabel->setText(UiHelpers::money(income - expense));
 
-    std::map<int, double> categoryTotals;
-    transactions->getTransactions().forEach([&](Transaction* const& t) {
-        if (t == nullptr || t->getType() != TransactionType::EXPENSE) return;
-        QString date = QString::fromStdString(t->getDateTime()).left(10);
-        if (date < first.toString("yyyy-MM-dd") || date > last.toString("yyyy-MM-dd")) return;
-        categoryTotals[t->getCategoryId()] += t->getAmount();
-    });
-
     QVector<QColor> palette = {
         QColor("#6c4ed9"), QColor("#f09a58"), QColor("#51a8a2"),
         QColor("#d56486"), QColor("#5c85d6"), QColor("#d1a83d"),
@@ -173,15 +162,16 @@ void DashboardPage::refresh() {
 
     QVector<ChartSlice> slices;
     int colorIndex = 0;
-    for (const auto& [categoryId, value] : categoryTotals) {
-        const Category* category = categories->findById(categoryId);
+    categories->getCategories().forEach([&](const Category& category) {
+        double value = transactions->getCategoryExpense(category.getId(), monthStart, monthEnd);
+        if (value <= 0) return;
         slices.push_back({
-            category ? QString::fromStdString(category->getName()) : "Không rõ",
+            QString::fromStdString(category.getName()),
             value,
             palette[colorIndex % palette.size()]
         });
         colorIndex++;
-    }
+    });
     donutChart->setData(slices);
 
     string today = now.toString("yyyy-MM-dd").toStdString();
@@ -212,20 +202,12 @@ void DashboardPage::refresh() {
         budgetProgress->setFormat(QString::number(percent) + "%");
     }
 
-    std::vector<const Transaction*> items;
-    transactions->getTransactions().forEach([&](Transaction* const& t) {
-        if (t != nullptr) items.push_back(t);
-    });
-
-    std::sort(items.begin(), items.end(), [](const Transaction* a, const Transaction* b) {
-        return a->getDateTime() > b->getDateTime();
-    });
+    LinkedList<const Transaction*> items;
+    transactions->getTransactionsByDate(items);
 
     recentTable->setRowCount(0);
-    int limit = qMin(6, static_cast<int>(items.size()));
-
-    for (int i = 0; i < limit; ++i) {
-        const Transaction* t = items[i];
+    items.forEach([&](const Transaction* t) {
+        if (recentTable->rowCount() >= 6) return;
         const Category* category = categories->findById(t->getCategoryId());
         const Wallet* wallet = wallets->findById(t->getWalletId());
 
@@ -247,5 +229,5 @@ void DashboardPage::refresh() {
         recentTable->setItem(row, 4, new QTableWidgetItem(
             UiHelpers::money(t->getSignedAmount())
         ));
-    }
+    });
 }

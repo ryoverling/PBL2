@@ -1,31 +1,20 @@
 @echo off
 setlocal
+cd /d "%~dp0"
 
-echo ==========================================
-echo        MoneyManager - Qt 6 Build
-echo ==========================================
+where cmake >nul 2>nul
+if errorlevel 1 if exist "C:\Qt\Tools\CMake_64\bin\cmake.exe" set "PATH=C:\Qt\Tools\CMake_64\bin;%PATH%"
+where ninja >nul 2>nul
+if errorlevel 1 if exist "C:\Qt\Tools\Ninja\ninja.exe" set "PATH=C:\Qt\Tools\Ninja;%PATH%"
 
-if not exist build mkdir build
+echo Building MoneyManager C++ core...
+cmake -S . -B build/core -G Ninja -DCMAKE_BUILD_TYPE=Release
+if errorlevel 1 exit /b 1
 
-cmake -S . -B build
-if errorlevel 1 (
-    echo.
-    echo CMake khong tim thay Qt.
-    echo Neu ban da cai Qt, hay cau hinh CMAKE_PREFIX_PATH.
-    echo Vi du:
-    echo cmake -S . -B build -DCMAKE_PREFIX_PATH=C:\Qt\6.8.0\mingw_64
-    pause
-    exit /b 1
-)
+cmake --build build/core --config Release
+if errorlevel 1 exit /b 1
 
-cmake --build build --config Release
-if errorlevel 1 (
-    echo Build that bai.
-    pause
-    exit /b 1
-)
+ctest --test-dir build/core -C Release --output-on-failure
+if errorlevel 1 exit /b 1
 
-echo.
-echo Build thanh cong.
-echo File chay nam trong thu muc build.
-pause
+echo Core build and tests passed. No user interface is included.

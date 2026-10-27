@@ -11,9 +11,11 @@ class QTableWidget;
 class TransactionManager;
 class WalletManager;
 class CategoryManager;
+namespace Ui { class TransactionPage; }
 
 class TransactionPage : public QWidget {
 private:
+    Ui::TransactionPage* ui;
     TransactionManager* transactions;
     WalletManager* wallets;
     CategoryManager* categories;
@@ -43,6 +45,7 @@ public:
                     CategoryManager* categories,
                     std::function<void()> onChanged,
                     QWidget* parent = nullptr);
+    ~TransactionPage();
 
     void refresh();
 };

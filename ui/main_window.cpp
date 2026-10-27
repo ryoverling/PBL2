@@ -1,4 +1,5 @@
 #include "main_window.h"
+#include "ui/ui_main_window.h"
 
 #include "data_paths.h"
 #include "dashboard_page.h"
@@ -26,18 +27,20 @@ MainWindow::MainWindow(QString userName,
                        std::function<void()> onLogout,
                        QWidget* parent)
     : QMainWindow(parent),
+      ui(new Ui::MainWindow),
       userName(std::move(userName)),
       onLogout(std::move(onLogout)) {
 
-    setWindowTitle("MoneyManager");
-    setMinimumSize(1080, 700);
-    resize(1320, 820);
-
     dataReady = loadData();
     if (!dataReady) return;
+    ui->setupUi(this);
     buildUi();
     refreshAll();
     if (unsavedChanges) saveAll();
+}
+
+MainWindow::~MainWindow() {
+    delete ui;
 }
 
 bool MainWindow::loadData() {
@@ -120,66 +123,25 @@ void MainWindow::refreshAll() {
 }
 
 void MainWindow::buildUi() {
-    QWidget* central = new QWidget();
-    QHBoxLayout* root = new QHBoxLayout(central);
-    root->setContentsMargins(0, 0, 0, 0);
-    root->setSpacing(0);
-
-    QFrame* sidebar = new QFrame();
-    sidebar->setObjectName("sidebar");
-    sidebar->setFixedWidth(230);
-
-    QVBoxLayout* sideLayout = new QVBoxLayout(sidebar);
-    sideLayout->setContentsMargins(18, 22, 18, 22);
-    sideLayout->setSpacing(6);
-
-    QLabel* brand = new QLabel("MONEY\nMANAGER");
-    brand->setObjectName("brand");
-
-    QLabel* userLabel = new QLabel("Xin chào, " + userName);
-    userLabel->setObjectName("sidebarUser");
-
-    sideLayout->addWidget(brand);
-    sideLayout->addWidget(userLabel);
-    sideLayout->addSpacing(22);
+    ui->userLabel->setText("Xin chào, " + userName);
+    pageStack = ui->pageStack;
 
     navigationGroup = new QButtonGroup(this);
     navigationGroup->setExclusive(true);
-
-    QStringList labels = {
-        "Tổng quan",
-        "Giao dịch",
-        "Ví",
-        "Ngân sách",
-        "Thống kê",
-        "Danh mục"
+    const QList<QPushButton*> buttons = {
+        ui->dashboardButton, ui->transactionButton, ui->walletButton,
+        ui->budgetButton, ui->statisticsButton, ui->categoryButton
     };
-
-    for (int i = 0; i < labels.size(); ++i) {
-        QPushButton* button = new QPushButton(labels[i]);
-        button->setObjectName("sidebarButton");
-        button->setCheckable(true);
+    for (int i = 0; i < buttons.size(); ++i) {
+        QPushButton* button = buttons[i];
         navigationGroup->addButton(button, i);
-        sideLayout->addWidget(button);
-
         connect(button, &QPushButton::clicked, this, [this, i]() {
             pageStack->setCurrentIndex(i);
         });
-
-        if (i == 0) button->setChecked(true);
     }
-
-    sideLayout->addStretch();
-
-    QPushButton* logoutButton = new QPushButton("Đăng xuất");
-    logoutButton->setObjectName("sidebarButton");
-    sideLayout->addWidget(logoutButton);
-
-    connect(logoutButton, &QPushButton::clicked, this, [this]() {
+    connect(ui->logoutButton, &QPushButton::clicked, this, [this]() {
         handleLogout();
     });
-
-    pageStack = new QStackedWidget();
 
     auto changed = [this]() {
         unsavedChanges = true;
@@ -213,10 +175,6 @@ void MainWindow::buildUi() {
     pageStack->addWidget(statisticsPage);
     pageStack->addWidget(categoryPage);
 
-    root->addWidget(sidebar);
-    root->addWidget(pageStack, 1);
-
-    setCentralWidget(central);
 }
 
 void MainWindow::handleLogout() {

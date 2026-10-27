@@ -1,4 +1,5 @@
 #include "login_window.h"
+#include "ui/ui_login_window.h"
 
 #include "main_window.h"
 #include "data_paths.h"
@@ -17,95 +18,14 @@
 #include <QHBoxLayout>
 
 LoginWindow::LoginWindow(QWidget* parent)
-    : QWidget(parent) {
+    : QWidget(parent), ui(new Ui::LoginWindow) {
+    ui->setupUi(this);
+    usernameInput = ui->usernameInput;
+    passwordInput = ui->passwordInput;
+    showPasswordCheck = ui->showPasswordCheck;
+    messageLabel = ui->messageLabel;
 
-    setWindowTitle("MoneyManager - Đăng nhập");
-    setMinimumSize(760, 520);
-    resize(900, 580);
-
-    QHBoxLayout* root = new QHBoxLayout(this);
-    root->setContentsMargins(0, 0, 0, 0);
-    root->setSpacing(0);
-
-    QFrame* brandPanel = new QFrame();
-    brandPanel->setStyleSheet(
-        "QFrame { background: #17181d; }"
-        "QLabel { color: white; background: transparent; }"
-    );
-    brandPanel->setMinimumWidth(330);
-
-    QVBoxLayout* brandLayout = new QVBoxLayout(brandPanel);
-    brandLayout->setContentsMargins(44, 44, 44, 44);
-
-    QLabel* brand = new QLabel("MONEY\nMANAGER");
-    brand->setStyleSheet("font-size: 34px; font-weight: 800; color: white;");
-
-    QLabel* slogan = new QLabel(
-        "Ghi chép thu chi hằng ngày,\n"
-        "theo dõi ví và ngân sách\n"
-        "ngay trên máy tính của bạn."
-    );
-    slogan->setStyleSheet("font-size: 15px; color: #b9bcc5; line-height: 1.5;");
-
-    brandLayout->addStretch();
-    brandLayout->addWidget(brand);
-    brandLayout->addSpacing(18);
-    brandLayout->addWidget(slogan);
-    brandLayout->addStretch();
-
-    QWidget* formPanel = new QWidget();
-    QVBoxLayout* formLayout = new QVBoxLayout(formPanel);
-    formLayout->setContentsMargins(70, 54, 70, 54);
-
-    QLabel* title = new QLabel("Chào mừng trở lại");
-    title->setObjectName("pageTitle");
-
-    QLabel* subtitle = new QLabel("Đăng nhập để tiếp tục vào MoneyManager.");
-    subtitle->setObjectName("mutedLabel");
-
-    QLabel* usernameLabel = new QLabel("Tên đăng nhập");
-    usernameInput = new QLineEdit();
-    usernameInput->setPlaceholderText("Nhập tên đăng nhập");
-
-    QLabel* passwordLabel = new QLabel("Mật khẩu");
-    passwordInput = new QLineEdit();
-    passwordInput->setPlaceholderText("Nhập mật khẩu");
-    passwordInput->setEchoMode(QLineEdit::Password);
-
-    showPasswordCheck = new QCheckBox("Hiện mật khẩu");
-
-    QPushButton* loginButton = new QPushButton("Đăng nhập");
-    loginButton->setObjectName("primaryButton");
-
-    messageLabel = new QLabel();
-    messageLabel->setStyleSheet("color: #b42318;");
-    messageLabel->setWordWrap(true);
-
-    QLabel* hint = new QLabel("Tài khoản mặc định lần đầu: admin / 123456");
-    hint->setObjectName("mutedLabel");
-    hint->setStyleSheet("color: #8b8e96; font-size: 12px;");
-
-    formLayout->addStretch();
-    formLayout->addWidget(title);
-    formLayout->addWidget(subtitle);
-    formLayout->addSpacing(28);
-    formLayout->addWidget(usernameLabel);
-    formLayout->addWidget(usernameInput);
-    formLayout->addSpacing(12);
-    formLayout->addWidget(passwordLabel);
-    formLayout->addWidget(passwordInput);
-    formLayout->addWidget(showPasswordCheck);
-    formLayout->addSpacing(12);
-    formLayout->addWidget(loginButton);
-    formLayout->addWidget(messageLabel);
-    formLayout->addSpacing(12);
-    formLayout->addWidget(hint);
-    formLayout->addStretch();
-
-    root->addWidget(brandPanel, 4);
-    root->addWidget(formPanel, 6);
-
-    connect(loginButton, &QPushButton::clicked, this, [this]() {
+    connect(ui->loginButton, &QPushButton::clicked, this, [this]() {
         handleLogin();
     });
 
@@ -119,6 +39,10 @@ LoginWindow::LoginWindow(QWidget* parent)
     if (!ensureDefaultUser()) {
         messageLabel->setText("Không thể đọc hoặc tạo tài khoản. Hãy kiểm tra thư mục dữ liệu.");
     }
+}
+
+LoginWindow::~LoginWindow() {
+    delete ui;
 }
 
 bool LoginWindow::ensureDefaultUser() {

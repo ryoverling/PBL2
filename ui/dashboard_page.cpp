@@ -1,4 +1,5 @@
 #include "dashboard_page.h"
+#include "ui/ui_dashboard_page.h"
 
 #include "chart_widgets.h"
 #include "ui_helpers.h"
@@ -20,122 +21,32 @@
 #include <QHBoxLayout>
 
 
-namespace {
-    QFrame* makeMetricCard(const QString& caption, QLabel*& valueLabel) {
-        QFrame* card = new QFrame();
-        card->setObjectName("card");
-
-        QVBoxLayout* layout = new QVBoxLayout(card);
-        layout->setContentsMargins(18, 16, 18, 16);
-
-        QLabel* captionLabel = new QLabel(caption);
-        captionLabel->setObjectName("mutedLabel");
-
-        valueLabel = new QLabel("0 đ");
-        valueLabel->setStyleSheet("font-size: 23px; font-weight: 800;");
-
-        layout->addWidget(captionLabel);
-        layout->addWidget(valueLabel);
-        return card;
-    }
-}
-
 DashboardPage::DashboardPage(TransactionManager* transactions,
                              WalletManager* wallets,
                              CategoryManager* categories,
                              BudgetManager* budgets,
                              QWidget* parent)
     : QWidget(parent),
+      ui(new Ui::DashboardPage),
       transactions(transactions),
       wallets(wallets),
       categories(categories),
       budgets(budgets) {
-
-    QVBoxLayout* root = new QVBoxLayout(this);
-    root->setContentsMargins(28, 24, 28, 28);
-    root->setSpacing(16);
-
-    QHBoxLayout* header = new QHBoxLayout();
-    QLabel* title = new QLabel("Tổng quan");
-    title->setObjectName("pageTitle");
-    QLabel* date = new QLabel(QDate::currentDate().toString("'Hôm nay,' dd/MM/yyyy"));
-    date->setObjectName("mutedLabel");
-    header->addWidget(title);
-    header->addStretch();
-    header->addWidget(date);
-
-    QGridLayout* metrics = new QGridLayout();
-    metrics->setHorizontalSpacing(14);
-    metrics->addWidget(makeMetricCard("Tổng tài sản", totalBalanceLabel), 0, 0);
-    metrics->addWidget(makeMetricCard("Thu tháng này", incomeLabel), 0, 1);
-    metrics->addWidget(makeMetricCard("Chi tháng này", expenseLabel), 0, 2);
-    metrics->addWidget(makeMetricCard("Chênh lệch", differenceLabel), 0, 3);
-
-    QGridLayout* middle = new QGridLayout();
-    middle->setHorizontalSpacing(14);
-
-    QFrame* chartCard = new QFrame();
-    chartCard->setObjectName("card");
-    QVBoxLayout* chartLayout = new QVBoxLayout(chartCard);
-    chartLayout->setContentsMargins(18, 16, 18, 16);
-    QLabel* chartTitle = new QLabel("Chi tiêu tháng này");
-    chartTitle->setObjectName("sectionTitle");
-    donutChart = new DonutChartWidget();
-    chartLayout->addWidget(chartTitle);
-    chartLayout->addWidget(donutChart);
-
-    QFrame* budgetCard = new QFrame();
-    budgetCard->setObjectName("card");
-    QVBoxLayout* budgetLayout = new QVBoxLayout(budgetCard);
-    budgetLayout->setContentsMargins(18, 16, 18, 16);
-    QLabel* budgetTitle = new QLabel("Ngân sách đang áp dụng");
-    budgetTitle->setObjectName("sectionTitle");
-    budgetDetailLabel = new QLabel("Chưa có ngân sách đang áp dụng.");
-    budgetDetailLabel->setWordWrap(true);
-    budgetDetailLabel->setObjectName("mutedLabel");
-    budgetProgress = new QProgressBar();
-    budgetProgress->setRange(0, 100);
-    budgetProgress->setValue(0);
-    budgetLayout->addWidget(budgetTitle);
-    budgetLayout->addSpacing(12);
-    budgetLayout->addWidget(budgetDetailLabel);
-    budgetLayout->addSpacing(8);
-    budgetLayout->addWidget(budgetProgress);
-    budgetLayout->addStretch();
-
-    middle->addWidget(chartCard, 0, 0);
-    middle->addWidget(budgetCard, 0, 1);
-    middle->setColumnStretch(0, 2);
-    middle->setColumnStretch(1, 1);
-
-    QFrame* recentCard = new QFrame();
-    recentCard->setObjectName("card");
-    QVBoxLayout* recentLayout = new QVBoxLayout(recentCard);
-    recentLayout->setContentsMargins(18, 16, 18, 16);
-    QLabel* recentTitle = new QLabel("Giao dịch gần đây");
-    recentTitle->setObjectName("sectionTitle");
-
-    recentTable = new QTableWidget(0, 5);
-    recentTable->setHorizontalHeaderLabels({"Thời gian", "Loại", "Danh mục", "Ví", "Số tiền"});
-    recentTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    recentTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    recentTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
-    recentTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
-    recentTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
-    recentTable->verticalHeader()->setVisible(false);
-    recentTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    recentTable->setSelectionMode(QAbstractItemView::NoSelection);
-    recentTable->setMaximumHeight(245);
-
-    recentLayout->addWidget(recentTitle);
-    recentLayout->addWidget(recentTable);
-
-    root->addLayout(header);
-    root->addLayout(metrics);
-    root->addLayout(middle);
-    root->addWidget(recentCard);
-
+    ui->setupUi(this);
+    ui->dateLabel->setText(QDate::currentDate().toString("'Hôm nay,' dd/MM/yyyy"));
+    totalBalanceLabel = ui->totalBalanceLabel;
+    incomeLabel = ui->incomeLabel;
+    expenseLabel = ui->expenseLabel;
+    differenceLabel = ui->differenceLabel;
+    budgetDetailLabel = ui->budgetDetailLabel;
+    budgetProgress = ui->budgetProgress;
+    recentTable = ui->recentTable;
+    donutChart = ui->donutChart;
     refresh();
+}
+
+DashboardPage::~DashboardPage() {
+    delete ui;
 }
 
 void DashboardPage::refresh() {

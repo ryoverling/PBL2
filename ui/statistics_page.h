@@ -10,9 +10,11 @@ class BarChartWidget;
 
 class TransactionManager;
 class CategoryManager;
+namespace Ui { class StatisticsPage; }
 
 class StatisticsPage : public QWidget {
 private:
+    Ui::StatisticsPage* ui;
     TransactionManager* transactions;
     CategoryManager* categories;
 
@@ -34,6 +36,7 @@ public:
     StatisticsPage(TransactionManager* transactions,
                    CategoryManager* categories,
                    QWidget* parent = nullptr);
+    ~StatisticsPage();
 
     void refresh();
 };

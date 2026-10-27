@@ -1,4 +1,5 @@
 #include "transaction_dialog.h"
+#include "ui/ui_transaction_dialog.h"
 
 #include "../manager/wallet_manager.h"
 #include "../manager/category_manager.h"
@@ -21,32 +22,20 @@ TransactionDialog::TransactionDialog(WalletManager* wallets,
                                      const Transaction* existing,
                                      QWidget* parent)
     : QDialog(parent),
+      ui(new Ui::TransactionDialog),
       wallets(wallets),
       categories(categories),
       existing(existing) {
-
+    ui->setupUi(this);
     setWindowTitle(existing ? "Sửa giao dịch" : "Thêm giao dịch");
-    setMinimumWidth(470);
-
-    typeCombo = new QComboBox();
+    typeCombo = ui->typeCombo;
+    amountInput = ui->amountInput;
+    categoryCombo = ui->categoryCombo;
+    walletCombo = ui->walletCombo;
+    noteInput = ui->noteInput;
+    timeLabel = ui->timeLabel;
     typeCombo->addItem("Chi tiêu", static_cast<int>(TransactionType::EXPENSE));
     typeCombo->addItem("Thu nhập", static_cast<int>(TransactionType::INCOME));
-
-    amountInput = new QDoubleSpinBox();
-    amountInput->setRange(1, 1000000000000.0);
-    amountInput->setDecimals(0);
-    amountInput->setSingleStep(10000);
-    amountInput->setSuffix(" đ");
-
-    categoryCombo = new QComboBox();
-    walletCombo = new QComboBox();
-
-    noteInput = new QTextEdit();
-    noteInput->setPlaceholderText("Ghi chú cho giao dịch");
-    noteInput->setMaximumHeight(90);
-
-    timeLabel = new QLabel();
-    timeLabel->setObjectName("mutedLabel");
 
     populateWallets();
 
@@ -70,31 +59,18 @@ TransactionDialog::TransactionDialog(WalletManager* wallets,
         timeLabel->setText(QString::fromStdString(DateUtils::getCurrentDateTime()) + " (tự động)");
     }
 
-    QFormLayout* form = new QFormLayout();
-    form->addRow("Loại giao dịch", typeCombo);
-    form->addRow("Số tiền", amountInput);
-    form->addRow("Danh mục", categoryCombo);
-    form->addRow("Ví", walletCombo);
-    form->addRow("Thời gian", timeLabel);
-    form->addRow("Ghi chú", noteInput);
-
-    QDialogButtonBox* buttons = new QDialogButtonBox(
-        QDialogButtonBox::Save | QDialogButtonBox::Cancel
-    );
-
-    QVBoxLayout* root = new QVBoxLayout(this);
-    root->addLayout(form);
-    root->addSpacing(8);
-    root->addWidget(buttons);
-
     connect(typeCombo, &QComboBox::currentIndexChanged, this, [this]() {
         populateCategories();
     });
 
-    connect(buttons, &QDialogButtonBox::accepted, this, [this]() {
+    connect(ui->buttons, &QDialogButtonBox::accepted, this, [this]() {
         validateAndAccept();
     });
-    connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    connect(ui->buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+}
+
+TransactionDialog::~TransactionDialog() {
+    delete ui;
 }
 
 void TransactionDialog::populateWallets() {

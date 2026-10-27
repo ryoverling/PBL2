@@ -8,9 +8,11 @@ class QTableWidget;
 class BudgetManager;
 class TransactionManager;
 class CategoryManager;
+namespace Ui { class BudgetPage; }
 
 class BudgetPage : public QWidget {
 private:
+    Ui::BudgetPage* ui;
     BudgetManager* budgets;
     TransactionManager* transactions;
     CategoryManager* categories;
@@ -31,6 +33,7 @@ public:
                CategoryManager* categories,
                std::function<void()> onChanged,
                QWidget* parent = nullptr);
+    ~BudgetPage();
 
     void refresh();
 };

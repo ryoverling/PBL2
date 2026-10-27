@@ -1,4 +1,5 @@
 #include "wallet_page.h"
+#include "ui/ui_wallet_page.h"
 
 #include "wallet_dialog.h"
 #include "ui_helpers.h"
@@ -21,73 +22,24 @@ WalletPage::WalletPage(WalletManager* wallets,
                        std::function<void()> onChanged,
                        QWidget* parent)
     : QWidget(parent),
+      ui(new Ui::WalletPage),
       wallets(wallets),
       transactions(transactions),
       onChanged(std::move(onChanged)) {
+    ui->setupUi(this);
+    totalLabel = ui->totalLabel;
+    table = ui->table;
 
-    QVBoxLayout* root = new QVBoxLayout(this);
-    root->setContentsMargins(28, 24, 28, 28);
-    root->setSpacing(16);
-
-    QHBoxLayout* header = new QHBoxLayout();
-    QLabel* title = new QLabel("Ví");
-    title->setObjectName("pageTitle");
-    QPushButton* addButton = new QPushButton("+ Thêm ví");
-    addButton->setObjectName("primaryButton");
-    header->addWidget(title);
-    header->addStretch();
-    header->addWidget(addButton);
-
-    QFrame* summary = new QFrame();
-    summary->setObjectName("card");
-    QVBoxLayout* summaryLayout = new QVBoxLayout(summary);
-    QLabel* caption = new QLabel("Tổng tài sản");
-    caption->setObjectName("mutedLabel");
-    totalLabel = new QLabel("0 đ");
-    totalLabel->setStyleSheet("font-size: 30px; font-weight: 800;");
-    summaryLayout->addWidget(caption);
-    summaryLayout->addWidget(totalLabel);
-
-    QFrame* card = new QFrame();
-    card->setObjectName("card");
-    QVBoxLayout* cardLayout = new QVBoxLayout(card);
-    cardLayout->setContentsMargins(18, 18, 18, 18);
-
-    QHBoxLayout* actions = new QHBoxLayout();
-    QLabel* section = new QLabel("Danh sách ví");
-    section->setObjectName("sectionTitle");
-    QPushButton* editButton = new QPushButton("Sửa");
-    QPushButton* deleteButton = new QPushButton("Xóa");
-    deleteButton->setObjectName("dangerButton");
-    actions->addWidget(section);
-    actions->addStretch();
-    actions->addWidget(editButton);
-    actions->addWidget(deleteButton);
-
-    table = new QTableWidget(0, 4);
-    table->setHorizontalHeaderLabels({"ID", "Tên ví", "Loại", "Số dư"});
-    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
-    table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-    table->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
-    table->setSelectionBehavior(QAbstractItemView::SelectRows);
-    table->setSelectionMode(QAbstractItemView::SingleSelection);
-    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    table->verticalHeader()->setVisible(false);
-
-    cardLayout->addLayout(actions);
-    cardLayout->addWidget(table);
-
-    root->addLayout(header);
-    root->addWidget(summary);
-    root->addWidget(card, 1);
-
-    connect(addButton, &QPushButton::clicked, this, [this]() { addWallet(); });
-    connect(editButton, &QPushButton::clicked, this, [this]() { editWallet(); });
-    connect(deleteButton, &QPushButton::clicked, this, [this]() { deleteWallet(); });
+    connect(ui->addButton, &QPushButton::clicked, this, [this]() { addWallet(); });
+    connect(ui->editButton, &QPushButton::clicked, this, [this]() { editWallet(); });
+    connect(ui->deleteButton, &QPushButton::clicked, this, [this]() { deleteWallet(); });
     connect(table, &QTableWidget::cellDoubleClicked, this, [this](int, int) { editWallet(); });
 
     refresh();
+}
+
+WalletPage::~WalletPage() {
+    delete ui;
 }
 
 int WalletPage::selectedId() const {

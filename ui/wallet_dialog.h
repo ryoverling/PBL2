@@ -6,9 +6,11 @@
 class QLineEdit;
 class QComboBox;
 class QDoubleSpinBox;
+namespace Ui { class WalletDialog; }
 
 class WalletDialog : public QDialog {
 private:
+    Ui::WalletDialog* ui;
     QLineEdit* nameInput;
     QComboBox* typeCombo;
     QDoubleSpinBox* balanceInput;
@@ -18,6 +20,7 @@ private:
 
 public:
     explicit WalletDialog(const Wallet* wallet = nullptr, QWidget* parent = nullptr);
+    ~WalletDialog();
 
     QString walletName() const;
     WalletType walletType() const;

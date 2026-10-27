@@ -5,9 +5,11 @@
 class QLineEdit;
 class QLabel;
 class QCheckBox;
+namespace Ui { class LoginWindow; }
 
 class LoginWindow : public QWidget {
 private:
+    Ui::LoginWindow* ui;
     QLineEdit* usernameInput;
     QLineEdit* passwordInput;
     QLabel* messageLabel;
@@ -18,4 +20,5 @@ private:
 
 public:
     explicit LoginWindow(QWidget* parent = nullptr);
+    ~LoginWindow();
 };

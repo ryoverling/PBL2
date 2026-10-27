@@ -1,4 +1,5 @@
 #include "statistics_page.h"
+#include "ui/ui_statistics_page.h"
 
 #include "chart_widgets.h"
 #include "ui_helpers.h"
@@ -16,103 +17,32 @@
 #include <QVBoxLayout>
 
 
-namespace {
-    QFrame* makeSummaryCard(const QString& caption, QLabel*& valueLabel) {
-        QFrame* card = new QFrame();
-        card->setObjectName("card");
-        QVBoxLayout* layout = new QVBoxLayout(card);
-        layout->setContentsMargins(18, 16, 18, 16);
-
-        QLabel* title = new QLabel(caption);
-        title->setObjectName("mutedLabel");
-
-        valueLabel = new QLabel("0 đ");
-        valueLabel->setStyleSheet("font-size: 23px; font-weight: 800;");
-
-        layout->addWidget(title);
-        layout->addWidget(valueLabel);
-        return card;
-    }
-}
-
 StatisticsPage::StatisticsPage(TransactionManager* transactions,
                                CategoryManager* categories,
                                QWidget* parent)
     : QWidget(parent),
+      ui(new Ui::StatisticsPage),
       transactions(transactions),
       categories(categories) {
-
-    QVBoxLayout* root = new QVBoxLayout(this);
-    root->setContentsMargins(28, 24, 28, 28);
-    root->setSpacing(16);
-
-    QHBoxLayout* header = new QHBoxLayout();
-    QLabel* title = new QLabel("Thống kê");
-    title->setObjectName("pageTitle");
-
-    periodCombo = new QComboBox();
+    ui->setupUi(this);
+    periodCombo = ui->periodCombo;
+    referenceDate = ui->referenceDate;
+    customStart = ui->customStart;
+    customEnd = ui->customEnd;
+    incomeLabel = ui->incomeLabel;
+    expenseLabel = ui->expenseLabel;
+    differenceLabel = ui->differenceLabel;
+    donutChart = ui->donutChart;
+    barChart = ui->barChart;
     periodCombo->addItem("Tuần này", 0);
     periodCombo->addItem("Tháng này", 1);
     periodCombo->addItem("Năm nay", 2);
     periodCombo->addItem("Tùy chọn", 3);
     periodCombo->setCurrentIndex(1);
 
-    referenceDate = new QDateEdit(QDate::currentDate());
-    referenceDate->setCalendarPopup(true);
-    referenceDate->setDisplayFormat("dd/MM/yyyy");
-
-    customStart = new QDateEdit(QDate::currentDate().addMonths(-1));
-    customStart->setCalendarPopup(true);
-    customStart->setDisplayFormat("dd/MM/yyyy");
-
-    customEnd = new QDateEdit(QDate::currentDate());
-    customEnd->setCalendarPopup(true);
-    customEnd->setDisplayFormat("dd/MM/yyyy");
-
-    header->addWidget(title);
-    header->addStretch();
-    header->addWidget(periodCombo);
-    header->addWidget(referenceDate);
-    header->addWidget(customStart);
-    header->addWidget(customEnd);
-
-    QGridLayout* summaryGrid = new QGridLayout();
-    summaryGrid->setHorizontalSpacing(14);
-    summaryGrid->addWidget(makeSummaryCard("Thu nhập", incomeLabel), 0, 0);
-    summaryGrid->addWidget(makeSummaryCard("Chi tiêu", expenseLabel), 0, 1);
-    summaryGrid->addWidget(makeSummaryCard("Chênh lệch", differenceLabel), 0, 2);
-
-    QGridLayout* charts = new QGridLayout();
-    charts->setHorizontalSpacing(14);
-
-    QFrame* donutCard = new QFrame();
-    donutCard->setObjectName("card");
-    QVBoxLayout* donutLayout = new QVBoxLayout(donutCard);
-    donutLayout->setContentsMargins(18, 16, 18, 16);
-    QLabel* donutTitle = new QLabel("Chi tiêu theo danh mục");
-    donutTitle->setObjectName("sectionTitle");
-    donutChart = new DonutChartWidget();
-    donutLayout->addWidget(donutTitle);
-    donutLayout->addWidget(donutChart);
-
-    QFrame* barCard = new QFrame();
-    barCard->setObjectName("card");
-    QVBoxLayout* barLayout = new QVBoxLayout(barCard);
-    barLayout->setContentsMargins(18, 16, 18, 16);
-    QLabel* barTitle = new QLabel("Chi tiêu 6 tháng gần nhất");
-    barTitle->setObjectName("sectionTitle");
-    barChart = new BarChartWidget();
-    barLayout->addWidget(barTitle);
-    barLayout->addWidget(barChart);
-
-    charts->addWidget(donutCard, 0, 0);
-    charts->addWidget(barCard, 0, 1);
-    charts->setColumnStretch(0, 1);
-    charts->setColumnStretch(1, 1);
-
-    root->addLayout(header);
-    root->addLayout(summaryGrid);
-    root->addLayout(charts);
+    referenceDate->setDate(QDate::currentDate());
+    customStart->setDate(QDate::currentDate().addMonths(-1));
+    customEnd->setDate(QDate::currentDate());
 
     auto refreshFn = [this]() { refresh(); };
     connect(periodCombo, &QComboBox::currentIndexChanged, this, [this]() {
@@ -125,6 +55,10 @@ StatisticsPage::StatisticsPage(TransactionManager* transactions,
 
     updatePeriodUi();
     refresh();
+}
+
+StatisticsPage::~StatisticsPage() {
+    delete ui;
 }
 
 QString StatisticsPage::startDate() const {

@@ -1,4 +1,5 @@
 #include "category_page.h"
+#include "ui/ui_category_page.h"
 
 #include "category_dialog.h"
 #include "ui_helpers.h"
@@ -24,71 +25,30 @@ CategoryPage::CategoryPage(CategoryManager* categories,
                            std::function<void()> onChanged,
                            QWidget* parent)
     : QWidget(parent),
+      ui(new Ui::CategoryPage),
       categories(categories),
       transactions(transactions),
       budgets(budgets),
       onChanged(std::move(onChanged)) {
-
-    QVBoxLayout* root = new QVBoxLayout(this);
-    root->setContentsMargins(28, 24, 28, 28);
-    root->setSpacing(16);
-
-    QHBoxLayout* header = new QHBoxLayout();
-    QLabel* title = new QLabel("Danh mục");
-    title->setObjectName("pageTitle");
-
-    QPushButton* addButton = new QPushButton("+ Thêm danh mục");
-    addButton->setObjectName("primaryButton");
-
-    header->addWidget(title);
-    header->addStretch();
-    header->addWidget(addButton);
-
-    QFrame* card = new QFrame();
-    card->setObjectName("card");
-    QVBoxLayout* cardLayout = new QVBoxLayout(card);
-    cardLayout->setContentsMargins(18, 18, 18, 18);
-
-    QHBoxLayout* tools = new QHBoxLayout();
-    QLabel* filterLabel = new QLabel("Hiển thị");
-    filterCombo = new QComboBox();
+    ui->setupUi(this);
+    filterCombo = ui->filterCombo;
+    table = ui->table;
     filterCombo->addItem("Tất cả", -1);
     filterCombo->addItem("Chi tiêu", static_cast<int>(CategoryType::EXPENSE));
     filterCombo->addItem("Thu nhập", static_cast<int>(CategoryType::INCOME));
 
-    QPushButton* editButton = new QPushButton("Sửa");
-    QPushButton* deleteButton = new QPushButton("Xóa");
-    deleteButton->setObjectName("dangerButton");
 
-    tools->addWidget(filterLabel);
-    tools->addWidget(filterCombo);
-    tools->addStretch();
-    tools->addWidget(editButton);
-    tools->addWidget(deleteButton);
-
-    table = new QTableWidget(0, 3);
-    table->setHorizontalHeaderLabels({"ID", "Tên danh mục", "Loại"});
-    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
-    table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-    table->setSelectionBehavior(QAbstractItemView::SelectRows);
-    table->setSelectionMode(QAbstractItemView::SingleSelection);
-    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    table->verticalHeader()->setVisible(false);
-
-    cardLayout->addLayout(tools);
-    cardLayout->addWidget(table);
-
-    root->addLayout(header);
-    root->addWidget(card);
-
-    connect(addButton, &QPushButton::clicked, this, [this]() { addCategory(); });
-    connect(editButton, &QPushButton::clicked, this, [this]() { editCategory(); });
-    connect(deleteButton, &QPushButton::clicked, this, [this]() { deleteCategory(); });
+    connect(ui->addButton, &QPushButton::clicked, this, [this]() { addCategory(); });
+    connect(ui->editButton, &QPushButton::clicked, this, [this]() { editCategory(); });
+    connect(ui->deleteButton, &QPushButton::clicked, this, [this]() { deleteCategory(); });
     connect(filterCombo, &QComboBox::currentIndexChanged, this, [this]() { refresh(); });
     connect(table, &QTableWidget::cellDoubleClicked, this, [this](int, int) { editCategory(); });
 
     refresh();
+}
+
+CategoryPage::~CategoryPage() {
+    delete ui;
 }
 
 int CategoryPage::selectedId() const {

@@ -17,9 +17,11 @@ class WalletPage;
 class BudgetPage;
 class StatisticsPage;
 class CategoryPage;
+namespace Ui { class MainWindow; }
 
 class MainWindow : public QMainWindow {
 private:
+    Ui::MainWindow* ui;
     QString userName;
     std::function<void()> onLogout;
 
@@ -56,4 +58,5 @@ public:
     MainWindow(QString userName,
                std::function<void()> onLogout,
                QWidget* parent = nullptr);
+    ~MainWindow();
 };

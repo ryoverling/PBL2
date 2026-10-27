@@ -1,4 +1,5 @@
 #include "transaction_page.h"
+#include "ui/ui_transaction_page.h"
 
 #include "transaction_dialog.h"
 #include "ui_helpers.h"
@@ -29,98 +30,34 @@ TransactionPage::TransactionPage(TransactionManager* transactions,
                                  std::function<void()> onChanged,
                                  QWidget* parent)
     : QWidget(parent),
+      ui(new Ui::TransactionPage),
       transactions(transactions),
       wallets(wallets),
       categories(categories),
       onChanged(std::move(onChanged)) {
-
-    QVBoxLayout* root = new QVBoxLayout(this);
-    root->setContentsMargins(28, 24, 28, 28);
-    root->setSpacing(16);
-
-    QHBoxLayout* header = new QHBoxLayout();
-    QLabel* title = new QLabel("Giao dịch");
-    title->setObjectName("pageTitle");
-    QPushButton* addButton = new QPushButton("+ Thêm giao dịch");
-    addButton->setObjectName("primaryButton");
-    header->addWidget(title);
-    header->addStretch();
-    header->addWidget(addButton);
-
-    QFrame* card = new QFrame();
-    card->setObjectName("card");
-    QVBoxLayout* cardLayout = new QVBoxLayout(card);
-    cardLayout->setContentsMargins(16, 16, 16, 16);
-
-    QHBoxLayout* filterRow1 = new QHBoxLayout();
-
-    searchInput = new QLineEdit();
-    searchInput->setPlaceholderText("Tìm theo ghi chú, danh mục, ví...");
-    searchInput->setClearButtonEnabled(true);
-
-    typeFilter = new QComboBox();
+    ui->setupUi(this);
+    searchInput = ui->searchInput;
+    typeFilter = ui->typeFilter;
+    walletFilter = ui->walletFilter;
+    categoryFilter = ui->categoryFilter;
+    periodFilter = ui->periodFilter;
+    fromDate = ui->fromDate;
+    toDate = ui->toDate;
+    table = ui->table;
     typeFilter->addItem("Tất cả loại", -1);
     typeFilter->addItem("Chi tiêu", static_cast<int>(TransactionType::EXPENSE));
     typeFilter->addItem("Thu nhập", static_cast<int>(TransactionType::INCOME));
 
-    walletFilter = new QComboBox();
-    categoryFilter = new QComboBox();
-
-    filterRow1->addWidget(searchInput, 2);
-    filterRow1->addWidget(typeFilter);
-    filterRow1->addWidget(walletFilter);
-    filterRow1->addWidget(categoryFilter);
-
-    QHBoxLayout* filterRow2 = new QHBoxLayout();
-    periodFilter = new QComboBox();
     periodFilter->addItem("Tất cả thời gian", 0);
     periodFilter->addItem("Tháng này", 1);
     periodFilter->addItem("Tùy chọn", 2);
 
-    fromDate = new QDateEdit(QDate::currentDate().addMonths(-1));
-    fromDate->setCalendarPopup(true);
-    fromDate->setDisplayFormat("dd/MM/yyyy");
+    fromDate->setDate(QDate::currentDate().addMonths(-1));
+    toDate->setDate(QDate::currentDate());
 
-    toDate = new QDateEdit(QDate::currentDate());
-    toDate->setCalendarPopup(true);
-    toDate->setDisplayFormat("dd/MM/yyyy");
-
-    QPushButton* editButton = new QPushButton("Sửa");
-    QPushButton* deleteButton = new QPushButton("Xóa");
-    deleteButton->setObjectName("dangerButton");
-
-    filterRow2->addWidget(periodFilter);
-    filterRow2->addWidget(fromDate);
-    filterRow2->addWidget(toDate);
-    filterRow2->addStretch();
-    filterRow2->addWidget(editButton);
-    filterRow2->addWidget(deleteButton);
-
-    table = new QTableWidget(0, 6);
-    table->setHorizontalHeaderLabels(
-        {"Thời gian", "Loại", "Danh mục", "Ví", "Ghi chú", "Số tiền"}
-    );
-    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-    table->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
-    table->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Stretch);
-    table->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
-    table->setSelectionBehavior(QAbstractItemView::SelectRows);
-    table->setSelectionMode(QAbstractItemView::SingleSelection);
-    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    table->verticalHeader()->setVisible(false);
-
-    cardLayout->addLayout(filterRow1);
-    cardLayout->addLayout(filterRow2);
-    cardLayout->addWidget(table);
-
-    root->addLayout(header);
-    root->addWidget(card);
-
-    connect(addButton, &QPushButton::clicked, this, [this]() { addTransaction(); });
-    connect(editButton, &QPushButton::clicked, this, [this]() { editTransaction(); });
-    connect(deleteButton, &QPushButton::clicked, this, [this]() { deleteTransaction(); });
+    connect(ui->addButton, &QPushButton::clicked, this, [this]() { addTransaction(); });
+    connect(ui->editButton, &QPushButton::clicked, this, [this]() { editTransaction(); });
+    connect(ui->deleteButton, &QPushButton::clicked, this, [this]() { deleteTransaction(); });
     connect(table, &QTableWidget::cellDoubleClicked, this, [this](int, int) { editTransaction(); });
 
     auto refreshFn = [this]() { refresh(); };
@@ -138,6 +75,10 @@ TransactionPage::TransactionPage(TransactionManager* transactions,
     rebuildFilters();
     updatePeriodControls();
     refresh();
+}
+
+TransactionPage::~TransactionPage() {
+    delete ui;
 }
 
 int TransactionPage::selectedId() const {

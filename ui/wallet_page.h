@@ -8,9 +8,11 @@ class QTableWidget;
 
 class WalletManager;
 class TransactionManager;
+namespace Ui { class WalletPage; }
 
 class WalletPage : public QWidget {
 private:
+    Ui::WalletPage* ui;
     WalletManager* wallets;
     TransactionManager* transactions;
     std::function<void()> onChanged;
@@ -28,6 +30,7 @@ public:
                TransactionManager* transactions,
                std::function<void()> onChanged,
                QWidget* parent = nullptr);
+    ~WalletPage();
 
     void refresh();
 };

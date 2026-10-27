@@ -1,4 +1,5 @@
 #include "category_dialog.h"
+#include "ui/ui_category_dialog.h"
 
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -8,15 +9,11 @@
 #include <QVBoxLayout>
 
 CategoryDialog::CategoryDialog(const Category* category, QWidget* parent)
-    : QDialog(parent), editing(category != nullptr) {
-
+    : QDialog(parent), ui(new Ui::CategoryDialog), editing(category != nullptr) {
+    ui->setupUi(this);
     setWindowTitle(editing ? "Sửa danh mục" : "Thêm danh mục");
-    setMinimumWidth(380);
-
-    nameInput = new QLineEdit();
-    nameInput->setPlaceholderText("Ví dụ: Ăn uống");
-
-    typeCombo = new QComboBox();
+    nameInput = ui->nameInput;
+    typeCombo = ui->typeCombo;
     typeCombo->addItem("Chi tiêu", static_cast<int>(CategoryType::EXPENSE));
     typeCombo->addItem("Thu nhập", static_cast<int>(CategoryType::INCOME));
 
@@ -28,23 +25,14 @@ CategoryDialog::CategoryDialog(const Category* category, QWidget* parent)
         typeCombo->setEnabled(false);
     }
 
-    QFormLayout* form = new QFormLayout();
-    form->addRow("Tên danh mục", nameInput);
-    form->addRow("Loại", typeCombo);
-
-    QDialogButtonBox* buttons = new QDialogButtonBox(
-        QDialogButtonBox::Save | QDialogButtonBox::Cancel
-    );
-
-    QVBoxLayout* root = new QVBoxLayout(this);
-    root->addLayout(form);
-    root->addSpacing(10);
-    root->addWidget(buttons);
-
-    connect(buttons, &QDialogButtonBox::accepted, this, [this]() {
+    connect(ui->buttons, &QDialogButtonBox::accepted, this, [this]() {
         validateAndAccept();
     });
-    connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    connect(ui->buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+}
+
+CategoryDialog::~CategoryDialog() {
+    delete ui;
 }
 
 void CategoryDialog::validateAndAccept() {

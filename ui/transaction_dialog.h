@@ -10,9 +10,11 @@ class QLabel;
 class Transaction;
 class WalletManager;
 class CategoryManager;
+namespace Ui { class TransactionDialog; }
 
 class TransactionDialog : public QDialog {
 private:
+    Ui::TransactionDialog* ui;
     WalletManager* wallets;
     CategoryManager* categories;
     const Transaction* existing;
@@ -33,6 +35,7 @@ public:
                       CategoryManager* categories,
                       const Transaction* existing = nullptr,
                       QWidget* parent = nullptr);
+    ~TransactionDialog();
 
     Transaction* createTransaction(int id) const;
 };

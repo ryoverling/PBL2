@@ -1,6 +1,7 @@
 # MoneyManager - PBL2 (Qt GUI)
 
 Ứng dụng desktop quản lý chi tiêu cá nhân bằng **C++17 + Qt 6 Widgets**.
+Giao diện được thiết kế bằng **Qt Designer** và lưu trong các file `.ui`.
 
 Đây là phiên bản đã nối **GUI + core OOP + LinkedList + file local**.
 
@@ -61,6 +62,25 @@ MoneyManager/
 4. Build.
 5. Run.
 
+## Chỉnh sửa giao diện bằng Qt Designer
+
+Các màn hình và hộp thoại nằm trong thư mục `ui/` theo từng cặp file:
+
+```text
+transaction_page.ui   # Bố cục kéo thả trong Qt Designer
+transaction_page.cpp  # Kết nối sự kiện và xử lý nghiệp vụ
+transaction_page.h    # Khai báo lớp
+```
+
+Để chỉnh giao diện:
+
+1. Nhấp đúp file `.ui` trong Qt Creator.
+2. Kéo thả widget và đặt layout trong chế độ Design.
+3. Giữ nguyên `objectName` của widget nếu C++ đang truy cập widget đó.
+4. Build lại; CMake gọi `uic` để tự sinh header giao diện trong thư mục build.
+
+Không chỉnh sửa các file `ui_*.h` được sinh tự động trong thư mục build.
+
 ## Build bằng terminal
 
 Nếu CMake tìm được Qt:
@@ -97,7 +117,7 @@ Các file này được `.gitignore` để mỗi máy có dữ liệu riêng.
 
 ## Lưu ý học tập
 
-GUI đã được làm sẵn để team có sản phẩm trực quan, nhưng phần cần hiểu khi bảo vệ vẫn là:
+GUI được tách thành file Qt Designer để team dễ chỉnh bố cục trực quan, nhưng phần cần hiểu khi bảo vệ vẫn là:
 
 1. Category
 2. Wallet
@@ -109,3 +129,19 @@ GUI đã được làm sẵn để team có sản phẩm trực quan, nhưng ph�
 8. Qt GUI gọi Manager như thế nào
 
 Không nên coi GUI là thay thế cho việc hiểu core OOP.
+
+## Giao diện do Qt Designer quản lý
+
+Ứng dụng không còn áp dụng `Theme::appStyleSheet()` trong `main.cpp`.
+Màu sắc và font mặc định theo Qt/hệ điều hành; các tùy chỉnh riêng nằm trong
+thuộc tính `styleSheet`, `font`, `palette` của widget trong file `.ui`.
+Kích thước cửa sổ, layout, độ giãn và cấu hình bảng được chỉnh trong Designer.
+C++ không đổi `objectName` hay ép độ rộng cột sau `setupUi()` nữa.
+`ui/theme.h` là theme cũ, hiện không được ứng dụng sử dụng.
+
+Để sửa trang Danh mục, mở `ui/category_page.ui`, chỉnh thuộc tính rồi lưu
+và build lại project `D:/PBL 2/PBL2-truong/CMakeLists.txt`.
+Form → Preview xem riêng trang; khi chạy, trang được đặt trong cửa sổ chính
+và co giãn theo layout. Dữ liệu, lựa chọn bộ lọc, trạng thái nghiệp vụ và
+biểu đồ tùy chỉnh vẫn do C++ cập nhật khi chạy nên không xuất hiện đầy đủ
+trong preview tĩnh của Designer.

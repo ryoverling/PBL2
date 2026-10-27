@@ -9,9 +9,11 @@ class QWidget;
 
 class Budget;
 class CategoryManager;
+namespace Ui { class BudgetDialog; }
 
 class BudgetDialog : public QDialog {
 private:
+    Ui::BudgetDialog* ui;
     CategoryManager* categories;
     const Budget* existing;
 
@@ -32,6 +34,7 @@ public:
     BudgetDialog(CategoryManager* categories,
                  const Budget* existing = nullptr,
                  QWidget* parent = nullptr);
+    ~BudgetDialog();
 
     double amount() const;
     int categoryId() const;

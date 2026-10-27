@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui version="4.0">
+ <class>LoginWindow</class>
+ <widget class="QWidget" name="LoginWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>900</width>
+    <height>580</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>760</width>
+    <height>520</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>MoneyManager - Đăng nhập</string>
+  </property>
+  <layout class="QHBoxLayout" name="rootLayout" stretch="4,6">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="brandPanel">
+     <property name="minimumSize">
+      <size>
+       <width>330</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QFrame { background: #17181d; }
+QLabel { color: white; background: transparent; }</string>
+     </property>
+     <layout class="QVBoxLayout" name="brandLayout">
+      <property name="leftMargin">
+       <number>44</number>
+      </property>
+      <property name="topMargin">
+       <number>44</number>
+      </property>
+      <property name="rightMargin">
+       <number>44</number>
+      </property>
+      <property name="bottomMargin">
+       <number>44</number>
+      </property>
+      <item>
+       <spacer name="brandTopSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="brandLabel">
+        <property name="styleSheet">
+         <string notr="true">font-size: 34px; font-weight: 800; color: white;</string>
+        </property>
+        <property name="text">
+         <string>MONEY
+MANAGER</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="brandGap">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint">
+         <size>
+          <width>20</width>
+          <height>18</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="sloganLabel">
+        <property name="styleSheet">
+         <string notr="true">font-size: 15px; color: #b9bcc5;</string>
+        </property>
+        <property name="text">
+         <string>Ghi chép thu chi hằng ngày,
+theo dõi ví và ngân sách
+ngay trên máy tính của bạn.</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="brandBottomSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="formPanel">
+     <layout class="QVBoxLayout" name="formLayout">
+      <property name="leftMargin">
+       <number>70</number>
+      </property>
+      <property name="topMargin">
+       <number>54</number>
+      </property>
+      <property name="rightMargin">
+       <number>70</number>
+      </property>
+      <property name="bottomMargin">
+       <number>54</number>
+      </property>
+      <item>
+       <spacer name="formTopSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="titleLabel">
+        <property name="text">
+         <string>Chào mừng trở lại</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="subtitleLabel">
+        <property name="text">
+         <string>Đăng nhập để tiếp tục vào MoneyManager.</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="titleGap">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint">
+         <size>
+          <width>20</width>
+          <height>28</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="usernameLabel">
+        <property name="text">
+         <string>Tên đăng nhập</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="usernameInput">
+        <property name="placeholderText">
+         <string>Nhập tên đăng nhập</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="usernameGap">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint">
+         <size>
+          <width>20</width>
+          <height>12</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="passwordLabel">
+        <property name="text">
+         <string>Mật khẩu</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="passwordInput">
+        <property name="echoMode">
+         <enum>QLineEdit::Password</enum>
+        </property>
+        <property name="placeholderText">
+         <string>Nhập mật khẩu</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="showPasswordCheck">
+        <property name="text">
+         <string>Hiện mật khẩu</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="loginGap">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint">
+         <size>
+          <width>20</width>
+          <height>12</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="loginButton">
+        <property name="text">
+         <string>Đăng nhập</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="messageLabel">
+        <property name="styleSheet">
+         <string notr="true">color: #b42318;</string>
+        </property>
+        <property name="text">
+         <string></string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="hintGap">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint">
+         <size>
+          <width>20</width>
+          <height>12</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="hintLabel">
+        <property name="styleSheet">
+         <string notr="true">color: #8b8e96; font-size: 12px;</string>
+        </property>
+        <property name="text">
+         <string>Tài khoản mặc định lần đầu: admin / 123456</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="formBottomSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources />
+ <connections />
+</ui>

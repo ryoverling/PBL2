@@ -1,4 +1,5 @@
 #include "budget_dialog.h"
+#include "ui/ui_budget_dialog.h"
 
 #include "../manager/category_manager.h"
 #include "../model/budget.h"
@@ -19,50 +20,28 @@ BudgetDialog::BudgetDialog(CategoryManager* categories,
                            const Budget* existing,
                            QWidget* parent)
     : QDialog(parent),
+      ui(new Ui::BudgetDialog),
       categories(categories),
       existing(existing) {
-
+    ui->setupUi(this);
     setWindowTitle(existing ? "Sửa ngân sách" : "Tạo ngân sách");
-    setMinimumWidth(480);
-
-    amountInput = new QDoubleSpinBox();
-    amountInput->setRange(1, 1000000000000.0);
-    amountInput->setDecimals(0);
-    amountInput->setSingleStep(100000);
-    amountInput->setSuffix(" đ");
-
-    categoryCombo = new QComboBox();
+    amountInput = ui->amountInput;
+    categoryCombo = ui->categoryCombo;
+    periodCombo = ui->periodCombo;
+    referenceDate = ui->referenceDate;
+    customStart = ui->customStart;
+    customEnd = ui->customEnd;
+    referenceRow = ui->referenceRow;
+    customRow = ui->customRow;
     populateCategories();
-
-    periodCombo = new QComboBox();
     periodCombo->addItem("Theo tuần", 0);
     periodCombo->addItem("Theo tháng", 1);
     periodCombo->addItem("Theo năm", 2);
     periodCombo->addItem("Tùy chọn", 3);
 
-    referenceDate = new QDateEdit(QDate::currentDate());
-    referenceDate->setCalendarPopup(true);
-    referenceDate->setDisplayFormat("dd/MM/yyyy");
-
-    customStart = new QDateEdit(QDate::currentDate());
-    customStart->setCalendarPopup(true);
-    customStart->setDisplayFormat("dd/MM/yyyy");
-
-    customEnd = new QDateEdit(QDate::currentDate().addDays(6));
-    customEnd->setCalendarPopup(true);
-    customEnd->setDisplayFormat("dd/MM/yyyy");
-
-    referenceRow = new QWidget();
-    QHBoxLayout* referenceLayout = new QHBoxLayout(referenceRow);
-    referenceLayout->setContentsMargins(0, 0, 0, 0);
-    referenceLayout->addWidget(referenceDate);
-
-    customRow = new QWidget();
-    QHBoxLayout* customLayout = new QHBoxLayout(customRow);
-    customLayout->setContentsMargins(0, 0, 0, 0);
-    customLayout->addWidget(customStart);
-    customLayout->addWidget(new QLabel("đến"));
-    customLayout->addWidget(customEnd);
+    referenceDate->setDate(QDate::currentDate());
+    customStart->setDate(QDate::currentDate());
+    customEnd->setDate(QDate::currentDate().addDays(6));
 
     if (existing) {
         amountInput->setValue(existing->getAmount());
@@ -79,31 +58,19 @@ BudgetDialog::BudgetDialog(CategoryManager* categories,
         ));
     }
 
-    QFormLayout* form = new QFormLayout();
-    form->addRow("Số tiền", amountInput);
-    form->addRow("Danh mục", categoryCombo);
-    form->addRow("Chu kỳ", periodCombo);
-    form->addRow("Mốc thời gian", referenceRow);
-    form->addRow("Khoảng tùy chọn", customRow);
-
-    QDialogButtonBox* buttons = new QDialogButtonBox(
-        QDialogButtonBox::Save | QDialogButtonBox::Cancel
-    );
-
-    QVBoxLayout* root = new QVBoxLayout(this);
-    root->addLayout(form);
-    root->addSpacing(8);
-    root->addWidget(buttons);
-
     connect(periodCombo, &QComboBox::currentIndexChanged, this, [this]() {
         updatePeriodUi();
     });
-    connect(buttons, &QDialogButtonBox::accepted, this, [this]() {
+    connect(ui->buttons, &QDialogButtonBox::accepted, this, [this]() {
         validateAndAccept();
     });
-    connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    connect(ui->buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
     updatePeriodUi();
+}
+
+BudgetDialog::~BudgetDialog() {
+    delete ui;
 }
 
 void BudgetDialog::populateCategories() {

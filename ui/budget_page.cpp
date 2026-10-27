@@ -1,4 +1,5 @@
 #include "budget_page.h"
+#include "ui/ui_budget_page.h"
 
 #include "budget_dialog.h"
 #include "ui_helpers.h"
@@ -25,69 +26,24 @@ BudgetPage::BudgetPage(BudgetManager* budgets,
                        std::function<void()> onChanged,
                        QWidget* parent)
     : QWidget(parent),
+      ui(new Ui::BudgetPage),
       budgets(budgets),
       transactions(transactions),
       categories(categories),
       onChanged(std::move(onChanged)) {
+    ui->setupUi(this);
+    table = ui->table;
 
-    QVBoxLayout* root = new QVBoxLayout(this);
-    root->setContentsMargins(28, 24, 28, 28);
-    root->setSpacing(16);
-
-    QHBoxLayout* header = new QHBoxLayout();
-    QLabel* title = new QLabel("Ngân sách");
-    title->setObjectName("pageTitle");
-    QPushButton* addButton = new QPushButton("+ Tạo ngân sách");
-    addButton->setObjectName("primaryButton");
-    header->addWidget(title);
-    header->addStretch();
-    header->addWidget(addButton);
-
-    QFrame* card = new QFrame();
-    card->setObjectName("card");
-    QVBoxLayout* cardLayout = new QVBoxLayout(card);
-    cardLayout->setContentsMargins(18, 18, 18, 18);
-
-    QHBoxLayout* actions = new QHBoxLayout();
-    QLabel* section = new QLabel("Danh sách ngân sách");
-    section->setObjectName("sectionTitle");
-    QPushButton* editButton = new QPushButton("Sửa");
-    QPushButton* deleteButton = new QPushButton("Xóa");
-    deleteButton->setObjectName("dangerButton");
-    actions->addWidget(section);
-    actions->addStretch();
-    actions->addWidget(editButton);
-    actions->addWidget(deleteButton);
-
-    table = new QTableWidget(0, 7);
-    table->setHorizontalHeaderLabels({
-        "Danh mục", "Chu kỳ", "Khoảng thời gian",
-        "Ngân sách", "Đã chi", "Còn lại", "Trạng thái"
-    });
-    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
-    table->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
-    table->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
-    table->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
-    table->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
-    table->setSelectionBehavior(QAbstractItemView::SelectRows);
-    table->setSelectionMode(QAbstractItemView::SingleSelection);
-    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    table->verticalHeader()->setVisible(false);
-
-    cardLayout->addLayout(actions);
-    cardLayout->addWidget(table);
-
-    root->addLayout(header);
-    root->addWidget(card);
-
-    connect(addButton, &QPushButton::clicked, this, [this]() { addBudget(); });
-    connect(editButton, &QPushButton::clicked, this, [this]() { editBudget(); });
-    connect(deleteButton, &QPushButton::clicked, this, [this]() { deleteBudget(); });
+    connect(ui->addButton, &QPushButton::clicked, this, [this]() { addBudget(); });
+    connect(ui->editButton, &QPushButton::clicked, this, [this]() { editBudget(); });
+    connect(ui->deleteButton, &QPushButton::clicked, this, [this]() { deleteBudget(); });
     connect(table, &QTableWidget::cellDoubleClicked, this, [this](int, int) { editBudget(); });
 
     refresh();
+}
+
+BudgetPage::~BudgetPage() {
+    delete ui;
 }
 
 int BudgetPage::selectedId() const {

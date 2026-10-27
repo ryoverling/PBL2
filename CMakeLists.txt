@@ -5,7 +5,7 @@ project(MoneyManager VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
-# Widgets are built in C++; ui_helpers.h is not generated from a .ui form.
+# Qt Designer forms are compiled automatically by uic.
 set(CMAKE_AUTOUIC OFF)
 set(CMAKE_AUTORCC ON)
 
@@ -46,6 +46,23 @@ add_library(MoneyManagerUi STATIC
     ui/statistics_page.cpp
     ui/category_page.cpp
     ui/category_dialog.cpp
+)
+
+qt_add_ui(MoneyManagerUi
+    INCLUDE_PREFIX "ui"
+    SOURCES
+        ui/login_window.ui
+        ui/main_window.ui
+        ui/dashboard_page.ui
+        ui/transaction_page.ui
+        ui/transaction_dialog.ui
+        ui/wallet_page.ui
+        ui/wallet_dialog.ui
+        ui/budget_page.ui
+        ui/budget_dialog.ui
+        ui/statistics_page.ui
+        ui/category_page.ui
+        ui/category_dialog.ui
 )
 
 target_include_directories(MoneyManagerUi PUBLIC

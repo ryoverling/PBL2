@@ -11,9 +11,11 @@ class TransactionManager;
 class WalletManager;
 class CategoryManager;
 class BudgetManager;
+namespace Ui { class DashboardPage; }
 
 class DashboardPage : public QWidget {
 private:
+    Ui::DashboardPage* ui;
     TransactionManager* transactions;
     WalletManager* wallets;
     CategoryManager* categories;
@@ -34,6 +36,7 @@ public:
                   CategoryManager* categories,
                   BudgetManager* budgets,
                   QWidget* parent = nullptr);
+    ~DashboardPage();
 
     void refresh();
 };

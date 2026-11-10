@@ -8,6 +8,8 @@
 #include <QStyledItemDelegate>
 #include <QPainter>
 #include <QEvent>
+#include <QButtonGroup>
+#include <QSignalBlocker>
 
 class TypeBadgeDelegate : public QStyledItemDelegate {
 public:
@@ -139,3 +141,105 @@ void TransactionPage::saveAndRefresh() {
     else refreshData();
     if (saved) UiHelper::showInfo(this, "Đã lưu giao dịch.");
 }
+
+void TransactionPage::clearQuickFilterChip() {
+    if (!ui->quickFilterGroup->checkedButton()) return;
+    ui->quickFilterGroup->setExclusive(false);
+    ui->quickFilterGroup->checkedButton()->setChecked(false);
+    ui->quickFilterGroup->setExclusive(true);
+}
+
+void TransactionPage::applyQuickDateRange(const QDate& from, const QDate& to) {
+    QSignalBlocker checkBlocker(ui->chkDateFilter);
+    QSignalBlocker fromBlocker(ui->dteFrom);
+    QSignalBlocker toBlocker(ui->dteTo);
+    bool active = from.isValid() && to.isValid();
+    ui->chkDateFilter->setChecked(active);
+    if (active) { ui->dteFrom->setDate(from); ui->dteTo->setDate(to); }
+    else resetDates();
+    ui->dteFrom->setEnabled(active);
+    ui->dteTo->setEnabled(active);
+    refreshData();
+}
+
+void TransactionPage::filterByDate(const QDate& date) {
+    clearQuickFilterChip();
+    applyQuickDateRange(date, date);
+}
+
+void TransactionPage::on_btnQuickAll_clicked() { applyQuickDateRange(QDate(), QDate()); }
+
+void TransactionPage::on_btnQuickThisMonth_clicked() {
+    QDate today = QDate::currentDate();
+    QDate first(today.year(), today.month(), 1);
+    applyQuickDateRange(first, first.addMonths(1).addDays(-1));
+}
+
+void TransactionPage::on_btnQuickLastMonth_clicked() {
+    QDate thisMonth = QDate::currentDate();
+    QDate first = QDate(thisMonth.year(), thisMonth.month(), 1).addMonths(-1);
+    applyQuickDateRange(first, first.addMonths(1).addDays(-1));
+}
+
+void TransactionPage::on_btnQuickSevenDays_clicked() {
+    QDate today = QDate::currentDate();
+    applyQuickDateRange(today.addDays(-6), today);
+}
+
+void TransactionPage::resetDates() {
+    QSignalBlocker first(ui->dteFrom);
+    QSignalBlocker last(ui->dteTo);
+    QDate today = QDate::currentDate();
+    ui->dteFrom->setDate(QDate(today.year(), today.month(), 1));
+    ui->dteTo->setDate(today);
+}
+
+void TransactionPage::on_btnResetFilter_clicked() {
+    QSignalBlocker keyword(ui->edtKeyword);
+    QSignalBlocker type(ui->cboType);
+    QSignalBlocker wallet(ui->cboWallet);
+    QSignalBlocker category(ui->cboCategory);
+    QSignalBlocker dateFilter(ui->chkDateFilter);
+    ui->edtKeyword->clear();
+    ui->cboType->setCurrentIndex(0);
+    ui->cboWallet->setCurrentIndex(0);
+    ui->cboCategory->setCurrentIndex(0);
+    ui->chkDateFilter->setChecked(false);
+    resetDates();
+    on_chkDateFilter_toggled(false);
+    ui->btnQuickAll->setChecked(true);
+}
+
+void TransactionPage::on_chkDateFilter_toggled(bool checked) {
+    clearQuickFilterChip();
+    if (checked && (!ui->dteFrom->date().isValid() || !ui->dteTo->date().isValid())) {
+        resetDates();
+    }
+    ui->dteFrom->setEnabled(checked);
+    ui->dteTo->setEnabled(checked);
+    QString tip = checked ? "" : QString::fromUtf8("Bật 'Lọc theo ngày' để chọn");
+    ui->dteFrom->setToolTip(tip);
+    ui->dteTo->setToolTip(tip);
+    refreshData();
+}
+
+void TransactionPage::on_dteFrom_dateChanged(const QDate& from) {
+    if (from.isValid() && ui->dteTo->date().isValid() && from > ui->dteTo->date()) {
+        ui->dteTo->setDate(from);
+    }
+    clearQuickFilterChip();
+    refreshData();
+}
+
+void TransactionPage::on_dteTo_dateChanged(const QDate& to) {
+    if (to.isValid() && ui->dteFrom->date().isValid() && to < ui->dteFrom->date()) {
+        ui->dteFrom->setDate(to);
+    }
+    clearQuickFilterChip();
+    refreshData();
+}
+
+void TransactionPage::on_cboType_currentIndexChanged(int) { refreshData(); }
+void TransactionPage::on_cboWallet_currentIndexChanged(int) { refreshData(); }
+void TransactionPage::on_cboCategory_currentIndexChanged(int) { refreshData(); }
+void TransactionPage::on_edtKeyword_textChanged(const QString&) { refreshData(); }

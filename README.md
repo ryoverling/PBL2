@@ -26,8 +26,9 @@ Khi chưa có `data/users.dat`, hãy đăng ký tài khoản trong ứng dụng 
 
 ### Cấu trúc mã nguồn Core (Chuẩn OOP PBL2)
 
-- Mỗi lớp trong `src/core/` được tổ chức tinh gọn: tương ứng đúng 1 cặp file `.h` và `.cpp` (`MoneyManager`, `TransactionManager`, `WalletManager`, `CategoryManager`, `UserManager`, `FileStorage`, `StatUtils`).
-- File `src/core/storage/file_storage_internal.h` được giữ lại tối giản chứa `RecordFields` và `tachTruong()` phục vụ kiểm thử đơn vị lưu trữ trong `tests/test_console.cpp`.
+- Mỗi module nghiệp vụ trong `src/core/` được tổ chức tinh gọn: tương ứng đúng 1 cặp file `.h` và `.cpp` (`MoneyManager`, `TransactionManager`, `WalletManager`, `CategoryManager`, `UserManager`, `FileStorage`, `utils`).
+- Lớp `Income` và `Expense` kế thừa `Transaction` được đặt chung trong `src/core/model/transaction.h/.cpp`.
+- `RecordFields` và `tachTruong()` được tích hợp trực tiếp trong `src/core/storage/file_storage.h/.cpp`.
 
 ## Sơ đồ lớp
 

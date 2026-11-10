@@ -43,7 +43,7 @@ classDiagram
 
 API hiện có và các slot `on_<objectName>_<signal>` giữ tên ổn định để Qt và các trang gọi được. Hàm nội bộ gần nghiệp vụ có thể dùng tiếng Việt không dấu, chẳng hạn `cungThangNam`, `congChiDanhMuc`, `ngayTangDan`; tên lớp và thuật ngữ Qt/C++ vẫn dùng tiếng Anh. Tên hàm mô tả đúng một việc, tham số có nghĩa rõ ràng. Chú thích giải thích quy tắc hoặc quyền sở hữu bộ nhớ, không lặp lại từng dòng lệnh.
 
-Mỗi lớp trong `src/core/` được tổ chức tinh gọn theo đúng chuẩn OOP với 1 cặp file `.h` và `.cpp` (ví dụ `MoneyManager`, `TransactionManager`, `WalletManager`, `CategoryManager`, `UserManager`, `FileStorage`, `StatUtils`). Riêng `file_storage_internal.h` được giữ lại tối giản để chứa `struct RecordFields` và khai báo `tachTruong()`, phục vụ trực tiếp cho ca kiểm thử độc lập trong `tests/test_console.cpp` (bước 4.2) mà không làm lộ chi tiết phân tách dòng văn bản ra header công khai `file_storage.h`. Khi sửa giao dịch, kiểm tra ví và loại danh mục trước khi tạo danh mục mới. `TransactionManager::applyToWallet` dùng `getSignedAmount()` của `Income`/`Expense` để cộng hoặc trừ số dư. Bất biến nghiệp vụ: mọi thao tác thêm/sửa/xóa giao dịch đều qua bộ kiểm tra lịch sử (`validateWalletTimeline`), từ chối nếu làm số dư bất kỳ ví nào âm ở bất kỳ mốc thời gian nào.
+Mỗi module nghiệp vụ trong `src/core/` được tổ chức tinh gọn theo đúng chuẩn OOP với 1 cặp file `.h` và `.cpp` (ví dụ `MoneyManager`, `TransactionManager`, `WalletManager`, `CategoryManager`, `UserManager`, `FileStorage`, `utils`). Định dạng tệp dữ liệu dùng `struct RecordFields` và hàm `tachTruong()` ngay trong `file_storage.h/.cpp` phục vụ ca kiểm thử trong `tests/test_console.cpp`. Khi sửa giao dịch, kiểm tra ví và loại danh mục trước khi tạo danh mục mới. `TransactionManager::applyToWallet` dùng `getSignedAmount()` của `Income`/`Expense` để cộng hoặc trừ số dư. Bất biến nghiệp vụ: mọi thao tác thêm/sửa/xóa giao dịch đều qua bộ kiểm tra lịch sử (`validateWalletTimeline`), từ chối nếu làm số dư bất kỳ ví nào âm ở bất kỳ mốc thời gian nào.
 
 Core tự cài `LinkedList` và Selection Sort cho phần cấu trúc dữ liệu của đồ án. Đọc file có tối đa bảy trường nên dùng mảng cố định `RecordFields`, không cần `std::vector`. Thư viện chuẩn còn dùng cho chuỗi, file, thư mục, ngày giờ và định dạng; giao diện cần Qt Widgets, Qt Designer và QPainter. Không thêm thư viện giao diện ngoài Qt.
 
@@ -52,7 +52,7 @@ Core tự cài `LinkedList` và Selection Sort cho phần cấu trúc dữ liệ
 | Tính chất | Vị trí |
 |---|---|
 | Đóng gói | `src/core/model/transaction.h:15` (`private`), `src/core/model/transaction.h:32` (getter/setter) |
-| Kế thừa | `src/core/model/income.h:6`, `src/core/model/expense.h:6` |
+| Kế thừa | `src/core/model/transaction.h:54` (`Income : public Transaction`), `src/core/model/transaction.h:66` (`Expense : public Transaction`) |
 | Đa hình | `src/core/model/transaction.h:30` (destructor ảo), `src/core/model/transaction.h:46` (virtual), `src/core/manager/transaction_manager.h:12` (`Transaction*`) |
 | Trừu tượng | `src/core/model/transaction.h:46`, `src/core/model/transaction.h:50` (hai phương thức thuần ảo) |
 

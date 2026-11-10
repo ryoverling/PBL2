@@ -4,6 +4,7 @@
 #include "../model/expense.h"
 #include <vector>
 #include <algorithm>
+#include <cctype>
 
 void TransactionManager::applyToWallet(const Transaction* tx, Wallet* wallet, bool isReverse) {
     if (!tx || !wallet) return;
@@ -365,4 +366,195 @@ bool TransactionManager::addLoadedTransaction(Transaction* tx) {
     if (!tx) return false;
     transactions.pushBack(tx);
     return true;
+}
+
+void TransactionManager::applyUpdatedFields(Transaction* tx, long long amount, const Date& date,
+                                             const std::string& note, int walletId, int categoryId,
+                                             Wallet* oldWallet, Wallet* newWallet) {
+    applyToWallet(tx, oldWallet, true);
+    tx->setAmount(amount);
+    tx->setDate(date);
+    tx->setNote(note);
+    tx->setWalletId(walletId);
+    tx->setCategoryId(categoryId);
+    applyToWallet(tx, newWallet, false);
+}
+
+bool TransactionManager::updateTransaction(int id, long long newAmount, const Date& newDate,
+                                           const std::string& newNote, int newWalletId, int newCategoryId,
+                                           Wallet* oldWallet, Wallet* newWallet, const Category* newCategory) {
+    if (newAmount <= 0 || !newDate.isValid()) return false;
+    if (!oldWallet || !newWallet || !newCategory) return false;
+    if (newWallet->getId() != newWalletId || newCategory->getId() != newCategoryId) return false;
+
+    Transaction* tx = findById(id);
+    if (!tx || tx->getWalletId() != oldWallet->getId()) return false;
+
+    // Kiểm tra loại giao dịch khớp loại danh mục mới
+    bool isIncomeTx = (tx->getType() == TransactionType::INCOME);
+    bool isIncomeCat = (newCategory->getType() == CategoryType::INCOME);
+    if (isIncomeTx != isIncomeCat) return false;
+
+    // KIỂM TRA BẤT BIẾN NGHIỆP VỤ: SỐ DƯ VÍ LUÔN >= 0 TRÊN MỌI MỐC LỊCH SỬ
+    BalanceValidationResult valRes = validateUpdate(id, newAmount, newDate, newWalletId, oldWallet, newWallet, newCategory);
+    if (!valRes.isValid) return false;
+
+    applyUpdatedFields(tx, newAmount, newDate, newNote, newWalletId, newCategoryId,
+                       oldWallet, newWallet);
+    return true;
+}
+
+bool TransactionManager::deleteTransaction(int id, Wallet* wallet) {
+    Transaction* tx = findById(id);
+    if (!tx) return false;
+    if (!wallet || wallet->getId() != tx->getWalletId()) return false;
+
+    // KIỂM TRA BẤT BIẾN NGHIỆP VỤ: SỐ DƯ VÍ LUÔN >= 0 TRÊN MỌI MỐC LỊCH SỬ
+    BalanceValidationResult valRes = validateDelete(id, wallet);
+    if (!valRes.isValid) return false;
+
+    // 1. Đảo ngược số dư ví đúng chiều (Xóa Chi -> cộng lại; Xóa Thu -> trừ đi)
+    applyToWallet(tx, wallet, true);
+
+    // 2. Xóa khỏi danh sách và giải phóng vùng nhớ
+    return transactions.removeIf([id](Transaction* item) {
+        if (item && item->getId() == id) {
+            delete item;
+            return true;
+        }
+        return false;
+    });
+}
+
+Transaction* TransactionManager::findById(int id) {
+    for (Node<Transaction*>* cur = transactions.getHead(); cur != nullptr; cur = cur->next) {
+        if (cur->data && cur->data->getId() == id) {
+            return cur->data;
+        }
+    }
+    return nullptr;
+}
+
+const Transaction* TransactionManager::findById(int id) const {
+    for (Node<Transaction*>* cur = transactions.getHead(); cur != nullptr; cur = cur->next) {
+        if (cur->data && cur->data->getId() == id) {
+            return cur->data;
+        }
+    }
+    return nullptr;
+}
+
+bool TransactionManager::isWalletUsed(int walletId) const {
+    for (Node<Transaction*>* cur = transactions.getHead(); cur != nullptr; cur = cur->next) {
+        if (cur->data && cur->data->getWalletId() == walletId) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool TransactionManager::isCategoryUsed(int categoryId) const {
+    for (Node<Transaction*>* cur = transactions.getHead(); cur != nullptr; cur = cur->next) {
+        if (cur->data && cur->data->getCategoryId() == categoryId) {
+            return true;
+        }
+    }
+    return false;
+}
+
+size_t TransactionManager::getCount() const {
+    return transactions.getSize();
+}
+
+// Ghi chú về Unicode: std::tolower của C++ chuẩn chỉ hỗ trợ ký tự ASCII (a-z).
+// Với tiếng Việt có dấu, tầng Core hỗ trợ tìm kiếm khớp chính xác hoặc ASCII không dấu;
+// tầng Giao diện (Qt) sẽ sử dụng QString::contains(..., Qt::CaseInsensitive) để tìm kiếm
+// không phân biệt hoa thường toàn diện cho 100% tiếng Việt có dấu.
+static bool containsIgnoreCase(const std::string& source, const std::string& target) {
+    if (target.empty()) return true;
+    if (source.size() < target.size()) return false;
+    std::string sLower = source;
+    std::string tLower = target;
+    for (char& c : sLower) c = std::tolower(static_cast<unsigned char>(c));
+    for (char& c : tLower) c = std::tolower(static_cast<unsigned char>(c));
+    return sLower.find(tLower) != std::string::npos;
+}
+
+static bool matchesFilter(const Transaction* tx, const Date& fromDate, const Date& toDate,
+                          int walletId, int categoryId, int type, const std::string& keyword) {
+    if (!tx) return false;
+    if (fromDate.isValid() && tx->getDate() < fromDate) return false;
+    if (toDate.isValid() && toDate < tx->getDate()) return false;
+    if (walletId > 0 && tx->getWalletId() != walletId) return false;
+    if (categoryId > 0 && tx->getCategoryId() != categoryId) return false;
+    if (type == 1 && tx->getType() != TransactionType::INCOME) return false;
+    if (type == 2 && tx->getType() != TransactionType::EXPENSE) return false;
+    return keyword.empty() || containsIgnoreCase(tx->getNote(), keyword);
+}
+
+// Bộ so sánh tách riêng để thấy rõ chiều sắp xếp khi học Selection Sort.
+static bool ngayTangDan(Transaction* a, Transaction* b) {
+    return a && b && a->getDate() < b->getDate();
+}
+
+static bool ngayGiamDan(Transaction* a, Transaction* b) {
+    return a && b && b->getDate() < a->getDate();
+}
+
+static bool tienTangDan(Transaction* a, Transaction* b) {
+    return a && b && a->getAmount() < b->getAmount();
+}
+
+static bool tienGiamDan(Transaction* a, Transaction* b) {
+    return a && b && b->getAmount() < a->getAmount();
+}
+
+void TransactionManager::getAllTransactions(LinkedList<Transaction*>& outResult) const {
+    filterTransactions(outResult);
+}
+
+void TransactionManager::filterTransactions(LinkedList<Transaction*>& outResult,
+                                            const Date& fromDate,
+                                            const Date& toDate,
+                                            int walletId,
+                                            int categoryId,
+                                            int type,
+                                            const std::string& keyword) const {
+    outResult.clear();
+    for (Node<Transaction*>* cur = transactions.getHead(); cur != nullptr; cur = cur->next) {
+        Transaction* tx = cur->data;
+        if (!matchesFilter(tx, fromDate, toDate, walletId, categoryId, type, keyword)) continue;
+        outResult.pushBack(tx);
+    }
+}
+
+void TransactionManager::sortTransactionsByDate(bool ascending) {
+    sortByDate(transactions, ascending);
+}
+
+void TransactionManager::sortTransactionsByAmount(bool ascending) {
+    sortByAmount(transactions, ascending);
+}
+
+void TransactionManager::sortByDate(LinkedList<Transaction*>& list, bool ascending) {
+    list.selectionSort(ascending ? ngayTangDan : ngayGiamDan);
+}
+
+void TransactionManager::sortByAmount(LinkedList<Transaction*>& list, bool ascending) {
+    list.selectionSort(ascending ? tienTangDan : tienGiamDan);
+}
+
+void TransactionManager::clear() {
+    for (Node<Transaction*>* cur = transactions.getHead(); cur != nullptr; cur = cur->next) {
+        delete cur->data;
+    }
+    transactions.clear();
+}
+
+LinkedList<Transaction*>& TransactionManager::getTransactions() {
+    return transactions;
+}
+
+const LinkedList<Transaction*>& TransactionManager::getTransactions() const {
+    return transactions;
 }

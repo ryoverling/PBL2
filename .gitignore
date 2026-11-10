@@ -1,14 +1,19 @@
 build/
+test_*_data/
+ui_old/
 .vscode/
 *.exe
 *.o
 *.obj
+*.idx
 *.user
 *.autosave
 CMakeCache.txt
 CMakeFiles/
 
 # Runtime data is local to each machine.
+data/*.dat
 data/*.txt
 !data/.gitkeep
 data/previous-gui-runtime/
+.qtcreator/

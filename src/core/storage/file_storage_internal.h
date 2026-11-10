@@ -1,11 +1,5 @@
 #pragma once
 #include <string>
-#include <mutex>
-
-extern std::mutex g_fileStorageMutex;
-
-void ensureParentDir(const std::string& filePath);
-bool commitAtomicFile(const std::string& targetPath, const std::string& content);
 
 // Mỗi dòng dữ liệu hiện có tối đa 7 trường (giao dịch).
 struct RecordFields {
@@ -18,3 +12,4 @@ struct RecordFields {
 };
 
 RecordFields tachTruong(const std::string& line, char delim = '|');
+

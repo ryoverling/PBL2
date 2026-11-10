@@ -1,7 +1,6 @@
 #include "file_storage.h"
 #include "file_storage_internal.h"
-#include "../model/income.h"
-#include "../model/expense.h"
+#include "../model/transaction.h"
 #include <fstream>
 #include <filesystem>
 #include <mutex>

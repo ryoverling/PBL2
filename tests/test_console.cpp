@@ -10,8 +10,6 @@
 #include "model/wallet.h"
 #include "model/category.h"
 #include "model/transaction.h"
-#include "model/income.h"
-#include "model/expense.h"
 #include "storage/file_storage.h"
 #include "storage/file_storage_internal.h"
 #include "manager/wallet_manager.h"

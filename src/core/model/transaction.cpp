@@ -18,3 +18,29 @@ void Transaction::setDate(const Date& newDate) { date = newDate; }
 void Transaction::setNote(const std::string& newNote) { note = newNote; }
 void Transaction::setWalletId(int newWalletId) { walletId = newWalletId; }
 void Transaction::setCategoryId(int newCategoryId) { categoryId = newCategoryId; }
+
+Income::Income() : Transaction() {}
+
+Income::Income(int id, long long amount, const Date& date, const std::string& note, int walletId, int categoryId)
+    : Transaction(id, amount, date, note, walletId, categoryId) {}
+
+TransactionType Income::getType() const {
+    return TransactionType::INCOME;
+}
+
+long long Income::getSignedAmount() const {
+    return getAmount();
+}
+
+Expense::Expense() : Transaction() {}
+
+Expense::Expense(int id, long long amount, const Date& date, const std::string& note, int walletId, int categoryId)
+    : Transaction(id, amount, date, note, walletId, categoryId) {}
+
+TransactionType Expense::getType() const {
+    return TransactionType::EXPENSE;
+}
+
+long long Expense::getSignedAmount() const {
+    return -getAmount();
+}

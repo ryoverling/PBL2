@@ -15,8 +15,6 @@ add_library(core STATIC
     src/core/model/wallet.cpp
     src/core/model/category.cpp
     src/core/model/transaction.cpp
-    src/core/model/income.cpp
-    src/core/model/expense.cpp
     src/core/utils/stat_utils.cpp
     src/core/storage/file_storage.cpp
     src/core/manager/wallet_manager.cpp

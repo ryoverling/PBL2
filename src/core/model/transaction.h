@@ -48,5 +48,28 @@ public:
     // Phương thức thuần ảo trả về số tiền có dấu (+amount cho Thu, -amount cho Chi)
     // để cộng trừ trực tiếp vào số dư ví
     virtual long long getSignedAmount() const = 0;
+};
 
+// Lớp đại diện cho Khoản Thu nhập
+class Income : public Transaction {
+public:
+    Income();
+    Income(int id, long long amount, const Date& date, const std::string& note, int walletId, int categoryId);
+
+    // Ghi đè phương thức thuần ảo
+    TransactionType getType() const override;
+    // Thu nhập mang dấu dương (+)
+    long long getSignedAmount() const override;
+};
+
+// Lớp đại diện cho Khoản Chi tiêu
+class Expense : public Transaction {
+public:
+    Expense();
+    Expense(int id, long long amount, const Date& date, const std::string& note, int walletId, int categoryId);
+
+    // Ghi đè phương thức thuần ảo
+    TransactionType getType() const override;
+    // Chi tiêu mang dấu âm (-)
+    long long getSignedAmount() const override;
 };

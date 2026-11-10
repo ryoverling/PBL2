@@ -1,7 +1,5 @@
 #include "transaction_manager.h"
 #include "../utils/format_utils.h"
-#include "../model/income.h"
-#include "../model/expense.h"
 #include <vector>
 #include <algorithm>
 #include <cctype>

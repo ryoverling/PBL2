@@ -2,8 +2,7 @@
 #include "ui_transaction_dialog.h"
 #include "../gui_helpers.h"
 #include "../../core/app/money_manager.h"
-#include "../../core/model/income.h"
-#include "../../core/model/expense.h"
+#include "../../core/model/transaction.h"
 #include <QMessageBox>
 
 void TransactionDialog::on_btnSave_clicked() {

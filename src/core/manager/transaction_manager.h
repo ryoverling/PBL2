@@ -97,9 +97,6 @@ public:
     // Lấy số lượng giao dịch
     size_t getCount() const;
 
-    // Lấy toàn bộ giao dịch vào danh sách tham chiếu outResult (dùng để sắp xếp hiển thị mà không đổi thứ tự gốc)
-    void getAllTransactions(LinkedList<Transaction*>& outResult) const;
-
     // LỌC GIAO DỊCH:
     // Đẩy các con trỏ THAM CHIẾU (không sao chép đối tượng) vào outResult.
     // LƯU Ý QUAN TRỌNG: Danh sách outResult KHÔNG sở hữu bộ nhớ và TUYỆT ĐỐI KHÔNG ĐƯỢC delete các phần tử!

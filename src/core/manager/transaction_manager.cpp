@@ -507,10 +507,6 @@ static bool tienGiamDan(Transaction* a, Transaction* b) {
     return a && b && b->getAmount() < a->getAmount();
 }
 
-void TransactionManager::getAllTransactions(LinkedList<Transaction*>& outResult) const {
-    filterTransactions(outResult);
-}
-
 void TransactionManager::filterTransactions(LinkedList<Transaction*>& outResult,
                                             const Date& fromDate,
                                             const Date& toDate,

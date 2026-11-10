@@ -98,12 +98,6 @@ bool CategoryManager::updateCategory(int id, const std::string& newName, Categor
     return true;
 }
 
-bool CategoryManager::updateCategoryName(int id, const std::string& newName) {
-    Category* c = findById(id);
-    if (!c) return false;
-    return updateCategory(id, newName, c->getType(), false);
-}
-
 bool CategoryManager::deleteCategory(int id, bool isUsed) {
     // Nếu danh mục đang được sử dụng ở giao dịch thì từ chối xóa
     if (isUsed) return false;

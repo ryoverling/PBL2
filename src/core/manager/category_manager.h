@@ -36,9 +36,6 @@ public:
     // Cập nhật tên và loại danh mục
     bool updateCategory(int id, const std::string& newName, CategoryType newType, bool isUsed = false);
 
-    // Đổi tên danh mục
-    bool updateCategoryName(int id, const std::string& newName);
-
     // Xóa danh mục: nếu isUsed == true thì từ chối xóa và trả về false
     bool deleteCategory(int id, bool isUsed);
 

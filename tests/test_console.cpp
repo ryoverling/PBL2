@@ -210,7 +210,7 @@ void testStep43() {
     assert(cId1 == 1);
     assert(cm.addCategory("An uong", CategoryType::EXPENSE, &cId2) == true);
     assert(cId2 == 2);
-    assert(cm.updateCategoryName(2, "An uong ngoai quan") == true);
+    assert(cm.updateCategory(2, "An uong ngoai quan", CategoryType::EXPENSE) == true);
     std::cout << "   - Danh muc 2 sau khi sua: " << cm.findById(2)->getName() << "\n";
 
     // 4. CategoryManager that bai (chan loi)
@@ -497,7 +497,7 @@ void testStep45() {
 
     // 2.7 Sap xep tren ban sao tham chieu (getAllTransactions) de giu nguyen thu tu goc
     LinkedList<Transaction*> viewCopy;
-    tm.getAllTransactions(viewCopy);
+    tm.filterTransactions(viewCopy);
     TransactionManager::sortByAmount(viewCopy, true);
     assert(viewCopy.getHead()->data->getAmount() == 45000);
     assert(tm.getTransactions().getHead()->data->getId() == 1); // Thu tu goc van la GD 1 dau tien!

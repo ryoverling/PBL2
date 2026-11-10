@@ -1,0 +1,685 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ui version="4.0">
+ <class>TransactionPage</class>
+ <widget class="QWidget" name="TransactionPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>900</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="pageLayout">
+   <property name="leftMargin">
+    <number>20</number>
+   </property>
+   <property name="topMargin">
+    <number>20</number>
+   </property>
+   <property name="rightMargin">
+    <number>20</number>
+   </property>
+   <property name="bottomMargin">
+    <number>20</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" name="headerLayout">
+     <item>
+      <layout class="QVBoxLayout" name="headerTitleLayout">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="lblPageTitle">
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>16</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>💳 Giao dịch</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lblPageSubtitle">
+         <property name="text">
+          <string>Theo dõi và quản lý các khoản thu chi của bạn</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="spacerHeader">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnAdd">
+       <property name="role" stdset="0">
+        <string notr="true">primary</string>
+       </property>
+       <property name="text">
+        <string>+ Thêm giao dịch</string>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnEdit">
+       <property name="role" stdset="0">
+        <string notr="true">secondary</string>
+       </property>
+       <property name="text">
+        <string>Sửa</string>
+       </property>
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnDelete">
+       <property name="role" stdset="0">
+        <string notr="true">danger</string>
+       </property>
+       <property name="text">
+        <string>Xóa</string>
+       </property>
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QFrame" name="frmFilter">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="property" stdset="0">
+      <string notr="true">class</string>
+      <string notr="true">card</string>
+     </property>
+     <layout class="QVBoxLayout" name="filterCardLayout">
+      <item>
+       <layout class="QHBoxLayout" name="filterLayout">
+        <item>
+         <widget class="QComboBox" name="cboType">
+          <item>
+           <property name="text">
+            <string>Tất cả loại</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Thu nhập</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Chi tiêu</string>
+           </property>
+          </item>
+          <property name="minimumSize">
+           <size>
+            <width>115</width>
+            <height>38</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="cboWallet">
+          <item>
+           <property name="text">
+            <string>Tất cả ví</string>
+           </property>
+          </item>
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>38</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="cboCategory">
+          <item>
+           <property name="text">
+            <string>Tất cả danh mục</string>
+           </property>
+          </item>
+          <property name="minimumSize">
+           <size>
+            <width>140</width>
+            <height>38</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="edtKeyword">
+          <property name="minimumSize">
+           <size>
+            <width>180</width>
+            <height>38</height>
+           </size>
+          </property>
+          <property name="placeholderText">
+           <string>🔍 Tìm theo ghi chú...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnResetFilter">
+          <property name="role" stdset="0">
+           <string notr="true">secondary</string>
+          </property>
+          <property name="text">
+           <string>Đặt lại</string>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>78</width>
+            <height>38</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>8</number>
+        </property>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="dateFilterLayout">
+        <item>
+         <widget class="QPushButton" name="btnQuickAll">
+          <property name="text">
+           <string>Tất cả</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <property name="role" stdset="0">
+           <string>chip</string>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>78</width>
+            <height>38</height>
+           </size>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">quickFilterGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnQuickThisMonth">
+          <property name="text">
+           <string>Tháng này</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="role" stdset="0">
+           <string>chip</string>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>90</width>
+            <height>38</height>
+           </size>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">quickFilterGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnQuickLastMonth">
+          <property name="text">
+           <string>Tháng trước</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="role" stdset="0">
+           <string>chip</string>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>96</width>
+            <height>38</height>
+           </size>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">quickFilterGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnQuickSevenDays">
+          <property name="text">
+           <string>7 ngày qua</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="role" stdset="0">
+           <string>chip</string>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>92</width>
+            <height>38</height>
+           </size>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">quickFilterGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="chkDateFilter">
+          <property name="text">
+           <string>Lọc theo ngày</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel">
+          <property name="text">
+           <string>Từ ngày</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="DatePickerField" name="dteFrom">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          
+          
+          
+          <property name="minimumSize">
+           <size>
+            <width>118</width>
+            <height>38</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel">
+          <property name="text">
+           <string>Đến ngày</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="DatePickerField" name="dteTo">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          
+          
+          
+          <property name="minimumSize">
+           <size>
+            <width>118</width>
+            <height>38</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <property name="spacing">
+         <number>8</number>
+        </property>
+       </layout>
+      </item>
+      <property name="leftMargin">
+       <number>14</number>
+      </property>
+      <property name="rightMargin">
+       <number>14</number>
+      </property>
+      <property name="topMargin">
+       <number>14</number>
+      </property>
+      <property name="bottomMargin">
+       <number>14</number>
+      </property>
+      <property name="spacing">
+       <number>8</number>
+      </property>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="summaryCardsLayout">
+     <property name="spacing">
+      <number>14</number>
+     </property>
+     <item>
+      <widget class="QFrame" name="cardFilteredIncome">
+       <property name="property" stdset="0">
+        <string notr="true">class</string>
+        <string notr="true">card</string>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>72</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>76</height>
+        </size>
+       </property>
+       <layout class="QHBoxLayout" name="cardFilteredIncomeLayout">
+        <property name="leftMargin">
+         <number>14</number>
+        </property>
+        <property name="rightMargin">
+         <number>14</number>
+        </property>
+        <property name="topMargin">
+         <number>14</number>
+        </property>
+        <property name="bottomMargin">
+         <number>14</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="lblFilteredIncomeTitle">
+          <property name="text">
+           <string>Tổng thu</string>
+          </property>
+          <property name="property" stdset="0">
+           <string notr="true">class</string>
+           <string notr="true">card-title</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="lblFilteredIncome">
+          <property name="text">
+           <string>0</string>
+          </property>
+          <property name="property" stdset="0">
+           <string notr="true">class</string>
+           <string notr="true">amount-income</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <property name="spacing">
+         <number>8</number>
+        </property>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QFrame" name="cardFilteredExpense">
+       <property name="property" stdset="0">
+        <string notr="true">class</string>
+        <string notr="true">card</string>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>72</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>76</height>
+        </size>
+       </property>
+       <layout class="QHBoxLayout" name="cardFilteredExpenseLayout">
+        <property name="leftMargin">
+         <number>14</number>
+        </property>
+        <property name="rightMargin">
+         <number>14</number>
+        </property>
+        <property name="topMargin">
+         <number>14</number>
+        </property>
+        <property name="bottomMargin">
+         <number>14</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="lblFilteredExpenseTitle">
+          <property name="text">
+           <string>Tổng chi</string>
+          </property>
+          <property name="property" stdset="0">
+           <string notr="true">class</string>
+           <string notr="true">card-title</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="lblFilteredExpense">
+          <property name="text">
+           <string>0</string>
+          </property>
+          <property name="property" stdset="0">
+           <string notr="true">class</string>
+           <string notr="true">amount-expense</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <property name="spacing">
+         <number>8</number>
+        </property>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QFrame" name="cardFilteredCount">
+       <property name="property" stdset="0">
+        <string notr="true">class</string>
+        <string notr="true">card</string>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>72</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>76</height>
+        </size>
+       </property>
+       <layout class="QHBoxLayout" name="cardFilteredCountLayout">
+        <property name="leftMargin">
+         <number>14</number>
+        </property>
+        <property name="rightMargin">
+         <number>14</number>
+        </property>
+        <property name="topMargin">
+         <number>14</number>
+        </property>
+        <property name="bottomMargin">
+         <number>14</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="lblFilteredCountTitle">
+          <property name="text">
+           <string>Số giao dịch</string>
+          </property>
+          <property name="property" stdset="0">
+           <string notr="true">class</string>
+           <string notr="true">card-title</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="lblFilteredCount">
+          <property name="text">
+           <string>0</string>
+          </property>
+          <property name="property" stdset="0">
+           <string notr="true">class</string>
+           <string notr="true">amount-count</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <property name="spacing">
+         <number>8</number>
+        </property>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="tblTransactions">
+     <attribute name="verticalHeaderDefaultSectionSize">
+      <number>42</number>
+     </attribute>
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
+     <property name="columnCount">
+      <number>6</number>
+     </property>
+     <column>
+      <property name="text">
+       <string>Loại</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Số tiền</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Ngày</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Ví</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Danh mục</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Ghi chú</string>
+      </property>
+     </column>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::SingleSelection</enum>
+     </property>
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <property name="spacing">
+    <number>14</number>
+   </property>
+  </layout>
+ </widget>
+ <resources />
+ <connections />
+ <buttongroups>
+  <buttongroup name="quickFilterGroup">
+   <property name="exclusive">
+    <bool>true</bool>
+   </property>
+  </buttongroup>
+ </buttongroups>
+ <customwidgets>
+  <customwidget>
+   <class>DatePickerField</class>
+   <extends>QLineEdit</extends>
+   <header>widgets/date_picker_field.h</header>
+  </customwidget>
+ </customwidgets>
+</ui>

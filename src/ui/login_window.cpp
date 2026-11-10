@@ -12,8 +12,8 @@ LoginWindow::LoginWindow(MoneyManager& mm, const std::string& dataDir, QWidget *
 
     // Hinh minh hoa vi tien & icons giao dien dang nhap
     ui->lblWelcomeArt->setPixmap(UiHelper::createLoginIllustration(200, 120));
-    ui->edtUsername->addAction(UiHelper::createUserIcon(QColor("#64748B")), QLineEdit::LeadingPosition);
-    ui->edtPassword->addAction(UiHelper::createLockIcon(QColor("#64748B")), QLineEdit::LeadingPosition);
+    ui->edtUsername->addAction(UiHelper::createUserIcon(QColor("#5B6B8C")), QLineEdit::LeadingPosition);
+    ui->edtPassword->addAction(UiHelper::createLockIcon(QColor("#5B6B8C")), QLineEdit::LeadingPosition);
     ui->btnLogin->setIcon(UiHelper::createRightArrowIcon(Qt::white));
     ui->btnRegister->setIcon(UiHelper::createKeyIcon(QColor("#1E6FFF")));
 }

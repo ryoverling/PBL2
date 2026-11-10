@@ -54,10 +54,10 @@ QString formatDate(const Date& date) {
 }
 
 static const char* kMsgBoxStyle =
-    "QMessageBox { background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; } "
-    "QLabel { color: #0F172A; font-size: 14px; min-width: 260px; } "
+    "QMessageBox { background-color: #FFFFFF; border: 1px solid #DCE8FA; border-radius: 14px; } "
+    "QLabel { color: #0B2A6B; font-size: 14px; min-width: 260px; } "
     "QPushButton { background-color: #1E6FFF; color: #FFFFFF; border: none; "
-    "border-radius: 8px; font-weight: 600; min-height: 36px; min-width: 80px; padding: 0 16px; } "
+    "border-radius: 10px; font-weight: 600; min-height: 38px; min-width: 80px; padding: 0 16px; } "
     "QPushButton:hover { background-color: #155EEF; }";
 
 void showError(QWidget* parent, const QString& message) {
@@ -87,14 +87,14 @@ bool askConfirmation(QWidget* parent, const QString& title, const QString& messa
     QPushButton* btnNo = box.addButton("Hủy", QMessageBox::NoRole);
     box.setDefaultButton(btnNo);
     box.setStyleSheet(
-        "QMessageBox { background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; } "
-        "QLabel { color: #0F172A; font-size: 14px; min-width: 280px; } "
+        "QMessageBox { background-color: #FFFFFF; border: 1px solid #DCE8FA; border-radius: 14px; } "
+        "QLabel { color: #0B2A6B; font-size: 14px; min-width: 280px; } "
         "QPushButton[role=\"yes\"] { background-color: #1E6FFF; color: #FFFFFF; border: none; "
-        "border-radius: 8px; font-weight: 600; min-height: 36px; min-width: 80px; padding: 0 16px; } "
+        "border-radius: 10px; font-weight: 600; min-height: 38px; min-width: 80px; padding: 0 16px; } "
         "QPushButton[role=\"yes\"]:hover { background-color: #155EEF; } "
-        "QPushButton[role=\"no\"] { background-color: #F1F5F9; color: #475569; border: 1px solid #E2E8F0; "
-        "border-radius: 8px; font-weight: 600; min-height: 36px; min-width: 80px; padding: 0 16px; } "
-        "QPushButton[role=\"no\"]:hover { background-color: #E2E8F0; }"
+        "QPushButton[role=\"no\"] { background-color: #FFFFFF; color: #5B6B8C; border: 1.5px solid #D5E1F5; "
+        "border-radius: 10px; font-weight: 600; min-height: 38px; min-width: 80px; padding: 0 16px; } "
+        "QPushButton[role=\"no\"]:hover { background-color: #F8FAFD; border-color: #CBD5E1; }"
     );
     btnYes->setProperty("role", "yes");
     btnNo->setProperty("role", "no");
@@ -106,12 +106,26 @@ void setupWindowTheme(QWidget* widget) {
 #ifdef Q_OS_WIN
     if (!widget) return;
     HWND hwnd = reinterpret_cast<HWND>(widget->winId());
-    if (hwnd) {
-        // Mau tieu de he thong Windows dong bo Primary #1E6FFF
-        COLORREF captionColor = RGB(30, 111, 255);
-        COLORREF textColor = RGB(255, 255, 255);
-        DwmSetWindowAttribute(hwnd, DWMWA_CAPTION_COLOR, &captionColor, sizeof(captionColor));
-        DwmSetWindowAttribute(hwnd, DWMWA_TEXT_COLOR, &textColor, sizeof(textColor));
+    if (!hwnd) return;
+
+    // Boc an toan bang cach kiem tra runtime dwmapi.dll (tuong thich Windows 10 & 11)
+    HMODULE dwmapi = GetModuleHandleW(L"dwmapi.dll");
+    if (!dwmapi) {
+        dwmapi = LoadLibraryW(L"dwmapi.dll");
+    }
+    if (dwmapi) {
+        typedef HRESULT (WINAPI *DwmSetWindowAttrFunc)(HWND, DWORD, LPCVOID, DWORD);
+        auto pDwmSetWindowAttribute = reinterpret_cast<DwmSetWindowAttrFunc>(
+            GetProcAddress(dwmapi, "DwmSetWindowAttribute")
+        );
+        if (pDwmSetWindowAttribute) {
+            // DWMWA_CAPTION_COLOR (35) va DWMWA_TEXT_COLOR (36) chi hoat dong tren Win 11 (Build 22000+)
+            // Tren Windows 10, Windows chi tra ve E_INVALIDARG ma khong crash hay anh huong ung dung
+            COLORREF captionColor = RGB(30, 111, 255); // #1E6FFF
+            COLORREF textColor = RGB(255, 255, 255);
+            pDwmSetWindowAttribute(hwnd, DWMWA_CAPTION_COLOR, &captionColor, sizeof(captionColor));
+            pDwmSetWindowAttribute(hwnd, DWMWA_TEXT_COLOR, &textColor, sizeof(textColor));
+        }
     }
 #else
     Q_UNUSED(widget);
@@ -123,7 +137,7 @@ void applyCardShadow(QWidget* target, int blurRadius, int offsetY, qreal opacity
     auto* shadow = new QGraphicsDropShadowEffect(target);
     shadow->setBlurRadius(blurRadius);
     shadow->setOffset(0, offsetY);
-    shadow->setColor(QColor(15, 23, 42, static_cast<int>(opacity * 255)));
+    shadow->setColor(QColor(11, 42, 107, static_cast<int>(opacity * 255)));
     target->setGraphicsEffect(shadow);
 }
 

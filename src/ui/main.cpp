@@ -24,12 +24,12 @@ static void initStyle(QApplication& app) {
     appFont.setStyleHint(QFont::SansSerif);
     app.setFont(appFont);
 
-    // Chuan hoa bang mau nen va mau nhan dong bo he thong (#1E6FFF, #0F172A)
+    // Chuan hoa bang mau nen va mau nhan dong bo he thong (#1E6FFF, #0B2A6B)
     QPalette palette = app.palette();
-    palette.setColor(QPalette::Window, QColor("#F0F5FD"));
-    palette.setColor(QPalette::WindowText, QColor("#0F172A"));
+    palette.setColor(QPalette::Window, QColor("#EAF2FF"));
+    palette.setColor(QPalette::WindowText, QColor("#0B2A6B"));
     palette.setColor(QPalette::Base, QColor("#FFFFFF"));
-    palette.setColor(QPalette::AlternateBase, QColor("#F8FAFC"));
+    palette.setColor(QPalette::AlternateBase, QColor("#F8FAFD"));
     palette.setColor(QPalette::Highlight, QColor("#1E6FFF"));
     palette.setColor(QPalette::HighlightedText, QColor("#FFFFFF"));
     app.setPalette(palette);

@@ -1,42 +1,118 @@
-/* MoneyManager Design System (C++17 Qt 6 Widgets) */
-/* Bang mau chuan PBL2: */
-/* Primary: #1E6FFF | Navy: #0B2A6B | Thu: #0E8F4F/#19B26B | Chi: #E0173D/#FF4D6A */
-/* Nen: #EAF2FF -> #F8FBFF | Text: #0F172A | Muted: #64748B | Border: #E2E8F0 */
+/* ==========================================================================
+   MONEYMANAGER DESIGN TOKENS (C++17 Qt 6 Widgets)
+   Bang mau & Thong so he thong chuan PBL2 theo prompt goc:
+   - Mau chinh (Primary):     #1E6FFF (hover: #155EEF, pressed: #0B43AB)
+   - Mau Navy (Tieu de/Text): #0B2A6B (chu chinh, tieu de card, brand)
+   - Mau chu phu (Muted):     #5B6B8C (chu phu, nhan mo ta, placeholder)
+   - Khoan Thu (Income):      #0E8F4F / #19B26B (nen: #EAFBF3, border: #B7EBCE)
+   - Khoan Chi (Expense):     #E0173D / #FF4D6A (nen: #FFF0F3, border: #FFCCD5)
+   - Can bang / Vang:         #F59E0B (amber accent)
+   - Nen cua so & Content:    qlineargradient(#EAF2FF -> #F8FBFF)
+   - Card container:          #FFFFFF (vien: #DCE8FA, bo goc: 18px)
+   - Button & Input:          #FFFFFF (vien: #D5E1F5, bo goc: 12px, cao: 42px)
+   - Chip / Badge:            bo goc dang pill (20px)
+   - Bang du lieu:            Header #F1F6FF, hang cao 48px, hover #F8FAFD
+   ========================================================================== */
 
+/* 1. Reset & Global Typography */
 QWidget {
     font-family: "Segoe UI", "Be Vietnam Pro", "Inter", sans-serif;
     font-size: 14px;
-    color: #0F172A;
+    color: #0B2A6B;
 }
 
 QMainWindow, #contentFrame, #DashboardPage, #TransactionPage, #WalletPage, #StatisticsPage, #SettingsPage {
-    background-color: #F0F5FD;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #EAF2FF, stop:1 #F8FBFF);
 }
 
 QDialog {
     background-color: #FFFFFF;
 }
 
-QDialog QLineEdit, QDialog QComboBox, QDialog QDateEdit {
-    min-height: 42px;
-    max-height: 44px;
-    border-radius: 10px;
-    padding: 2px 12px;
-    border: 1px solid #E2E8F0;
+/* 2. Tooltip Nen Tang */
+QToolTip {
+    background-color: #0B2A6B;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+/* 3. ScrollBar Mong Chuan Modern */
+QScrollBar:vertical {
+    background: transparent;
+    width: 7px;
+    margin: 4px 1px 4px 1px;
+}
+
+QScrollBar::handle:vertical {
+    background: #CBD5E1;
+    min-height: 24px;
+    border-radius: 3px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #94A3B8;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical,
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+    background: transparent;
+    height: 0px;
+}
+
+QScrollBar:horizontal {
+    background: transparent;
+    height: 7px;
+    margin: 1px 4px 1px 4px;
+}
+
+QScrollBar::handle:horizontal {
+    background: #CBD5E1;
+    min-width: 24px;
+    border-radius: 3px;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background: #94A3B8;
+}
+
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal,
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+    background: transparent;
+    width: 0px;
+}
+
+/* 4. Checkbox Nen Tang */
+QCheckBox {
+    color: #0B2A6B;
+    spacing: 8px;
+    font-size: 13px;
+}
+
+QCheckBox::indicator {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid #D5E1F5;
+    border-radius: 5px;
     background-color: #FFFFFF;
-    color: #0F172A;
 }
 
-QDialog QDateEdit {
-    padding-right: 28px;
-    min-width: 130px;
+QCheckBox::indicator:hover {
+    border-color: #1E6FFF;
 }
 
-/* Header & Navigation */
+QCheckBox::indicator:checked {
+    background-color: #1E6FFF;
+    border-color: #1E6FFF;
+}
+
+/* 5. Header Bar & Navigation */
 #headerFrame {
     background-color: #FFFFFF;
     border: none;
-    border-bottom: 1px solid #E2E8F0;
+    border-bottom: 1px solid #DCE8FA;
 }
 
 #lblAppTitle {
@@ -45,40 +121,39 @@ QDialog QDateEdit {
     font-weight: 700;
 }
 
-/* Nav Tabs */
 QPushButton[role="nav"] {
     background-color: transparent;
     border: none;
     font-size: 14px;
     font-weight: 500;
-    color: #64748B;
+    color: #5B6B8C;
     padding: 0 16px;
-    border-radius: 10px;
-    min-height: 40px;
+    border-radius: 12px;
+    min-height: 42px;
 }
 
 QPushButton[role="nav"]:hover {
-    background-color: #F1F5F9;
-    color: #0F172A;
+    background-color: #F1F6FF;
+    color: #0B2A6B;
 }
 
 QPushButton[role="nav"]:checked {
     background-color: #E0EDFF;
     color: #1E6FFF;
     font-weight: 700;
-    border-radius: 10px;
+    border-radius: 12px;
 }
 
-/* Login Window */
+/* 6. Login Window */
 #LoginWindow {
     background-color: #FFFFFF;
 }
 
 #LoginWindow #frmWelcome {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #EAF2FF, stop:1 #DDEBFF);
-    border-top-left-radius: 14px;
-    border-bottom-left-radius: 14px;
-    border-right: 1px solid #D7E4F4;
+    border-top-left-radius: 18px;
+    border-bottom-left-radius: 18px;
+    border-right: 1px solid #DCE8FA;
 }
 
 #LoginWindow #lblWelcomeBrand {
@@ -94,7 +169,7 @@ QPushButton[role="nav"]:checked {
 }
 
 #LoginWindow #lblWelcomeDescription {
-    color: #64748B;
+    color: #5B6B8C;
     font-size: 13px;
 }
 
@@ -105,35 +180,35 @@ QPushButton[role="nav"]:checked {
 
 #LoginWindow #frmLogin {
     background-color: #FFFFFF;
-    border-top-right-radius: 14px;
-    border-bottom-right-radius: 14px;
+    border-top-right-radius: 18px;
+    border-bottom-right-radius: 18px;
 }
 
 #LoginWindow #lblLoginHeading {
-    color: #0F172A;
+    color: #0B2A6B;
     font-size: 24px;
     font-weight: 700;
 }
 
 #LoginWindow #lblLoginDescription {
-    color: #64748B;
+    color: #5B6B8C;
     font-size: 13px;
 }
 
 #LoginWindow #lblUsername, #LoginWindow #lblPassword {
-    color: #0F172A;
+    color: #0B2A6B;
     font-size: 13px;
     font-weight: 600;
 }
 
 #LoginWindow QLineEdit {
     min-height: 42px;
-    border: 1px solid #E2E8F0;
-    border-radius: 10px;
+    border: 1px solid #D5E1F5;
+    border-radius: 12px;
     padding-left: 10px;
     background-color: #FFFFFF;
     font-size: 13px;
-    color: #0F172A;
+    color: #0B2A6B;
 }
 
 #LoginWindow QLineEdit:focus {
@@ -151,7 +226,7 @@ QPushButton[role="nav"]:checked {
     color: #FFFFFF;
     font-size: 14px;
     font-weight: 600;
-    border-radius: 10px;
+    border-radius: 12px;
     min-height: 44px;
     border: none;
 }
@@ -161,12 +236,12 @@ QPushButton[role="nav"]:checked {
 }
 
 #LoginWindow #btnRegister {
-    background-color: #F0F5FD;
-    border: 1px solid #D7E4F4;
+    background-color: #F1F6FF;
+    border: 1px solid #D5E1F5;
     color: #1E6FFF;
     font-size: 13px;
     font-weight: 600;
-    border-radius: 10px;
+    border-radius: 12px;
     min-height: 40px;
 }
 
@@ -175,32 +250,32 @@ QPushButton[role="nav"]:checked {
     border-color: #1E6FFF;
 }
 
-/* Headings */
+/* 7. Typography Headings */
 QLabel#lblPageTitle, QLabel#lblDialogTitle {
-    color: #0F172A;
+    color: #0B2A6B;
     font-size: 26px;
     font-weight: 700;
 }
 
 QLabel#lblPageSubtitle {
-    color: #64748B;
+    color: #5B6B8C;
     font-size: 14px;
 }
 
-/* Cards & Containers */
+/* 8. Cards & Containers (Bo goc 18px) */
 QFrame[property="card"], #frmFilter, #frmChart, #frmDonut, #frmCalendarCard {
     background-color: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 14px;
+    border: 1px solid #DCE8FA;
+    border-radius: 18px;
 }
 
 QLabel[property="card-title"] {
-    color: #64748B;
+    color: #5B6B8C;
     font-size: 14px;
     font-weight: 600;
 }
 
-/* Financial KPIs */
+/* 9. Financial KPIs */
 QLabel[property="amount-income"], #lblFilteredIncome, #lblTotalIncome, #lblDayIncome {
     color: #0E8F4F;
     font-size: 26px;
@@ -222,16 +297,19 @@ QLabel[property="amount-balance"], #lblTotalBalance, #lblNetTotal, #lblDayNet {
 #cardIncome {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #EAFBF3, stop:1 #FFFFFF);
     border: 1px solid #B7EBCE;
+    border-radius: 18px;
 }
 
 #cardExpense {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF0F3, stop:1 #FFFFFF);
     border: 1px solid #FFCCD5;
+    border-radius: 18px;
 }
 
 #cardNet {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #EBF3FF, stop:1 #FFFFFF);
     border: 1px solid #CFE2FF;
+    border-radius: 18px;
 }
 
 #cardNet[netState="positive"] {
@@ -259,21 +337,25 @@ QLabel[property="amount-balance"], #lblTotalBalance, #lblNetTotal, #lblDayNet {
 #cardBalance {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #EBF3FF, stop:1 #FFFFFF);
     border: 1px solid #CFE2FF;
+    border-radius: 18px;
 }
 
 #cardFilteredIncome {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #EAFBF3, stop:1 #FFFFFF);
     border: 1px solid #B7EBCE;
+    border-radius: 18px;
 }
 
 #cardFilteredExpense {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF0F3, stop:1 #FFFFFF);
     border: 1px solid #FFCCD5;
+    border-radius: 18px;
 }
 
 #cardFilteredCount {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #EBF3FF, stop:1 #FFFFFF);
     border: 1px solid #CFE2FF;
+    border-radius: 18px;
 }
 
 #lblFilteredCount {
@@ -282,38 +364,38 @@ QLabel[property="amount-balance"], #lblTotalBalance, #lblNetTotal, #lblDayNet {
     font-weight: 700;
 }
 
-/* Buttons */
+/* 10. Buttons Variants (Bo goc 12px, cao 42px) */
 QPushButton {
-    min-height: 40px;
+    min-height: 42px;
     padding: 0 18px;
-    border: 1px solid #E2E8F0;
-    border-radius: 10px;
+    border: 1px solid #D5E1F5;
+    border-radius: 12px;
     background-color: #FFFFFF;
-    color: #0F172A;
+    color: #0B2A6B;
     font-size: 14px;
     font-weight: 500;
 }
 
 QPushButton:hover {
-    background-color: #F8FAFC;
-    border-color: #CBD5E1;
+    background-color: #F8FAFD;
+    border-color: #BACFE8;
 }
 
 QPushButton:pressed {
-    background-color: #F1F5F9;
+    background-color: #EEF4FC;
 }
 
 QPushButton:focus {
     border-color: #1E6FFF;
 }
 
-/* Tier 1: Primary Button */
+/* Primary Button */
 QPushButton[role="primary"] {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #1E6FFF, stop:1 #155EEF);
     border: 1px solid #1E6FFF;
     color: #FFFFFF;
     font-weight: 600;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 0 20px;
 }
 
@@ -327,32 +409,32 @@ QPushButton[role="primary"]:pressed {
     border-color: #0B43AB;
 }
 
-/* Tier 2: Secondary Button */
+/* Secondary Button */
 QPushButton[role="secondary"] {
     background-color: #FFFFFF;
-    border: 1.5px solid #E2E8F0;
-    color: #0F172A;
+    border: 1.5px solid #D5E1F5;
+    color: #0B2A6B;
     font-weight: 600;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 0 18px;
 }
 
 QPushButton[role="secondary"]:hover {
-    background-color: #F8FAFC;
-    border-color: #CBD5E1;
+    background-color: #F8FAFD;
+    border-color: #BACFE8;
 }
 
 QPushButton[role="secondary"]:pressed {
-    background-color: #F1F5F9;
+    background-color: #EEF4FC;
 }
 
-/* Tier 3: Danger Button */
+/* Danger Button */
 QPushButton[role="danger"] {
     background-color: #FFFFFF;
-    border: 1.5px solid #FFD1DA;
+    border: 1.5px solid #FFCCD5;
     color: #E0173D;
     font-weight: 600;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 0 18px;
 }
 
@@ -365,14 +447,14 @@ QPushButton[role="danger"]:pressed {
     background-color: #FFE2E6;
 }
 
-/* Tier 4: Ghost / Text Button */
+/* Ghost Button */
 QPushButton[role="ghost"] {
     background-color: transparent;
     border: none;
     color: #1E6FFF;
     font-weight: 600;
     padding: 0 12px;
-    border-radius: 8px;
+    border-radius: 10px;
 }
 
 QPushButton[role="ghost"]:hover {
@@ -380,22 +462,22 @@ QPushButton[role="ghost"]:hover {
     color: #155EEF;
 }
 
-/* Filter Chip Buttons */
+/* Filter Chip Buttons (Pill bo goc 20px) */
 QPushButton[role="chip"] {
     background-color: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    color: #64748B;
+    border: 1px solid #D5E1F5;
+    color: #5B6B8C;
     font-size: 13px;
     font-weight: 500;
-    padding: 0 14px;
+    padding: 0 16px;
     min-height: 36px;
-    border-radius: 8px;
+    border-radius: 18px;
 }
 
 QPushButton[role="chip"]:hover {
-    background-color: #F8FAFC;
+    background-color: #F8FAFD;
     color: #1E6FFF;
-    border-color: #CBD5E1;
+    border-color: #BACFE8;
 }
 
 QPushButton[role="chip"]:checked {
@@ -406,19 +488,19 @@ QPushButton[role="chip"]:checked {
 }
 
 QPushButton:disabled {
-    background-color: #F8FAFC;
-    border: 1px solid #E2E8F0;
+    background-color: #F8FAFD;
+    border: 1px solid #D5E1F5;
     color: #94A3B8;
 }
 
-/* Inputs & Form Controls */
+/* 11. Form Inputs & Combobox (Bo goc 12px, cao 42px) */
 QLineEdit, QComboBox, QDateEdit, QSpinBox {
-    min-height: 40px;
+    min-height: 42px;
     background-color: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 10px;
+    border: 1px solid #D5E1F5;
+    border-radius: 12px;
     padding: 2px 12px;
-    color: #0F172A;
+    color: #0B2A6B;
 }
 
 QLineEdit:focus, QComboBox:focus, QDateEdit:focus, QSpinBox:focus {
@@ -426,14 +508,41 @@ QLineEdit:focus, QComboBox:focus, QDateEdit:focus, QSpinBox:focus {
 }
 
 QLineEdit:disabled, QComboBox:disabled, QDateEdit:disabled, QSpinBox:disabled {
-    background-color: #F8FAFC;
-    border: 1px solid #E2E8F0;
+    background-color: #F8FAFD;
+    border: 1px solid #D5E1F5;
     color: #94A3B8;
 }
 
+QComboBox {
+    padding-right: 30px;
+}
+
 QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 28px;
     border: none;
-    width: 26px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #FFFFFF;
+    border: 1px solid #DCE8FA;
+    border-radius: 12px;
+    padding: 6px;
+    selection-background-color: #E0EDFF;
+    selection-color: #1E6FFF;
+    outline: none;
+}
+
+QComboBox QAbstractItemView::item {
+    min-height: 36px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    color: #0B2A6B;
+}
+
+QComboBox QAbstractItemView::item:hover {
+    background-color: #F8FAFD;
 }
 
 QDateEdit::drop-down {
@@ -453,25 +562,21 @@ QSpinBox::up-button, QSpinBox::down-button {
     width: 18px;
 }
 
-QCheckBox {
-    color: #0F172A;
-    spacing: 8px;
-}
-
-/* Tables */
+/* 12. Bang Du Lieu (Header #F1F6FF, Row cao 48px) */
 QTableWidget {
     background-color: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-    gridline-color: #F1F5F9;
+    border: 1px solid #DCE8FA;
+    border-radius: 14px;
+    gridline-color: #F1F6FF;
     selection-background-color: #E0EDFF;
     selection-color: #1E6FFF;
 }
 
 QTableWidget::item {
-    padding: 10px 12px;
-    border-bottom: 1px solid #F1F5F9;
-    color: #0F172A;
+    min-height: 48px;
+    padding: 8px 12px;
+    border-bottom: 1px solid #F1F6FF;
+    color: #0B2A6B;
 }
 
 QTableWidget::item:selected {
@@ -480,30 +585,32 @@ QTableWidget::item:selected {
 }
 
 QTableWidget::item:hover {
-    background-color: #F8FAFC;
+    background-color: #F8FAFD;
 }
 
 QHeaderView::section {
-    background-color: #F8FAFC;
-    color: #64748B;
+    background-color: #F1F6FF;
+    color: #5B6B8C;
     border: none;
-    border-bottom: 1px solid #E2E8F0;
-    padding: 10px 12px;
+    border-bottom: 1px solid #DCE8FA;
+    padding: 12px;
     font-weight: 600;
+    font-size: 13px;
+    min-height: 40px;
 }
 
-/* Calendar Widget & Popups */
+/* 13. Calendar Widget & Popups */
 QCalendarWidget QWidget {
     background-color: #FFFFFF;
-    color: #0F172A;
+    color: #0B2A6B;
 }
 
 QCalendarWidget QToolButton {
     background-color: transparent;
-    color: #0F172A;
+    color: #0B2A6B;
     font-weight: 600;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 4px;
 }
 
@@ -516,7 +623,7 @@ QCalendarWidget QTableView {
     background-color: #FFFFFF;
     selection-background-color: #1E6FFF;
     selection-color: #FFFFFF;
-    gridline-color: #F1F5F9;
+    gridline-color: #F1F6FF;
     outline: 0;
 }
 
@@ -526,35 +633,35 @@ QCalendarWidget QTableView::item:hover {
 }
 
 QCalendarWidget #qt_calendar_navigationbar {
-    background-color: #F8FAFC;
-    border-bottom: 1px solid #E2E8F0;
+    background-color: #F1F6FF;
+    border-bottom: 1px solid #DCE8FA;
     padding: 4px;
 }
 
-/* Wallet Cards */
+/* 14. Wallet Cards */
 QFrame#WalletCard {
-    border: 1px solid #E2E8F0;
-    border-radius: 14px;
+    border: 1px solid #DCE8FA;
+    border-radius: 18px;
     background-color: #FFFFFF;
 }
 
 QFrame#WalletCard[walletType="cash"] {
-    border-top: 3.5px solid #0E8F4F;
+    border-top: 4px solid #0E8F4F;
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F4FBF7, stop:1 #FFFFFF);
 }
 
 QFrame#WalletCard[walletType="bank"] {
-    border-top: 3.5px solid #1E6FFF;
+    border-top: 4px solid #1E6FFF;
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F4F8FE, stop:1 #FFFFFF);
 }
 
 QFrame#WalletCard[walletType="ewallet"] {
-    border-top: 3.5px solid #8B5CF6;
+    border-top: 4px solid #8B5CF6;
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FAF6FE, stop:1 #FFFFFF);
 }
 
 QFrame#WalletCard:hover {
-    border-color: #CBD5E1;
+    border-color: #BACFE8;
 }
 
 QFrame#WalletCard[selected="true"] {
@@ -562,7 +669,7 @@ QFrame#WalletCard[selected="true"] {
 }
 
 #WalletCard #lblName {
-    color: #0F172A;
+    color: #0B2A6B;
     font-size: 17px;
     font-weight: 600;
 }
@@ -570,10 +677,10 @@ QFrame#WalletCard[selected="true"] {
 #WalletCard #lblType {
     color: #0E8F4F;
     background: #E6FAF3;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 12px;
     font-weight: 600;
-    padding: 2px 8px;
+    padding: 3px 10px;
 }
 
 #WalletCard #lblType[walletType="bank"] {
@@ -587,12 +694,12 @@ QFrame#WalletCard[selected="true"] {
 }
 
 #WalletCard #lblBalanceCaption {
-    color: #64748B;
+    color: #5B6B8C;
     font-size: 13px;
 }
 
 #WalletCard #lblBalance {
-    color: #0F172A;
+    color: #0B2A6B;
     font-size: 24px;
     font-weight: 700;
 }
@@ -612,7 +719,7 @@ QFrame#WalletCard[selected="true"] {
 }
 
 #WalletPage #lblWalletCount {
-    color: #64748B;
+    color: #5B6B8C;
     font-size: 13px;
 }
 
@@ -620,8 +727,8 @@ QFrame#WalletCard[selected="true"] {
     min-height: 176px;
     max-height: 176px;
     padding: 0;
-    border: 2px dashed #CBD5E1;
-    border-radius: 14px;
+    border: 2px dashed #BACFE8;
+    border-radius: 18px;
     background: transparent;
 }
 
@@ -630,7 +737,7 @@ QFrame#WalletCard[selected="true"] {
     border-color: #1E6FFF;
 }
 
-/* Statistics Page Elements */
+/* 15. Statistics Page */
 #StatisticsPage #scrollStatistics, #StatisticsPage #statisticsContent {
     background: transparent;
     border: none;
@@ -644,74 +751,74 @@ QFrame#WalletCard[selected="true"] {
 
 #StatisticsPage #tblCategories {
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
 }
 
 #StatisticsPage #tblCategories::item {
-    border-bottom: 1px solid #F1F5F9;
+    border-bottom: 1px solid #F1F6FF;
     padding: 8px 10px;
-    color: #0F172A;
+    color: #0B2A6B;
 }
 
 #StatisticsPage #lblTopCategory, #StatisticsPage #lblComparison {
-    color: #64748B;
+    color: #5B6B8C;
     font-size: 13px;
 }
 
-/* Settings Page */
+/* 16. Settings Page */
 #SettingsPage #scrollSettings, #SettingsPage #settingsContent {
-    background-color: #F0F5FD;
+    background: transparent;
     border: none;
 }
 
 #SettingsPage #cardAccount, #SettingsPage #cardChangePassword, #SettingsPage #cardUtilities {
     background-color: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 14px;
+    border: 1px solid #DCE8FA;
+    border-radius: 18px;
 }
 
 #SettingsPage #lblAccountHeading, #SettingsPage #lblPasswordHeading, #SettingsPage #lblSessionHeading {
-    color: #0F172A;
+    color: #0B2A6B;
     font-size: 16px;
     font-weight: 600;
 }
 
 #SettingsPage #lblAccountAvatar {
     background-color: #E0EDFF;
-    border-radius: 12px;
+    border-radius: 14px;
     color: #1E6FFF;
     font-size: 22px;
     font-weight: 700;
 }
 
 #SettingsPage #lblCurrentAccount {
-    color: #0F172A;
+    color: #0B2A6B;
     font-size: 20px;
     font-weight: 700;
 }
 
 #SettingsPage #lblAccountCaption, #SettingsPage #lblSessionDescription,
 #SettingsPage #lblPasswordDescription {
-    color: #64748B;
+    color: #5B6B8C;
     font-size: 14px;
 }
 
 #SettingsPage #lblOldPassword, #SettingsPage #lblNewPassword,
 #SettingsPage #lblConfirmPassword {
-    color: #0F172A;
+    color: #0B2A6B;
     font-size: 14px;
     font-weight: 600;
 }
 
 #SettingsPage QLineEdit {
     min-height: 42px;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 0 12px;
 }
 
 #SettingsPage #btnChangePassword {
-    min-height: 42px;
-    border-radius: 10px;
+    min-height: 44px;
+    border-radius: 12px;
     font-weight: 600;
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #1E6FFF, stop:1 #155EEF);
     color: #FFFFFF;
@@ -723,11 +830,11 @@ QFrame#WalletCard[selected="true"] {
 }
 
 #SettingsPage #btnLogout {
-    min-height: 42px;
-    border-radius: 10px;
+    min-height: 44px;
+    border-radius: 12px;
     font-weight: 600;
     background-color: #FFFFFF;
-    border: 1.5px solid #FFD1DA;
+    border: 1.5px solid #FFCCD5;
     color: #E0173D;
 }
 
@@ -736,14 +843,14 @@ QFrame#WalletCard[selected="true"] {
     border-color: #E0173D;
 }
 
-/* DatePickerField Styling */
+/* 17. DatePickerField Styling */
 DatePickerField {
-    min-height: 40px;
+    min-height: 42px;
     padding: 0 34px 0 12px;
-    border: 1px solid #E2E8F0;
-    border-radius: 10px;
+    border: 1px solid #D5E1F5;
+    border-radius: 12px;
     background-color: #FFFFFF;
-    color: #0F172A;
+    color: #0B2A6B;
     font-size: 13px;
     font-weight: 500;
 }
@@ -753,19 +860,20 @@ DatePickerField:focus {
 }
 
 DatePickerField:disabled {
-    background-color: #F8FAFC;
+    background-color: #F8FAFD;
     color: #94A3B8;
-    border: 1px solid #E2E8F0;
+    border: 1px solid #D5E1F5;
 }
 
-/* DatePickerPopup Styling */
+/* 18. DatePickerPopup Styling */
 DatePickerPopup {
     background-color: #FFFFFF;
-    border: 1px solid #CBD5E1;
-    border-radius: 12px;
+    border: 1px solid #BACFE8;
+    border-radius: 16px;
 }
 
 DatePickerPopup QPushButton {
     padding: 0;
-    min-height: 36px;
+    min-height: 38px;
+    border-radius: 10px;
 }

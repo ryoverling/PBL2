@@ -50,7 +50,7 @@ void MainWindow::setupPages() {
 
 void MainWindow::updateNavButtons(int activeIndex) {
     QColor activeColor("#1E6FFF");
-    QColor inactiveColor("#64748B");
+    QColor inactiveColor("#5B6B8C");
 
     ui->btnNavDashboard->setChecked(activeIndex == 0);
     ui->btnNavDashboard->setIcon(UiHelper::createHomeNavIcon(activeIndex == 0 ? activeColor : inactiveColor));

@@ -50,15 +50,15 @@ namespace UiHelper {
 
     // Icon Vector cho Navigation Header va App Logo
     QIcon createAppLogoIcon(int size = 36);
-    QIcon createHomeNavIcon(const QColor& color = QColor("#64748B"));
-    QIcon createExchangeNavIcon(const QColor& color = QColor("#64748B"));
-    QIcon createWalletNavIcon(const QColor& color = QColor("#64748B"));
-    QIcon createStatsNavIcon(const QColor& color = QColor("#64748B"));
-    QIcon createSettingsNavIcon(const QColor& color = QColor("#64748B"));
+    QIcon createHomeNavIcon(const QColor& color = QColor("#5B6B8C"));
+    QIcon createExchangeNavIcon(const QColor& color = QColor("#5B6B8C"));
+    QIcon createWalletNavIcon(const QColor& color = QColor("#5B6B8C"));
+    QIcon createStatsNavIcon(const QColor& color = QColor("#5B6B8C"));
+    QIcon createSettingsNavIcon(const QColor& color = QColor("#5B6B8C"));
 
     // Icon Vector cho Form Dang nhap va Thao tac
-    QIcon createUserIcon(const QColor& color = QColor("#64748B"));
-    QIcon createLockIcon(const QColor& color = QColor("#64748B"));
+    QIcon createUserIcon(const QColor& color = QColor("#5B6B8C"));
+    QIcon createLockIcon(const QColor& color = QColor("#5B6B8C"));
     QIcon createRightArrowIcon(const QColor& color = Qt::white);
     QIcon createKeyIcon(const QColor& color = QColor("#1E6FFF"));
     QPixmap createLoginIllustration(int width = 200, int height = 120);
@@ -69,10 +69,10 @@ namespace UiHelper {
     QIcon createTrashIcon(const QColor& color = QColor("#E0173D"));
     QIcon createListIcon(const QColor& color = QColor("#1E6FFF"));
     QIcon createCalendarIcon(const QColor& color = QColor("#1E6FFF"));
-    QIcon createSearchIcon(const QColor& color = QColor("#64748B"));
-    QIcon createFilterIcon(const QColor& color = QColor("#64748B"));
-    QIcon createWalletIcon(const QColor& color = QColor("#64748B"));
-    QIcon createTagIcon(const QColor& color = QColor("#64748B"));
+    QIcon createSearchIcon(const QColor& color = QColor("#5B6B8C"));
+    QIcon createFilterIcon(const QColor& color = QColor("#5B6B8C"));
+    QIcon createWalletIcon(const QColor& color = QColor("#5B6B8C"));
+    QIcon createTagIcon(const QColor& color = QColor("#5B6B8C"));
     QIcon createArrowUpIcon(const QColor& color = QColor("#0E8F4F"));
     QIcon createArrowDownIcon(const QColor& color = QColor("#E0173D"));
 

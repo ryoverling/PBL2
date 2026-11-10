@@ -3,7 +3,7 @@
 #include <QString>
 #include <QColor>
 #include <QWidget>
-#include "../core/utils/date.h"
+#include "../core/utils/utils.h"
 
 // Các hàm tiện ích dùng chung cho tầng giao diện Qt
 namespace UiHelper {

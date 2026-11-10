@@ -2,7 +2,7 @@
 
 #include <QDialog>
 #include <string>
-#include "../../core/utils/date.h"
+#include "../../core/utils/utils.h"
 #include "../../core/model/transaction.h"
 
 class MoneyManager;

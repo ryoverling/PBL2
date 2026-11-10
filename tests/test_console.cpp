@@ -4,8 +4,7 @@
 #include <cassert>
 #include <filesystem>
 
-#include "utils/date.h"
-#include "utils/format_utils.h"
+#include "utils/utils.h"
 #include "model/user.h"
 #include "model/wallet.h"
 #include "model/category.h"
@@ -15,7 +14,6 @@
 #include "manager/wallet_manager.h"
 #include "manager/category_manager.h"
 #include "manager/transaction_manager.h"
-#include "utils/stat_utils.h"
 #include "app/money_manager.h"
 
 namespace fs = std::filesystem;

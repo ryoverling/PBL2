@@ -5,7 +5,7 @@
 #include <QIcon>
 #include <QPainter>
 #include <QPixmap>
-#include "../core/utils/format_utils.h"
+#include "../core/utils/utils.h"
 
 #ifdef Q_OS_WIN
 #include <windows.h>

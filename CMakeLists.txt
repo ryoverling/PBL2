@@ -9,13 +9,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # 1. THU VIEN TINH CORE (C++ thuan, khong dung Qt)
 # ==============================================================================
 add_library(core STATIC
-    src/core/utils/date.cpp
-    src/core/utils/format_utils.cpp
+    src/core/utils/utils.cpp
     src/core/model/user.cpp
     src/core/model/wallet.cpp
     src/core/model/category.cpp
     src/core/model/transaction.cpp
-    src/core/utils/stat_utils.cpp
     src/core/storage/file_storage.cpp
     src/core/manager/wallet_manager.cpp
     src/core/manager/category_manager.cpp

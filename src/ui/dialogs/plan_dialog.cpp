@@ -1,6 +1,6 @@
 #include "plan_dialog.h"
 #include "../gui_helpers.h"
-#include "../../core/utils/format_utils.h"
+#include "../../core/utils/utils.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QFormLayout>

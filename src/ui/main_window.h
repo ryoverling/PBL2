@@ -2,7 +2,7 @@
 
 #include <QMainWindow>
 #include <string>
-#include "../core/utils/date.h"
+#include "../core/utils/utils.h"
 
 class MoneyManager;
 class DashboardPage;

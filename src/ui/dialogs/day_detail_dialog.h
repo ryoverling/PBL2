@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QDialog>
-#include "../../core/utils/date.h"
+#include "../../core/utils/utils.h"
 
 class MoneyManager;
 class MainWindow;

@@ -3,7 +3,7 @@
 #include <QWidget>
 #include <QColor>
 #include <QString>
-#include "../../core/utils/stat_utils.h"
+#include "../../core/utils/utils.h"
 
 class QPainter;
 

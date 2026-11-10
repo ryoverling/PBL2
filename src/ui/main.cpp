@@ -19,18 +19,18 @@ namespace fs = std::filesystem;
 #endif
 
 static void initStyle(QApplication& app) {
-    // Chuẩn hóa một font họ Segoe UI duy nhất, hỗ trợ tiếng Việt đầy đủ
+    // Chuan hoa font Segoe UI ho tro tieng Viet day du
     QFont appFont("Segoe UI", 10);
     appFont.setStyleHint(QFont::SansSerif);
     app.setFont(appFont);
 
-    // Chuẩn hóa bảng màu nền và màu nhấn đồng bộ hệ thống Fintech
+    // Chuan hoa bang mau nen va mau nhan dong bo he thong (#1E6FFF, #0F172A)
     QPalette palette = app.palette();
-    palette.setColor(QPalette::Window, QColor("#F3F7FD"));
-    palette.setColor(QPalette::WindowText, QColor("#102748"));
+    palette.setColor(QPalette::Window, QColor("#F0F5FD"));
+    palette.setColor(QPalette::WindowText, QColor("#0F172A"));
     palette.setColor(QPalette::Base, QColor("#FFFFFF"));
-    palette.setColor(QPalette::AlternateBase, QColor("#F8FAFD"));
-    palette.setColor(QPalette::Highlight, QColor("#1769EE"));
+    palette.setColor(QPalette::AlternateBase, QColor("#F8FAFC"));
+    palette.setColor(QPalette::Highlight, QColor("#1E6FFF"));
     palette.setColor(QPalette::HighlightedText, QColor("#FFFFFF"));
     app.setPalette(palette);
 

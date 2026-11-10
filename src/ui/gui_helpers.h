@@ -3,58 +3,80 @@
 #include <QString>
 #include <QColor>
 #include <QWidget>
+#include <QIcon>
+#include <QPixmap>
 #include "../core/utils/utils.h"
 
-// Các hàm tiện ích dùng chung cho tầng giao diện Qt
+// Cac ham tien ich dung chung cho giao dien Qt (chuan sinh vien nam 2)
 namespace UiHelper {
-    // Cờ trạng thái ẩn/hiện số dư
+    // Co trang thai an/hien so du
     extern bool balanceHidden;
 
-    // Định dạng số dư (trả về 8 ký tự • khi ẩn, ngược lại định dạng tiền tệ)
+    // Dinh dang so du (tra ve 8 ky tu • khi an, nguoc lai dinh dang tien te)
     QString formatBalance(long long amount);
 
-    // Định dạng tiền tệ hiển thị (ví dụ: 1.500.000 đ)
+    // Dinh dang tien te hien thi (vi du: 1.500.000 d)
     QString formatMoneyVND(long long amount);
 
-    // Định dạng ngày tháng hiển thị (DD/MM/YYYY)
+    // Dinh dang ngay thang hien thi (DD/MM/YYYY)
     QString formatDate(const Date& date);
 
-    // Hiển thị hộp thoại thông báo lỗi ngắn gọn
+    // Hien thi hop thoai thong bao loi (restyle QMessageBox)
     void showError(QWidget* parent, const QString& message);
 
-    // Hiển thị hộp thoại thông báo thông tin
+    // Hien thi hop thoai thong bao thong tin (restyle QMessageBox)
     void showInfo(QWidget* parent, const QString& message);
 
-    // Xác nhận với nút Đồng ý nổi bật và Hủy là nút phụ
+    // Hop thoai xac nhan voi nut Dong y noi bat va Huy la nut phu
     bool askConfirmation(QWidget* parent, const QString& title, const QString& message);
 
-    // Chuẩn hóa tên: cắt khoảng trắng đầu/cuối, gộp khoảng trắng thừa
+    // Chuan hoa ten: cat khoang trang dau/cuoi, gop khoang trang thua
     QString cleanName(const QString& input);
 
-    // Kiểm tra tên hợp lệ (không rỗng, không chứa ký tự phân cách | \n \r)
+    // Kiem tra ten hop le
     bool isValidName(const QString& name);
 
-    // Thiết lập màu thanh tiêu đề Windows đồng bộ giao diện
+    // Thiet lap mau thanh tieu de he thong Windows dong bo mau xanh #1E6FFF
     void setupWindowTheme(QWidget* widget);
 
-    // Tạo các Icon vector chuẩn Design System cho nút bấm
-    class QIcon createPlusIcon(const QColor& color = Qt::white);
-    class QIcon createEditIcon(const QColor& color = QColor("#1769EE"));
-    class QIcon createTrashIcon(const QColor& color = QColor("#EF4765"));
-    class QIcon createListIcon(const QColor& color = QColor("#1769EE"));
-    class QIcon createCalendarIcon(const QColor& color = QColor("#1769EE"));
-    class QIcon createSearchIcon(const QColor& color = QColor("#64748B"));
-    class QIcon createFilterIcon(const QColor& color = QColor("#64748B"));
-    class QIcon createWalletIcon(const QColor& color = QColor("#64748B"));
-    class QIcon createTagIcon(const QColor& color = QColor("#64748B"));
-    class QIcon createArrowUpIcon(const QColor& color = QColor("#10B981"));
-    class QIcon createArrowDownIcon(const QColor& color = QColor("#EF4444"));
+    // Gan hieu ung do bong mem cho the Card
+    void applyCardShadow(QWidget* target, int blurRadius = 14, int offsetY = 2, qreal opacity = 0.08);
 
-    // Biểu tượng danh mục và ví tiền hợp lý
+    // Bang mau chuan he thong MoneyManager
+    QColor colorPrimary();  // #1E6FFF
+    QColor colorNavy();     // #0B2A6B
+    QColor colorIncome();   // #0E8F4F
+    QColor colorExpense();  // #E0173D
+
+    // Icon Vector cho Navigation Header va App Logo
+    QIcon createAppLogoIcon(int size = 36);
+    QIcon createHomeNavIcon(const QColor& color = QColor("#64748B"));
+    QIcon createExchangeNavIcon(const QColor& color = QColor("#64748B"));
+    QIcon createWalletNavIcon(const QColor& color = QColor("#64748B"));
+    QIcon createStatsNavIcon(const QColor& color = QColor("#64748B"));
+    QIcon createSettingsNavIcon(const QColor& color = QColor("#64748B"));
+
+    // Icon Vector cho Form Dang nhap va Thao tac
+    QIcon createUserIcon(const QColor& color = QColor("#64748B"));
+    QIcon createLockIcon(const QColor& color = QColor("#64748B"));
+    QIcon createRightArrowIcon(const QColor& color = Qt::white);
+    QIcon createKeyIcon(const QColor& color = QColor("#1E6FFF"));
+    QPixmap createLoginIllustration(int width = 200, int height = 120);
+
+    // Icon Vector cho Button thao tac chung
+    QIcon createPlusIcon(const QColor& color = Qt::white);
+    QIcon createEditIcon(const QColor& color = QColor("#1E6FFF"));
+    QIcon createTrashIcon(const QColor& color = QColor("#E0173D"));
+    QIcon createListIcon(const QColor& color = QColor("#1E6FFF"));
+    QIcon createCalendarIcon(const QColor& color = QColor("#1E6FFF"));
+    QIcon createSearchIcon(const QColor& color = QColor("#64748B"));
+    QIcon createFilterIcon(const QColor& color = QColor("#64748B"));
+    QIcon createWalletIcon(const QColor& color = QColor("#64748B"));
+    QIcon createTagIcon(const QColor& color = QColor("#64748B"));
+    QIcon createArrowUpIcon(const QColor& color = QColor("#0E8F4F"));
+    QIcon createArrowDownIcon(const QColor& color = QColor("#E0173D"));
+
+    // Bieu tuong danh muc va vi tien
     QString getCategoryIcon(const QString& categoryName);
     QString getWalletIcon(const QString& walletName, int walletType = 0);
-
-    // Màu sắc quy ước chuẩn
-    QColor colorIncome();   // #10B981
-    QColor colorExpense();  // #FF405C
 }

@@ -9,6 +9,13 @@ LoginWindow::LoginWindow(MoneyManager& mm, const std::string& dataDir, QWidget *
     ui->setupUi(this);
     UiHelper::setupWindowTheme(this);
     ui->lblError->clear();
+
+    // Hinh minh hoa vi tien & icons giao dien dang nhap
+    ui->lblWelcomeArt->setPixmap(UiHelper::createLoginIllustration(200, 120));
+    ui->edtUsername->addAction(UiHelper::createUserIcon(QColor("#64748B")), QLineEdit::LeadingPosition);
+    ui->edtPassword->addAction(UiHelper::createLockIcon(QColor("#64748B")), QLineEdit::LeadingPosition);
+    ui->btnLogin->setIcon(UiHelper::createRightArrowIcon(Qt::white));
+    ui->btnRegister->setIcon(UiHelper::createKeyIcon(QColor("#1E6FFF")));
 }
 
 LoginWindow::~LoginWindow() {

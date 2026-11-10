@@ -16,6 +16,16 @@ MainWindow::MainWindow(MoneyManager& mm, const std::string& userDir, const std::
       userDirectory(userDir), baseDataDirectory(baseDir) {
     ui->setupUi(this);
     UiHelper::setupWindowTheme(this);
+
+    // Thiet lap Logo App va kich thuoc icon nav
+    ui->lblAppLogo->setPixmap(UiHelper::createAppLogoIcon(32).pixmap(32, 32));
+    QSize navIconSize(18, 18);
+    ui->btnNavDashboard->setIconSize(navIconSize);
+    ui->btnNavTransactions->setIconSize(navIconSize);
+    ui->btnNavWallets->setIconSize(navIconSize);
+    ui->btnNavStats->setIconSize(navIconSize);
+    ui->btnNavSettings->setIconSize(navIconSize);
+
     setupPages();
     updateNavButtons(0);
 }
@@ -39,11 +49,23 @@ void MainWindow::setupPages() {
 }
 
 void MainWindow::updateNavButtons(int activeIndex) {
+    QColor activeColor("#1E6FFF");
+    QColor inactiveColor("#64748B");
+
     ui->btnNavDashboard->setChecked(activeIndex == 0);
+    ui->btnNavDashboard->setIcon(UiHelper::createHomeNavIcon(activeIndex == 0 ? activeColor : inactiveColor));
+
     ui->btnNavTransactions->setChecked(activeIndex == 1);
+    ui->btnNavTransactions->setIcon(UiHelper::createExchangeNavIcon(activeIndex == 1 ? activeColor : inactiveColor));
+
     ui->btnNavWallets->setChecked(activeIndex == 2);
+    ui->btnNavWallets->setIcon(UiHelper::createWalletNavIcon(activeIndex == 2 ? activeColor : inactiveColor));
+
     ui->btnNavStats->setChecked(activeIndex == 3);
+    ui->btnNavStats->setIcon(UiHelper::createStatsNavIcon(activeIndex == 3 ? activeColor : inactiveColor));
+
     ui->btnNavSettings->setChecked(activeIndex == 4);
+    ui->btnNavSettings->setIcon(UiHelper::createSettingsNavIcon(activeIndex == 4 ? activeColor : inactiveColor));
 }
 
 void MainWindow::on_btnNavDashboard_clicked() {

@@ -1,10 +1,13 @@
 #include "gui_helpers.h"
 #include <QMessageBox>
+#include <QPushButton>
 #include <QAbstractButton>
 #include <QRegularExpression>
 #include <QIcon>
 #include <QPainter>
+#include <QPainterPath>
 #include <QPixmap>
+#include <QGraphicsDropShadowEffect>
 #include "../core/utils/utils.h"
 
 #ifdef Q_OS_WIN
@@ -50,20 +53,53 @@ QString formatDate(const Date& date) {
     return QString::fromStdString(date.toString());
 }
 
+static const char* kMsgBoxStyle =
+    "QMessageBox { background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; } "
+    "QLabel { color: #0F172A; font-size: 14px; min-width: 260px; } "
+    "QPushButton { background-color: #1E6FFF; color: #FFFFFF; border: none; "
+    "border-radius: 8px; font-weight: 600; min-height: 36px; min-width: 80px; padding: 0 16px; } "
+    "QPushButton:hover { background-color: #155EEF; }";
+
 void showError(QWidget* parent, const QString& message) {
-    QMessageBox::warning(parent, "Thông báo lỗi", message);
+    QMessageBox box(parent);
+    box.setWindowTitle("Thông báo lỗi");
+    box.setText(message);
+    box.setIcon(QMessageBox::Warning);
+    box.setStyleSheet(kMsgBoxStyle);
+    box.exec();
 }
 
 void showInfo(QWidget* parent, const QString& message) {
-    QMessageBox::information(parent, "Thông báo", message);
+    QMessageBox box(parent);
+    box.setWindowTitle("Thông báo");
+    box.setText(message);
+    box.setIcon(QMessageBox::Information);
+    box.setStyleSheet(kMsgBoxStyle);
+    box.exec();
 }
 
 bool askConfirmation(QWidget* parent, const QString& title, const QString& message) {
-    QMessageBox box(QMessageBox::Question, title, message, QMessageBox::Yes | QMessageBox::No, parent);
-    box.button(QMessageBox::Yes)->setProperty("role", "primary");
-    box.button(QMessageBox::No)->setProperty("role", "secondary");
-    box.setDefaultButton(QMessageBox::No);
-    return box.exec() == QMessageBox::Yes;
+    QMessageBox box(parent);
+    box.setWindowTitle(title);
+    box.setText(message);
+    box.setIcon(QMessageBox::Question);
+    QPushButton* btnYes = box.addButton("Đồng ý", QMessageBox::YesRole);
+    QPushButton* btnNo = box.addButton("Hủy", QMessageBox::NoRole);
+    box.setDefaultButton(btnNo);
+    box.setStyleSheet(
+        "QMessageBox { background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; } "
+        "QLabel { color: #0F172A; font-size: 14px; min-width: 280px; } "
+        "QPushButton[role=\"yes\"] { background-color: #1E6FFF; color: #FFFFFF; border: none; "
+        "border-radius: 8px; font-weight: 600; min-height: 36px; min-width: 80px; padding: 0 16px; } "
+        "QPushButton[role=\"yes\"]:hover { background-color: #155EEF; } "
+        "QPushButton[role=\"no\"] { background-color: #F1F5F9; color: #475569; border: 1px solid #E2E8F0; "
+        "border-radius: 8px; font-weight: 600; min-height: 36px; min-width: 80px; padding: 0 16px; } "
+        "QPushButton[role=\"no\"]:hover { background-color: #E2E8F0; }"
+    );
+    btnYes->setProperty("role", "yes");
+    btnNo->setProperty("role", "no");
+    box.exec();
+    return box.clickedButton() == btnYes;
 }
 
 void setupWindowTheme(QWidget* widget) {
@@ -71,7 +107,8 @@ void setupWindowTheme(QWidget* widget) {
     if (!widget) return;
     HWND hwnd = reinterpret_cast<HWND>(widget->winId());
     if (hwnd) {
-        COLORREF captionColor = RGB(23, 105, 238); // #1769EE primary blue
+        // Mau tieu de he thong Windows dong bo Primary #1E6FFF
+        COLORREF captionColor = RGB(30, 111, 255);
         COLORREF textColor = RGB(255, 255, 255);
         DwmSetWindowAttribute(hwnd, DWMWA_CAPTION_COLOR, &captionColor, sizeof(captionColor));
         DwmSetWindowAttribute(hwnd, DWMWA_TEXT_COLOR, &textColor, sizeof(textColor));
@@ -81,12 +118,196 @@ void setupWindowTheme(QWidget* widget) {
 #endif
 }
 
-QColor colorIncome() {
-    return QColor("#10B981");
+void applyCardShadow(QWidget* target, int blurRadius, int offsetY, qreal opacity) {
+    if (!target) return;
+    auto* shadow = new QGraphicsDropShadowEffect(target);
+    shadow->setBlurRadius(blurRadius);
+    shadow->setOffset(0, offsetY);
+    shadow->setColor(QColor(15, 23, 42, static_cast<int>(opacity * 255)));
+    target->setGraphicsEffect(shadow);
 }
 
-QColor colorExpense() {
-    return QColor("#FF405C");
+QColor colorPrimary() { return QColor("#1E6FFF"); }
+QColor colorNavy()    { return QColor("#0B2A6B"); }
+QColor colorIncome()  { return QColor("#0E8F4F"); }
+QColor colorExpense() { return QColor("#E0173D"); }
+
+QIcon createAppLogoIcon(int size) {
+    QPixmap pix(size, size);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+
+    // Nen gradient xanh bo tron
+    QLinearGradient bg(0, 0, size, size);
+    bg.setColorAt(0.0, QColor("#1E6FFF"));
+    bg.setColorAt(1.0, QColor("#0B2A6B"));
+    p.setPen(Qt::NoPen);
+    p.setBrush(bg);
+    p.drawRoundedRect(0, 0, size, size, 8, 8);
+
+    // 3 cot bieu do mau trang
+    p.setBrush(Qt::white);
+    int barW = size / 6;
+    int r = barW / 2;
+    int gap = size / 8;
+    int x1 = size / 5;
+    int x2 = x1 + barW + gap;
+    int x3 = x2 + barW + gap;
+    int b = size - size / 5;
+
+    p.drawRoundedRect(x1, b - size / 3, barW, size / 3, r, r);
+    p.drawRoundedRect(x2, b - size / 2, barW, size / 2, r, r);
+    p.drawRoundedRect(x3, b - (size * 2) / 3, barW, (size * 2) / 3, r, r);
+    return QIcon(pix);
+}
+
+QIcon createHomeNavIcon(const QColor& color) {
+    QPixmap pix(20, 20);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+    p.setPen(QPen(color, 1.8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    // Mai nha
+    QPointF roof[3] = { QPointF(10, 3.5), QPointF(3.5, 9.5), QPointF(16.5, 9.5) };
+    p.drawPolyline(roof, 3);
+    // Than nha
+    p.drawRect(5, 9, 10, 7.5);
+    return QIcon(pix);
+}
+
+QIcon createExchangeNavIcon(const QColor& color) {
+    QPixmap pix(20, 20);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+    p.setPen(QPen(color, 1.8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    // Mui ten tren huong sang phai
+    p.drawLine(4, 7, 16, 7);
+    p.drawLine(12, 4, 16, 7);
+    // Mui ten duoi huong sang trai
+    p.drawLine(16, 13, 4, 13);
+    p.drawLine(8, 16, 4, 13);
+    return QIcon(pix);
+}
+
+QIcon createWalletNavIcon(const QColor& color) {
+    QPixmap pix(20, 20);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+    p.setPen(QPen(color, 1.8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    p.drawRoundedRect(3, 5, 14, 10, 2.5, 2.5);
+    p.drawPoint(13, 10);
+    return QIcon(pix);
+}
+
+QIcon createStatsNavIcon(const QColor& color) {
+    QPixmap pix(20, 20);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+    p.setPen(QPen(color, 2.0, Qt::SolidLine, Qt::RoundCap));
+    p.drawLine(5, 16, 5, 10);
+    p.drawLine(10, 16, 10, 4);
+    p.drawLine(15, 16, 15, 7);
+    return QIcon(pix);
+}
+
+QIcon createSettingsNavIcon(const QColor& color) {
+    QPixmap pix(20, 20);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+    p.setPen(QPen(color, 1.8, Qt::SolidLine, Qt::RoundCap));
+    p.drawEllipse(6, 6, 8, 8);
+    // 4 rang banh rang chinh
+    p.drawLine(10, 2, 10, 5);
+    p.drawLine(10, 15, 10, 18);
+    p.drawLine(2, 10, 5, 10);
+    p.drawLine(15, 10, 18, 10);
+    return QIcon(pix);
+}
+
+QIcon createUserIcon(const QColor& color) {
+    QPixmap pix(20, 20);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+    p.setPen(QPen(color, 1.8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    p.drawEllipse(7, 3, 6, 6);
+    QPainterPath path;
+    path.arcMoveTo(3, 8, 14, 10, 0);
+    path.arcTo(3, 8, 14, 10, 0, 180);
+    p.drawPath(path);
+    return QIcon(pix);
+}
+
+QIcon createLockIcon(const QColor& color) {
+    QPixmap pix(20, 20);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+    p.setPen(QPen(color, 1.8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    p.drawRoundedRect(4, 8, 12, 9, 2, 2);
+    p.drawArc(6, 3, 8, 8, 0 * 16, 180 * 16);
+    p.drawPoint(10, 12);
+    return QIcon(pix);
+}
+
+QIcon createRightArrowIcon(const QColor& color) {
+    QPixmap pix(20, 20);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+    p.setPen(QPen(color, 2.0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    p.drawLine(5, 10, 14, 10);
+    p.drawLine(11, 6, 15, 10);
+    p.drawLine(11, 14, 15, 10);
+    return QIcon(pix);
+}
+
+QIcon createKeyIcon(const QColor& color) {
+    QPixmap pix(20, 20);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+    p.setPen(QPen(color, 1.8, Qt::SolidLine, Qt::RoundCap));
+    p.drawEllipse(4, 5, 6, 6);
+    p.drawLine(10, 10, 16, 15);
+    p.drawLine(14, 13, 16, 11);
+    return QIcon(pix);
+}
+
+QPixmap createLoginIllustration(int width, int height) {
+    QPixmap pix(width, height);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+
+    // Hinh minh hoa vi tien xanh 3D + xu vang trang tri
+    QLinearGradient grad(0, 0, width, height);
+    grad.setColorAt(0.0, QColor("#1E6FFF"));
+    grad.setColorAt(1.0, QColor("#0B2A6B"));
+    p.setBrush(grad);
+    p.setPen(Qt::NoPen);
+    p.drawRoundedRect(width / 4, height / 3, width / 2, height / 2, 12, 12);
+
+    // Nap vi
+    p.setBrush(QColor("#3B82F6"));
+    p.drawRoundedRect(width / 4 + 4, height / 3 + 4, width / 2 - 8, height / 5, 8, 8);
+
+    // Khoa vi
+    p.setBrush(QColor("#F59E0B"));
+    p.drawEllipse(width / 2 - 6, height / 2 - 2, 12, 12);
+
+    // Tien xu vang ben canh
+    p.setBrush(QColor("#F59E0B"));
+    p.drawEllipse(width / 5, height / 2 + 10, 20, 20);
+    p.setBrush(QColor("#FBBF24"));
+    p.drawEllipse(width / 5 + 3, height / 2 + 13, 14, 14);
+
+    return pix;
 }
 
 QIcon createPlusIcon(const QColor& color) {

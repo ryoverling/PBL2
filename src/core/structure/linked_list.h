@@ -2,7 +2,14 @@
 
 #include <cstddef>
 #include <utility>
-#include "node.h"
+
+template <typename T>
+struct Node {
+    T data;
+    Node<T>* next;
+
+    explicit Node(const T& data) : data(data), next(nullptr) {}
+};
 
 template <typename T>
 class LinkedList {

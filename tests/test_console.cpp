@@ -10,7 +10,6 @@
 #include "model/category.h"
 #include "model/transaction.h"
 #include "storage/file_storage.h"
-#include "storage/file_storage_internal.h"
 #include "manager/wallet_manager.h"
 #include "manager/category_manager.h"
 #include "manager/transaction_manager.h"

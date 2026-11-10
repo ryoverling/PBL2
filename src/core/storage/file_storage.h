@@ -7,6 +7,18 @@
 #include "../model/category.h"
 #include "../model/transaction.h"
 
+// Cấu trúc phân tách các trường trong 1 dòng dữ liệu (tối đa 7 trường)
+struct RecordFields {
+    static constexpr int MaxFields = 7;
+    std::string values[MaxFields];
+    int count = 0;
+
+    int size() const { return count; }
+    const std::string& operator[](int index) const { return values[index]; }
+};
+
+RecordFields tachTruong(const std::string& line, char delim = '|');
+
 // Lớp đọc và ghi 4 tệp dữ liệu .dat bằng ifstream / ofstream cơ bản
 class FileStorage {
 public:

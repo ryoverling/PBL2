@@ -16,10 +16,29 @@ DashboardPage::DashboardPage(MoneyManager& mm, const std::string& dataDir, MainW
 
     ui->btnAddTransaction->setText(QString::fromUtf8("Thêm giao dịch"));
     ui->btnAddTransaction->setIcon(UiHelper::createPlusIcon());
-    ui->btnViewAll->setIcon(UiHelper::createListIcon(QColor("#1A6BEB")));
 
-    ui->tblRecentTransactions->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->btnViewAll->setText(QString::fromUtf8("Xem tất cả →"));
+    ui->btnViewAll->setProperty("role", "ghost");
+
+    ui->btnEditPlan->setIcon(UiHelper::createEditIcon(QColor("#1E6FFF")));
+
+    ui->prgBudget->setFixedHeight(12);
+    ui->prgGoal->setFixedHeight(12);
+
+    // Gan hieu ung do bong mem cho cac card Dashboard
+    UiHelper::applyCardShadow(ui->cardBalance);
+    UiHelper::applyCardShadow(ui->cardIncome);
+    UiHelper::applyCardShadow(ui->cardExpense);
+    UiHelper::applyCardShadow(ui->cardNet);
+    UiHelper::applyCardShadow(ui->frmCalendarCard);
+    UiHelper::applyCardShadow(ui->frmPlanCard);
+    UiHelper::applyCardShadow(ui->frmTableCard);
+
+    ui->tblRecentTransactions->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    ui->tblRecentTransactions->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    ui->tblRecentTransactions->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
     ui->tblRecentTransactions->verticalHeader()->setVisible(false);
+    ui->tblRecentTransactions->verticalHeader()->setDefaultSectionSize(48);
 
     Date today = Date::today();
     ui->monthPicker->setMonthYear(today.month, today.year);
@@ -43,18 +62,26 @@ void DashboardPage::addRecentRow(const Transaction* tx) {
 
     QString amountPrefix = income ? "↑ + " : "↓ - ";
     auto* amount = new QTableWidgetItem(amountPrefix + UiHelper::formatMoneyVND(tx->getAmount()));
-    amount->setForeground(QColor(income ? "#10B981" : "#EF4444"));
+    amount->setForeground(QColor(income ? "#0E8F4F" : "#E0173D"));
+    QFont f = amount->font();
+    f.setBold(true);
+    amount->setFont(f);
+    amount->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
     QString catName = category ? QString::fromStdString(category->getName()) : "Khác";
-    QString detail = UiHelper::getCategoryIcon(catName) + " " + catName;
+    QString detail = UiHelper::getCategoryIcon(catName) + "  " + catName;
     if (!tx->getNote().empty()) {
         detail += " • " + QString::fromStdString(tx->getNote());
     }
 
-    amount->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    ui->tblRecentTransactions->setItem(row, 0, new QTableWidgetItem(UiHelper::formatDate(tx->getDate())));
+    auto* dateItem = new QTableWidgetItem(UiHelper::formatDate(tx->getDate()));
+    dateItem->setForeground(QColor("#5B6B8C"));
+
     auto* detailItem = new QTableWidgetItem(detail);
+    detailItem->setForeground(QColor("#0B2A6B"));
     detailItem->setToolTip(detail);
+
+    ui->tblRecentTransactions->setItem(row, 0, dateItem);
     ui->tblRecentTransactions->setItem(row, 1, detailItem);
     ui->tblRecentTransactions->setItem(row, 2, amount);
 }
@@ -115,16 +142,10 @@ void DashboardPage::updatePlanCard() {
         int clampedVal = qBound(0, static_cast<int>(pct), 100);
         ui->prgBudget->setValue(clampedVal);
 
-        QString statusColor = "#10B981"; // Xanh ngọc an toàn
-        if (pct >= 100.0) {
-            statusColor = "#EF4444"; // Đỏ cảnh báo vượt ngân sách
-        } else if (pct >= 75.0) {
-            statusColor = "#F59E0B"; // Cam gần đạt ngưỡng
-        }
-        ui->prgBudget->setStyleSheet(QString(
-            "QProgressBar { background-color: #E2E8F0; border-radius: 4px; } "
-            "QProgressBar::chunk { background-color: %1; border-radius: 4px; }"
-        ).arg(statusColor));
+        const char* variant = (pct >= 100.0) ? "danger" : (pct >= 75.0) ? "warning" : "success";
+        ui->prgBudget->setProperty("variant", variant);
+        ui->prgBudget->style()->unpolish(ui->prgBudget);
+        ui->prgBudget->style()->polish(ui->prgBudget);
 
         ui->lblBudgetLabel->setText(QString("Ngân sách chi tiêu tháng: %1 / %2 (%3%)")
             .arg(UiHelper::formatMoneyVND(expense))
@@ -140,10 +161,9 @@ void DashboardPage::updatePlanCard() {
         double pct = (double)currentPlan.currentSaved / (double)currentPlan.targetAmount * 100.0;
         int clampedVal = qBound(0, static_cast<int>(pct), 100);
         ui->prgGoal->setValue(clampedVal);
-        ui->prgGoal->setStyleSheet(
-            "QProgressBar { background-color: #E2E8F0; border-radius: 4px; } "
-            "QProgressBar::chunk { background-color: #1A6BEB; border-radius: 4px; }"
-        );
+        ui->prgGoal->setProperty("variant", "primary");
+        ui->prgGoal->style()->unpolish(ui->prgGoal);
+        ui->prgGoal->style()->polish(ui->prgGoal);
 
         QString goalStr = QString("Mục tiêu \"%1\": %2 / %3 (%4%)")
             .arg(QString::fromStdString(currentPlan.goalName))

@@ -34,7 +34,7 @@ QRect CalendarWidget::cellRect(int row, int col) const {
 void CalendarWidget::drawHeaders(QPainter& p) {
     static const char* titles[] = {"T2", "T3", "T4", "T5", "T6", "T7", "CN"};
     QFont font = p.font(); font.setPixelSize(12); font.setBold(true); p.setFont(font);
-    p.setPen(QColor("#64748B"));
+    p.setPen(QColor("#5B6B8C"));
     for (int col = 0; col < 7; ++col) {
         QRect r = cellRect(0, col);
         p.drawText(QRect(r.left(), 2, r.width(), 18), Qt::AlignCenter, titles[col]);
@@ -44,19 +44,29 @@ void CalendarWidget::drawHeaders(QPainter& p) {
 void CalendarWidget::drawCell(QPainter& p, const QRect& r, int day, const Date& today) {
     long long amount = expenses[day - 1];
     bool isToday = day == today.day && month == today.month && year == today.year;
-    QColor bg = amount == 0 ? QColor(isToday ? "#E8F2FF" : "#FFFFFF")
-              : amount < 100000 ? QColor("#DDF7EF") : amount <= 500000 ? QColor("#FFF0D9") : QColor("#FFE5EA");
+    QColor bg = amount == 0 ? QColor(isToday ? "#EAF2FF" : "#FFFFFF")
+              : amount < 100000 ? QColor("#E6FAF3")
+              : amount <= 500000 ? QColor("#FFF4E5")
+              : QColor("#FEECEB");
     p.setBrush(bg);
-    QColor edge = selectedDay == day ? QColor("#0958D9") : isToday || hoveredDay == day ? QColor("#1677FF") : QColor("#E2ECFA");
-    p.setPen(QPen(edge, selectedDay == day || isToday ? 2 : 1));
+    QColor edge = (selectedDay == day || isToday) ? QColor("#1E6FFF")
+                : (hoveredDay == day) ? QColor("#1E6FFF")
+                : QColor("#DCE8FA");
+    p.setPen(QPen(edge, (selectedDay == day || isToday) ? 2 : 1));
     p.drawRoundedRect(r.adjusted(1, 1, -1, -1), 10, 10);
+
     QFont font = p.font(); font.setPixelSize(12); font.setBold(amount > 0); p.setFont(font);
-    p.setPen(QColor("#0B1F3A"));
+    p.setPen(QColor("#0B2A6B"));
     p.drawText(r.adjusted(8, 3, -4, -2), Qt::AlignLeft | Qt::AlignTop, QString::number(day));
-    if (selectedDay == day) { p.setBrush(QColor("#0958D9")); p.setPen(Qt::NoPen); p.drawEllipse(r.right() - 10, r.top() + 6, 4, 4); }
+
+    if (selectedDay == day) {
+        p.setBrush(QColor("#1E6FFF")); p.setPen(Qt::NoPen);
+        p.drawEllipse(r.right() - 10, r.top() + 6, 4, 4);
+    }
     if (amount <= 0) return;
+
     font.setPixelSize(r.height() < 34 ? 12 : 14); font.setBold(true); p.setFont(font);
-    p.setPen(QColor(amount < 100000 ? "#059669" : amount <= 500000 ? "#D97706" : "#E11D48"));
+    p.setPen(QColor(amount < 100000 ? "#0E8F4F" : amount <= 500000 ? "#FF9F1A" : "#E0173D"));
     p.drawText(QRect(r.left() + 2, r.bottom() - 19, r.width() - 4, 17), Qt::AlignCenter, QString::fromStdString(formatShortMoney(amount)));
 }
 
@@ -71,11 +81,12 @@ void CalendarWidget::drawCells(QPainter& p) {
 
 void CalendarWidget::drawLegend(QPainter& p) {
     static const char* labels[] = {"Dưới 100k", "100k–500k", "Trên 500k"};
-    static const char* colors[] = {"#DDF7EF", "#FFF0D9", "#FFE5EA"};
+    static const char* bgColors[] = {"#E6FAF3", "#FFF4E5", "#FEECEB"};
+    static const char* borderColors[] = {"#B7EBCE", "#FCD34D", "#FFCCD5"};
+
     QFont font = p.font(); font.setPixelSize(12); font.setBold(false); p.setFont(font);
     QFontMetrics fm(font);
-    // Tính bề rộng chú giải để căn giữa dưới lịch.
-    const int dotW = 11, dotTextGap = 6, groupGap = 24;
+    const int dotW = 12, dotTextGap = 6, groupGap = 20;
     int totalW = 0;
     int textWidths[3];
     for (int i = 0; i < 3; ++i) {
@@ -88,9 +99,10 @@ void CalendarWidget::drawLegend(QPainter& p) {
     if (startX < 4) startX = 4;
     int x = startX;
     for (int i = 0; i < 3; ++i) {
-        p.setBrush(QColor(colors[i])); p.setPen(Qt::NoPen);
+        p.setBrush(QColor(bgColors[i]));
+        p.setPen(QPen(QColor(borderColors[i]), 1));
         p.drawRoundedRect(QRect(x, y, dotW, dotW), 3, 3);
-        p.setPen(QColor("#64748B"));
+        p.setPen(QColor("#5B6B8C"));
         p.drawText(QRect(x + dotW + dotTextGap, y - 2, textWidths[i] + 2, 16),
                    Qt::AlignLeft | Qt::AlignVCenter, QString::fromUtf8(labels[i]));
         x += dotW + dotTextGap + textWidths[i] + groupGap;

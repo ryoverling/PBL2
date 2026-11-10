@@ -127,7 +127,7 @@ QPushButton[role="nav"] {
     font-size: 14px;
     font-weight: 500;
     color: #5B6B8C;
-    padding: 0 16px;
+    padding: 0 12px;
     border-radius: 12px;
     min-height: 42px;
 }
@@ -877,3 +877,31 @@ DatePickerPopup QPushButton {
     min-height: 38px;
     border-radius: 10px;
 }
+
+/* 19. Progress Bar Styling (Bo goc 6px, cao 12px) */
+QProgressBar {
+    background-color: #E2E8F0;
+    border: none;
+    border-radius: 6px;
+    min-height: 12px;
+    max-height: 12px;
+    text-align: center;
+}
+
+QProgressBar::chunk {
+    background-color: #1E6FFF;
+    border-radius: 6px;
+}
+
+QProgressBar[variant="danger"]::chunk {
+    background-color: #E0173D;
+}
+
+QProgressBar[variant="warning"]::chunk {
+    background-color: #FF9F1A;
+}
+
+QProgressBar[variant="success"]::chunk {
+    background-color: #0E8F4F;
+}
+

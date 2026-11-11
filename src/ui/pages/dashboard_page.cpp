@@ -49,8 +49,6 @@ DashboardPage::DashboardPage(MoneyManager& mm, const std::string& dataDir, MainW
 
     Date today = Date::today();
     ui->monthPicker->setMonthYear(today.month, today.year);
-    connect(ui->monthPicker, &MonthPickerWidget::monthYearChanged, this, &DashboardPage::on_monthPicker_monthYearChanged);
-    connect(ui->btnEditPlan, &QPushButton::clicked, this, &DashboardPage::on_btnEditPlan_clicked);
 
     PlanDialog::loadPlanFromFile(dataDirectory, currentPlan);
     refreshData();

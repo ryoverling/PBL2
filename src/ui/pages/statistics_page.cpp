@@ -19,7 +19,6 @@ StatisticsPage::StatisticsPage(MoneyManager& mm, QWidget *parent)
 
     Date today = Date::today();
     ui->monthPicker->setMonthYear(today.month, today.year);
-    connect(ui->monthPicker, &MonthPickerWidget::monthYearChanged, this, &StatisticsPage::on_monthPicker_monthYearChanged);
 
     refreshData();
 }

@@ -35,6 +35,19 @@ QPixmap createChevronCircle(int size = 32);
 // Icon badge bo góc cho từng thẻ ví (Tiền mặt, Techcombank, MoMo, TP BANK...)
 QPixmap createWalletCardIcon(const QString& walletName, int walletType, int size = 42);
 
+// Icon tiêu đề trang Thống kê: biểu đồ cột
+QPixmap createStatisticsHeaderIcon(int size = 44);
+
+// Cán cân công lý cho thẻ KPI Chênh lệch thu chi
+QPixmap createScaleBadge(int size = 44);
+
+// Các icon cho trang Cài đặt (User, Khiên bảo mật, Ổ khóa, Đăng xuất)
+QPixmap createUserBadge(int size = 32);
+QPixmap createShieldBadge(int size = 32);
+QPixmap createLockBadge(int size = 32);
+QPixmap createLogoutIcon(int size = 16, const QColor& color = QColor("#E0173D"));
+QPixmap createLockActionIcon(int size = 16, const QColor& color = Qt::white);
+
 // Icon nhỏ kèm tiêu đề header bảng giao dịch
 QIcon createSortHeaderIcon();
 QIcon createCoinHeaderIcon();

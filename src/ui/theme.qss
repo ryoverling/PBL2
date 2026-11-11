@@ -263,7 +263,8 @@ QLabel#lblPageSubtitle {
 }
 
 /* 8. Cards & Containers (Bo goc 18px) */
-QFrame[property="card"], #frmFilter, #frmChart, #frmDonut, #frmCalendarCard, #frmTableCard {
+QFrame[property="card"], #frmFilter, #frmChart, #frmDonut, #frmCalendarCard, #frmTableCard,
+#cardAccount, #cardUtilities, #cardChangePassword {
     background-color: #FFFFFF;
     border: 1px solid #DCE8FA;
     border-radius: 18px;
@@ -844,57 +845,57 @@ QFrame#WalletCard[selected="true"] {
 }
 
 /* 16. Settings Page */
-#SettingsPage #scrollSettings, #SettingsPage #settingsContent {
+#scrollSettings, #settingsContent {
     background: transparent;
     border: none;
 }
 
-#SettingsPage #cardAccount, #SettingsPage #cardChangePassword, #SettingsPage #cardUtilities {
+#cardAccount, #cardChangePassword, #cardUtilities {
     background-color: #FFFFFF;
     border: 1px solid #DCE8FA;
     border-radius: 18px;
 }
 
-#SettingsPage #lblAccountHeading, #SettingsPage #lblPasswordHeading, #SettingsPage #lblSessionHeading {
+#lblAccountHeading, #lblPasswordHeading, #lblSessionHeading {
     color: #0B2A6B;
     font-size: 16px;
     font-weight: 600;
 }
 
-#SettingsPage #lblAccountAvatar {
+#lblAccountAvatar {
     background-color: #E0EDFF;
-    border-radius: 14px;
+    border-radius: 16px;
     color: #1E6FFF;
     font-size: 22px;
     font-weight: 700;
 }
 
-#SettingsPage #lblCurrentAccount {
+#lblCurrentAccount {
     color: #0B2A6B;
     font-size: 20px;
     font-weight: 700;
 }
 
-#SettingsPage #lblAccountCaption, #SettingsPage #lblSessionDescription,
-#SettingsPage #lblPasswordDescription {
+#lblAccountCaption, #lblSessionDescription,
+#lblPasswordDescription {
     color: #5B6B8C;
     font-size: 14px;
 }
 
-#SettingsPage #lblOldPassword, #SettingsPage #lblNewPassword,
-#SettingsPage #lblConfirmPassword {
+#lblOldPassword, #lblNewPassword,
+#lblConfirmPassword {
     color: #0B2A6B;
     font-size: 14px;
     font-weight: 600;
 }
 
-#SettingsPage QLineEdit {
+#cardChangePassword QLineEdit {
     min-height: 42px;
     border-radius: 12px;
     padding: 0 12px;
 }
 
-#SettingsPage #btnChangePassword {
+#btnChangePassword {
     min-height: 44px;
     border-radius: 12px;
     font-weight: 600;

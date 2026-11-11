@@ -1,12 +1,13 @@
-﻿<ui version="4.0">
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>StatisticsPage</class>
  <widget class="QWidget" name="StatisticsPage">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>850</width>
-    <height>650</height>
+    <width>960</width>
+    <height>680</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="pageLayout">
@@ -37,23 +38,58 @@
       <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
      <widget class="QWidget" name="statisticsContent">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>943</width>
+        <height>760</height>
+       </rect>
+      </property>
       <layout class="QVBoxLayout" name="statisticsContentLayout">
        <property name="spacing">
-        <number>16</number></property>
+        <number>16</number>
+       </property>
        <property name="leftMargin">
-        <number>20</number></property>
+        <number>24</number>
+       </property>
        <property name="topMargin">
-        <number>20</number></property>
+        <number>20</number>
+       </property>
        <property name="rightMargin">
-        <number>20</number></property>
+        <number>24</number>
+       </property>
        <property name="bottomMargin">
-        <number>20</number></property>
+        <number>20</number>
+       </property>
        <item>
         <layout class="QHBoxLayout" name="headerLayout">
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="lblHeaderIcon">
+           <property name="minimumSize">
+            <size>
+             <width>44</width>
+             <height>44</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>44</width>
+             <height>44</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
          <item>
           <layout class="QVBoxLayout" name="headingLayout">
            <property name="spacing">
-            <number>4</number>
+            <number>2</number>
            </property>
            <item>
             <widget class="QLabel" name="lblPageTitle">
@@ -65,7 +101,7 @@
               </font>
              </property>
              <property name="text">
-              <string>📊 Thống kê</string>
+              <string>Thống kê</string>
              </property>
             </widget>
            </item>
@@ -92,150 +128,355 @@
           </spacer>
          </item>
          <item>
-       <widget class="MonthPickerWidget" name="monthPicker" native="true">
-        <property name="minimumSize">
-         <size>
-          <width>230</width>
-          <height>38</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
+          <widget class="MonthPickerWidget" name="monthPicker" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>230</width>
+             <height>38</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <layout class="QHBoxLayout" name="cardsLayout">
          <property name="spacing">
-          <number>16</number>
+          <number>14</number>
          </property>
          <item>
           <widget class="QFrame" name="cardIncome">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>86</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>88</height>
+            </size>
            </property>
            <property name="property" stdset="0">
             <string notr="true">class</string>
-            <string notr="true">card</string>
+            <string notr="true">card kpi-card-income</string>
            </property>
-           <layout class="QVBoxLayout" name="incomeLayout">
+           <layout class="QHBoxLayout" name="incomeLayout">
+            <property name="spacing">
+             <number>12</number>
+            </property>
             <property name="leftMargin">
-             <number>16</number></property>
+             <number>16</number>
+            </property>
             <property name="topMargin">
-             <number>16</number></property>
+             <number>12</number>
+            </property>
             <property name="rightMargin">
-             <number>16</number></property>
+             <number>16</number>
+            </property>
             <property name="bottomMargin">
-             <number>16</number></property>
+             <number>12</number>
+            </property>
             <item>
-             <widget class="QLabel" name="lblIncomeTitle">
-              <property name="text">
-               <string>Tổng thu tháng</string>
+             <widget class="QLabel" name="iconIncomeBadge">
+              <property name="minimumSize">
+               <size>
+                <width>44</width>
+                <height>44</height>
+               </size>
               </property>
-              <property name="property" stdset="0">
-               <string notr="true">class</string>
-               <string notr="true">card-title</string>
+              <property name="maximumSize">
+               <size>
+                <width>44</width>
+                <height>44</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="lblTotalIncome">
-              <property name="text">
-               <string>0 đ</string>
+             <layout class="QVBoxLayout" name="incomeTextLayout">
+              <property name="spacing">
+               <number>2</number>
               </property>
-              <property name="property" stdset="0">
-               <string notr="true">class</string>
-               <string notr="true">amount-income</string>
+              <item>
+               <widget class="QLabel" name="lblIncomeTitle">
+                <property name="text">
+                 <string>Tổng thu tháng</string>
+                </property>
+                <property name="property" stdset="0">
+                 <string notr="true">class</string>
+                 <string notr="true">card-title</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="lblTotalIncome">
+                <property name="font">
+                 <font>
+                  <family>Segoe UI</family>
+                  <pointsize>15</pointsize>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>0 đ</string>
+                </property>
+                <property name="property" stdset="0">
+                 <string notr="true">class</string>
+                 <string notr="true">amount-income</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer name="spacerIncome">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="lblIncomeSparkline">
+              <property name="minimumSize">
+               <size>
+                <width>80</width>
+                <height>36</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
            </layout>
-          <property name="minimumSize"><size><width>0</width><height>108</height></size></property><property name="maximumSize"><size><width>16777215</width><height>116</height></size></property></widget>
+          </widget>
          </item>
          <item>
           <widget class="QFrame" name="cardExpense">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>86</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>88</height>
+            </size>
            </property>
            <property name="property" stdset="0">
             <string notr="true">class</string>
-            <string notr="true">card</string>
+            <string notr="true">card kpi-card-expense</string>
            </property>
-           <layout class="QVBoxLayout" name="expenseLayout">
+           <layout class="QHBoxLayout" name="expenseLayout">
+            <property name="spacing">
+             <number>12</number>
+            </property>
             <property name="leftMargin">
-             <number>16</number></property>
+             <number>16</number>
+            </property>
             <property name="topMargin">
-             <number>16</number></property>
+             <number>12</number>
+            </property>
             <property name="rightMargin">
-             <number>16</number></property>
+             <number>16</number>
+            </property>
             <property name="bottomMargin">
-             <number>16</number></property>
+             <number>12</number>
+            </property>
             <item>
-             <widget class="QLabel" name="lblExpenseTitle">
-              <property name="text">
-               <string>Tổng chi tháng</string>
+             <widget class="QLabel" name="iconExpenseBadge">
+              <property name="minimumSize">
+               <size>
+                <width>44</width>
+                <height>44</height>
+               </size>
               </property>
-              <property name="property" stdset="0">
-               <string notr="true">class</string>
-               <string notr="true">card-title</string>
+              <property name="maximumSize">
+               <size>
+                <width>44</width>
+                <height>44</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="lblTotalExpense">
-              <property name="text">
-               <string>0 đ</string>
+             <layout class="QVBoxLayout" name="expenseTextLayout">
+              <property name="spacing">
+               <number>2</number>
               </property>
-              <property name="property" stdset="0">
-               <string notr="true">class</string>
-               <string notr="true">amount-expense</string>
+              <item>
+               <widget class="QLabel" name="lblExpenseTitle">
+                <property name="text">
+                 <string>Tổng chi tháng</string>
+                </property>
+                <property name="property" stdset="0">
+                 <string notr="true">class</string>
+                 <string notr="true">card-title</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="lblTotalExpense">
+                <property name="font">
+                 <font>
+                  <family>Segoe UI</family>
+                  <pointsize>15</pointsize>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>0 đ</string>
+                </property>
+                <property name="property" stdset="0">
+                 <string notr="true">class</string>
+                 <string notr="true">amount-expense</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer name="spacerExpense">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="lblExpenseSparkline">
+              <property name="minimumSize">
+               <size>
+                <width>80</width>
+                <height>36</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
            </layout>
-          <property name="minimumSize"><size><width>0</width><height>108</height></size></property><property name="maximumSize"><size><width>16777215</width><height>116</height></size></property></widget>
+          </widget>
          </item>
          <item>
           <widget class="QFrame" name="cardNet">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>86</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>88</height>
+            </size>
            </property>
            <property name="property" stdset="0">
             <string notr="true">class</string>
             <string notr="true">card</string>
            </property>
-           <layout class="QVBoxLayout" name="netLayout">
+           <layout class="QHBoxLayout" name="netLayout">
+            <property name="spacing">
+             <number>12</number>
+            </property>
             <property name="leftMargin">
-             <number>16</number></property>
+             <number>16</number>
+            </property>
             <property name="topMargin">
-             <number>16</number></property>
+             <number>12</number>
+            </property>
             <property name="rightMargin">
-             <number>16</number></property>
+             <number>16</number>
+            </property>
             <property name="bottomMargin">
-             <number>16</number></property>
+             <number>12</number>
+            </property>
             <item>
-             <widget class="QLabel" name="lblNetTitle">
-              <property name="text">
-               <string>Chênh lệch thu chi</string>
+             <widget class="QLabel" name="iconNetBadge">
+              <property name="minimumSize">
+               <size>
+                <width>44</width>
+                <height>44</height>
+               </size>
               </property>
-              <property name="property" stdset="0">
-               <string notr="true">class</string>
-               <string notr="true">card-title</string>
+              <property name="maximumSize">
+               <size>
+                <width>44</width>
+                <height>44</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="lblNetTotal">
-              <property name="text">
-               <string>0 đ</string>
+             <layout class="QVBoxLayout" name="netTextLayout">
+              <property name="spacing">
+               <number>2</number>
               </property>
-              <property name="property" stdset="0">
-               <string notr="true">class</string>
-               <string notr="true">amount-balance</string>
-              </property>
-             </widget>
+              <item>
+               <widget class="QLabel" name="lblNetTitle">
+                <property name="text">
+                 <string>Chênh lệch thu chi</string>
+                </property>
+                <property name="property" stdset="0">
+                 <string notr="true">class</string>
+                 <string notr="true">card-title</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="lblNetTotal">
+                <property name="font">
+                 <font>
+                  <family>Segoe UI</family>
+                  <pointsize>15</pointsize>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>0 đ</string>
+                </property>
+                <property name="property" stdset="0">
+                 <string notr="true">class</string>
+                 <string notr="true">amount-balance</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
-          <property name="minimumSize"><size><width>0</width><height>108</height></size></property><property name="maximumSize"><size><width>16777215</width><height>116</height></size></property></widget>
+          </widget>
          </item>
         </layout>
        </item>
@@ -244,7 +485,7 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>230</height>
+           <height>250</height>
           </size>
          </property>
          <property name="frameShape">
@@ -255,16 +496,28 @@
           <string notr="true">card</string>
          </property>
          <layout class="QVBoxLayout" name="chartLayout">
+          <property name="leftMargin">
+           <number>20</number>
+          </property>
+          <property name="topMargin">
+           <number>16</number>
+          </property>
+          <property name="rightMargin">
+           <number>20</number>
+          </property>
+          <property name="bottomMargin">
+           <number>16</number>
+          </property>
           <item>
            <widget class="QLabel" name="lblChartTitle">
             <property name="font">
              <font>
-              <pointsize>12</pointsize>
+              <pointsize>13</pointsize>
               <bold>true</bold>
              </font>
             </property>
             <property name="text">
-             <string>Thu và chi trong 6 tháng</string>
+             <string>📊 Thu và chi trong 6 tháng</string>
             </property>
            </widget>
           </item>
@@ -279,7 +532,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>180</height>
+              <height>190</height>
              </size>
             </property>
            </widget>
@@ -292,81 +545,133 @@
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
+         <property name="property" stdset="0">
+          <string notr="true">class</string>
+          <string notr="true">card</string>
+         </property>
          <layout class="QVBoxLayout" name="frmDonutLayout">
           <property name="spacing">
-           <number>12</number>
+           <number>14</number>
           </property>
           <property name="leftMargin">
-           <number>16</number></property>
+           <number>20</number>
+          </property>
           <property name="topMargin">
-           <number>16</number></property>
+           <number>18</number>
+          </property>
           <property name="rightMargin">
-           <number>16</number></property>
+           <number>20</number>
+          </property>
           <property name="bottomMargin">
-           <number>16</number></property>
+           <number>18</number>
+          </property>
           <item>
            <widget class="QLabel" name="lblDonutTitle">
+            <property name="font">
+             <font>
+              <pointsize>13</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
-             <string>Cơ cấu chi theo danh mục</string>
+             <string>◐ Cơ cấu chi theo danh mục</string>
             </property>
            </widget>
           </item>
-          <item><layout class="QHBoxLayout" name="donutAndListLayout" stretch="2,3"><property name="spacing"><number>18</number></property><item><widget class="DonutWidget" name="donutWidget" native="true">
-            <property name="minimumSize">
-             <size>
-              <width>220</width>
-              <height>240</height>
-             </size>
+          <item>
+           <layout class="QHBoxLayout" name="donutAndListLayout" stretch="2,3">
+            <property name="spacing">
+             <number>20</number>
             </property>
-           </widget>
-          </item><item><layout class="QVBoxLayout" name="categoryListLayout"><property name="spacing"><number>12</number></property><item><widget class="QLabel" name="lblCategoryTitle">
-            <property name="text">
-             <string>📋 Chi tiết theo danh mục</string>
-            </property>
-           </widget>
-          </item><item><widget class="QTableWidget" name="tblCategories">
-            <attribute name="verticalHeaderDefaultSectionSize">
-             <number>44</number>
-            </attribute>
-            <property name="editTriggers">
-             <set>QAbstractItemView::NoEditTriggers</set>
-            </property>
-            <property name="selectionBehavior">
-             <enum>QAbstractItemView::SelectRows</enum>
-            </property>
-            <property name="columnCount">
-             <number>2</number></property>
-            <column>
-             <property name="text">
-              <string>Danh mục</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>↓ Tổng chi</string>
-             </property>
-            </column>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-           <property name="maximumSize"><size><width>16777215</width><height>280</height></size></property></widget>
-          </item><item><widget class="QLabel" name="lblTopCategory">
-            <property name="text">
-             <string>Danh mục chi nhiều nhất: Chưa có khoản chi</string>
-            </property>
-           </widget>
-          </item><item><widget class="QLabel" name="lblComparison">
-            <property name="text">
-             <string>So với tháng trước: Chưa có dữ liệu tháng trước</string>
-            </property>
-           </widget>
-          </item></layout></item></layout></item></layout>
+            <item>
+             <widget class="DonutWidget" name="donutWidget" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>220</width>
+                <height>240</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="categoryListLayout">
+              <property name="spacing">
+               <number>10</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="lblCategoryTitle">
+                <property name="font">
+                 <font>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>📋 Chi tiết theo danh mục</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTableWidget" name="tblCategories">
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>280</height>
+                 </size>
+                </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+                <property name="showGrid">
+                 <bool>false</bool>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <property name="columnCount">
+                 <number>3</number>
+                </property>
+                <attribute name="verticalHeaderDefaultSectionSize">
+                 <number>44</number>
+                </attribute>
+                <column>
+                 <property name="text">
+                  <string>Danh mục</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Tổng chi</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Tỷ trọng</string>
+                 </property>
+                </column>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="lblTopCategory">
+                <property name="text">
+                 <string>Danh mục chi nhiều nhất: Chưa có khoản chi</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="lblComparison">
+                <property name="text">
+                 <string>So với tháng trước: Chưa có dữ liệu tháng trước</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </widget>
        </item>
-       </layout>
+      </layout>
      </widget>
     </widget>
    </item>
@@ -384,14 +689,13 @@
    <extends>QWidget</extends>
    <header>widgets/donut_widget.h</header>
   </customwidget>
-   <customwidget>
+  <customwidget>
    <class>MonthPickerWidget</class>
    <extends>QWidget</extends>
    <header>widgets/month_picker_widget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources />
- <connections />
+ <resources/>
+ <connections/>
 </ui>
-

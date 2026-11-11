@@ -36,39 +36,48 @@ void ChartWidget::drawColumns(QPainter& painter, const QRect& plot, long long ma
     for (int i = 0; i < 6; ++i) {
         int left = plot.left() + i * groupWidth;
         int x = left + (groupWidth - barWidth * 2 - 3) / 2;
-        drawBar(painter, plot, x, barWidth, stats[i].totalIncome, maximum, QColor("#12B886"));
-        drawBar(painter, plot, x + barWidth + 3, barWidth, stats[i].totalExpense, maximum, QColor("#EF4765"));
-        painter.setPen(QColor("#536986"));
+        drawBar(painter, plot, x, barWidth, stats[i].totalIncome, maximum, QColor("#0E8F4F"));
+        drawBar(painter, plot, x + barWidth + 3, barWidth, stats[i].totalExpense, maximum, QColor("#E0173D"));
+        painter.setPen(QColor("#5B6B8C"));
         QString label = QString("%1/%2").arg(stats[i].month).arg(stats[i].year % 100, 2, 10, QChar('0'));
         painter.drawText(QRect(left, plot.bottom() + 6, groupWidth, 24), Qt::AlignCenter, label);
     }
 }
 
 void ChartWidget::drawLegend(QPainter& painter) {
-    painter.setPen(QColor("#536986"));
+    painter.setPen(QColor("#5B6B8C"));
     painter.drawText(4, 19, "Đơn vị: đồng");
 
-    // Income legend
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(QColor("#12B886"));
-    painter.drawRoundedRect(QRect(width() - 170, 8, 12, 12), 3, 3);
-    painter.setPen(QColor("#536986"));
-    painter.drawText(width() - 152, 19, "Thu");
+    // Khung pill bo tròn chứa ghi chú Thu / Chi ở góc phải
+    int boxW = 126;
+    int boxH = 28;
+    int boxX = width() - boxW - 8;
+    int boxY = 2;
+    painter.setPen(QPen(QColor("#DCE8FA"), 1));
+    painter.setBrush(QColor("#F8FBFF"));
+    painter.drawRoundedRect(QRectF(boxX, boxY, boxW, boxH), 14, 14);
 
-    // Expense legend
+    // Chấm Thu xanh lá
     painter.setPen(Qt::NoPen);
-    painter.setBrush(QColor("#EF4765"));
-    painter.drawRoundedRect(QRect(width() - 90, 8, 12, 12), 3, 3);
-    painter.setPen(QColor("#536986"));
-    painter.drawText(width() - 72, 19, "Chi");
+    painter.setBrush(QColor("#0E8F4F"));
+    painter.drawRoundedRect(QRect(boxX + 12, boxY + 9, 10, 10), 3, 3);
+    painter.setPen(QColor("#5B6B8C"));
+    painter.drawText(boxX + 28, boxY + 18, "Thu");
+
+    // Chấm Chi đỏ
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(QColor("#E0173D"));
+    painter.drawRoundedRect(QRect(boxX + 68, boxY + 9, 10, 10), 3, 3);
+    painter.setPen(QColor("#5B6B8C"));
+    painter.drawText(boxX + 84, boxY + 18, "Chi");
 }
 
 void ChartWidget::drawTick(QPainter& painter, const QRect& plot, int y, long long value) {
     painter.setPen(QPen(QColor("#EDF2F8"), 1, Qt::DashLine));
     painter.drawLine(plot.left(), y, plot.right(), y);
-    painter.setPen(QColor("#BACFE8"));
+    painter.setPen(QColor("#DCE8FA"));
     painter.drawLine(plot.left() - 4, y, plot.left(), y);
-    painter.setPen(QColor("#536986"));
+    painter.setPen(QColor("#5B6B8C"));
     painter.drawText(QRect(0, y - 10, plot.left() - 8, 20),
                      Qt::AlignRight | Qt::AlignVCenter, UiHelper::formatMoneyVND(value));
 }
@@ -80,7 +89,7 @@ void ChartWidget::drawAxes(QPainter& painter, const QRect& plot, long long maxim
         long long value = maximum / ticks * i + maximum % ticks * i / ticks;
         drawTick(painter, plot, y, value);
     }
-    painter.setPen(QColor("#D7E4F4"));
+    painter.setPen(QColor("#DCE8FA"));
     painter.drawLine(plot.bottomLeft(), plot.topLeft());
     painter.drawLine(plot.bottomLeft(), plot.bottomRight());
 }

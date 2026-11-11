@@ -15,6 +15,7 @@ public:
     int sliceCount() const { return count; }
     QString sliceName(int index) const { return slices[index].name; }
     long long sliceAmount(int index) const { return slices[index].amount; }
+    int slicePercentage(int index) const { return slices[index].percentage; }
     QColor sliceColor(int index) const { return slices[index].color; }
 
 protected:

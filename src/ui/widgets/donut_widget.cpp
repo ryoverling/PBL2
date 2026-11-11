@@ -5,10 +5,10 @@
 
 static const double kPi = 3.14159265358979323846;
 
-DonutWidget::DonutWidget(QWidget* parent) : QWidget(parent) { setMinimumHeight(240); }
+DonutWidget::DonutWidget(QWidget* parent) : QWidget(parent) { setMinimumHeight(200); }
 
 void DonutWidget::setData(const LinkedList<CategoryExpense>& categories, long long totalExpense) {
-    static const char* colors[6] = {"#1769EE", "#12B886", "#EF4765", "#E6A13D", "#9B5CFA", "#536986"};
+    static const char* colors[6] = {"#1E6FFF", "#0E8F4F", "#E0173D", "#FF9F1A", "#8B5CF6", "#5B6B8C"};
     count = 0;
     total = totalExpense;
     for (const Node<CategoryExpense>* cur = categories.getHead(); cur; cur = cur->next)
@@ -48,17 +48,28 @@ void DonutWidget::drawDonut(QPainter& painter) {
     }
     // Khoét tâm trắng và ghi tổng chi.
     painter.setBrush(QColor("#FFFFFF"));
+    painter.setPen(QPen(QColor("#DCE8FA"), 1));
     int inset = diameter * 0.23;
     painter.drawEllipse(circle.adjusted(inset, inset, -inset, -inset));
-    painter.setPen(QColor("#536986"));
+
+    // Vẽ biểu tượng ví tiền nhỏ ở tâm
+    int cx = static_cast<int>(circle.center().x());
+    int cy = static_cast<int>(circle.center().y()) - 26;
+    painter.setPen(QPen(QColor("#1E6FFF"), 1.8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter.setBrush(Qt::NoBrush);
+    painter.drawRoundedRect(QRectF(cx - 10, cy - 7, 20, 14), 3, 3);
+    painter.drawLine(cx + 2, cy - 1, cx + 5, cy - 1);
+
+    painter.setPen(QColor("#5B6B8C"));
     painter.setFont(QFont("Segoe UI", 9));
-    painter.drawText(QRectF(circle.left(), circle.center().y() - 27, diameter, 22), Qt::AlignCenter, "Tổng chi");
-    painter.setPen(QColor("#102748"));
+    painter.drawText(QRectF(circle.left(), circle.center().y() - 10, diameter, 20), Qt::AlignCenter, "Tổng chi");
+
+    painter.setPen(QColor("#0B2A6B"));
     QFont amountFont = painter.font();
     amountFont.setBold(true);
-    amountFont.setPointSize(10);
+    amountFont.setPointSize(11);
     painter.setFont(amountFont);
-    QRectF amountRect(circle.left() + inset / 2, circle.center().y() - 2, diameter - inset, 28);
+    QRectF amountRect(circle.left() + inset / 2, circle.center().y() + 10, diameter - inset, 26);
     QString amount = painter.fontMetrics().elidedText(UiHelper::formatMoneyVND(total), Qt::ElideRight, amountRect.width());
     painter.drawText(amountRect, Qt::AlignCenter, amount);
     drawPercentageLabels(painter, circle, diameter, starts, sweeps);

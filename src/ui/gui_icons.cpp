@@ -374,6 +374,133 @@ QPixmap createWalletCardIcon(const QString& walletName, int walletType, int size
     return pix;
 }
 
+QPixmap createStatisticsHeaderIcon(int size) {
+    QPixmap pix(size, size);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+
+    p.setPen(Qt::NoPen);
+    p.setBrush(QColor("#E0EDFF"));
+    p.drawRoundedRect(0, 0, size, size, 12, 12);
+
+    p.setBrush(QColor("#1E6FFF"));
+    p.drawRoundedRect(10, 20, 5, size - 30, 2, 2);
+    p.drawRoundedRect(18, 14, 5, size - 24, 2, 2);
+    p.drawRoundedRect(26, 24, 5, size - 34, 2, 2);
+
+    return pix;
+}
+
+QPixmap createScaleBadge(int size) {
+    QPixmap pix(size, size);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+
+    p.setPen(Qt::NoPen);
+    p.setBrush(QColor("#E0EDFF"));
+    p.drawRoundedRect(0, 0, size, size, 12, 12);
+
+    p.setPen(QPen(QColor("#1E6FFF"), 1.8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    int c = size / 2;
+    p.drawLine(c, 10, c, size - 10);
+    p.drawLine(10, 14, size - 10, 14);
+
+    // Đĩa cân trái
+    p.drawLine(10, 14, 6, 24);
+    p.drawLine(10, 14, 14, 24);
+    p.drawArc(6, 20, 8, 8, 180 * 16, 180 * 16);
+
+    // Đĩa cân phải
+    p.drawLine(size - 10, 14, size - 14, 24);
+    p.drawLine(size - 10, 14, size - 6, 24);
+    p.drawArc(size - 14, 20, 8, 8, 180 * 16, 180 * 16);
+
+    return pix;
+}
+
+QPixmap createUserBadge(int size) {
+    QPixmap pix(size, size);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+
+    p.setPen(QPen(QColor("#1E6FFF"), 1.8, Qt::SolidLine, Qt::RoundCap));
+    p.setBrush(Qt::NoBrush);
+    int c = size / 2;
+    p.drawEllipse(c - 5, 4, 10, 10);
+    p.drawArc(4, 15, size - 8, 16, 0, 180 * 16);
+
+    return pix;
+}
+
+QPixmap createShieldBadge(int size) {
+    QPixmap pix(size, size);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+
+    p.setPen(QPen(QColor("#1E6FFF"), 1.8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    p.setBrush(Qt::NoBrush);
+    QPainterPath path;
+    path.moveTo(size / 2, 4);
+    path.lineTo(size - 6, 8);
+    path.lineTo(size - 6, size / 2);
+    path.quadTo(size - 6, size - 5, size / 2, size - 4);
+    path.quadTo(6, size - 5, 6, size / 2);
+    path.lineTo(6, 8);
+    path.closeSubpath();
+    p.drawPath(path);
+    p.drawLine(size / 2 - 3, size / 2, size / 2 - 1, size / 2 + 3);
+    p.drawLine(size / 2 - 1, size / 2 + 3, size / 2 + 4, size / 2 - 3);
+
+    return pix;
+}
+
+QPixmap createLockBadge(int size) {
+    QPixmap pix(size, size);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+
+    p.setPen(QPen(QColor("#1E6FFF"), 1.8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    p.setBrush(Qt::NoBrush);
+    p.drawRoundedRect(6, 12, size - 12, size - 16, 3, 3);
+    p.drawArc(9, 5, size - 18, 14, 0, 180 * 16);
+
+    return pix;
+}
+
+QPixmap createLogoutIcon(int size, const QColor& color) {
+    QPixmap pix(size, size);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+
+    p.setPen(QPen(color, 1.8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    p.drawRoundedRect(2, 2, size - 7, size - 4, 2, 2);
+    p.drawLine(size / 2 - 1, size / 2, size - 1, size / 2);
+    p.drawLine(size - 4, size / 2 - 3, size - 1, size / 2);
+    p.drawLine(size - 4, size / 2 + 3, size - 1, size / 2);
+
+    return pix;
+}
+
+QPixmap createLockActionIcon(int size, const QColor& color) {
+    QPixmap pix(size, size);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+
+    p.setPen(QPen(color, 1.6, Qt::SolidLine, Qt::RoundCap));
+    p.setBrush(Qt::NoBrush);
+    p.drawRoundedRect(2, 6, size - 4, size - 8, 2, 2);
+    p.drawArc(4, 2, size - 8, 8, 0, 180 * 16);
+
+    return pix;
+}
+
 QPixmap createWalletBadgeIcon(const QString& walletName, int walletType, int size) {
     QPixmap pix(size, size);
     pix.fill(Qt::transparent);

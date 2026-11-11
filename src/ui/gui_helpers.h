@@ -79,4 +79,13 @@ namespace UiHelper {
     // Bieu tuong danh muc va vi tien
     QString getCategoryIcon(const QString& categoryName);
     QString getWalletIcon(const QString& walletName, int walletType = 0);
+
+    // Sparkline cho the KPI Dashboard
+    QPixmap createSparkline(bool up, int width = 56, int height = 26);
+
+    // Icon tron pastel cho bang giao dich
+    QIcon createCategoryCircleIcon(const QString& categoryName, int size = 28);
+
+    // Icon vuong bo goc cho ke hoach thang nay
+    QPixmap createPlanBadge(const QString& type, int size = 24);
 }

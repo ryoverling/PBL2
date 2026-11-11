@@ -87,7 +87,7 @@
         </size>
        </property>
        <property name="text">
-        <string>+ Thêm giao dịch</string>
+        <string>Thêm giao dịch</string>
        </property>
        <property name="role" stdset="0">
         <string notr="true">primary</string>
@@ -117,8 +117,26 @@
         <string notr="true">card</string>
        </property>
        <layout class="QVBoxLayout" name="balanceLayout">
+        <property name="spacing">
+         <number>10</number>
+        </property>
+        <property name="leftMargin">
+         <number>20</number>
+        </property>
+        <property name="topMargin">
+         <number>16</number>
+        </property>
+        <property name="rightMargin">
+         <number>20</number>
+        </property>
+        <property name="bottomMargin">
+         <number>16</number>
+        </property>
         <item>
          <layout class="QHBoxLayout" name="balanceTitleLayout">
+          <property name="spacing">
+           <number>8</number>
+          </property>
           <item>
            <widget class="IconBadge" name="badgeBalance">
             <property name="minimumSize">
@@ -139,13 +157,24 @@
            </widget>
           </item>
           <item>
+           <widget class="QLabel" name="lblBalanceTitle">
+            <property name="text">
+             <string>Tổng số dư</string>
+            </property>
+            <property name="property" stdset="0">
+             <string notr="true">class</string>
+             <string notr="true">card-title</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="spacerEyeDash">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>40</width>
+              <width>20</width>
               <height>20</height>
              </size>
             </property>
@@ -179,32 +208,6 @@
          </layout>
         </item>
         <item>
-         <widget class="QLabel" name="lblBalanceTitle">
-          <property name="text">
-           <string>Tổng số dư</string>
-          </property>
-          <property name="property" stdset="0">
-           <string notr="true">class</string>
-           <string notr="true">card-title</string>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <property name="leftMargin">
-         <number>20</number>
-        </property>
-        <property name="topMargin">
-         <number>20</number>
-        </property>
-        <property name="rightMargin">
-         <number>20</number>
-        </property>
-        <property name="bottomMargin">
-         <number>20</number>
-        </property>
-        <item>
          <widget class="QLabel" name="lblTotalBalance">
           <property name="text">
            <string>0 đ</string>
@@ -219,13 +222,13 @@
        <property name="minimumSize">
         <size>
          <width>230</width>
-         <height>118</height>
+         <height>108</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
          <width>16777215</width>
-         <height>118</height>
+         <height>108</height>
         </size>
        </property>
       </widget>
@@ -246,50 +249,89 @@
         <string notr="true">card</string>
        </property>
        <layout class="QVBoxLayout" name="incomeLayout">
-        <item>
-         <widget class="IconBadge" name="badgeIncome">
-          <property name="minimumSize">
-           <size>
-            <width>36</width>
-            <height>36</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>36</width>
-            <height>36</height>
-           </size>
-          </property>
-          <property name="kind" stdset="0">
-           <string notr="true">income</string>
-          </property>
-         </widget>
-        </item>
+        <property name="spacing">
+         <number>10</number>
+        </property>
         <property name="leftMargin">
          <number>20</number>
         </property>
         <property name="topMargin">
-         <number>20</number>
+         <number>16</number>
         </property>
         <property name="rightMargin">
          <number>20</number>
         </property>
         <property name="bottomMargin">
-         <number>20</number>
+         <number>16</number>
         </property>
         <item>
-         <widget class="QLabel" name="lblIncomeTitle">
-          <property name="text">
-           <string>Tổng thu tháng</string>
+         <layout class="QHBoxLayout" name="incomeTitleLayout">
+          <property name="spacing">
+           <number>8</number>
           </property>
-          <property name="property" stdset="0">
-           <string notr="true">class</string>
-           <string notr="true">card-title</string>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-         </widget>
+          <item>
+           <widget class="IconBadge" name="badgeIncome">
+            <property name="minimumSize">
+             <size>
+              <width>36</width>
+              <height>36</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>36</width>
+              <height>36</height>
+             </size>
+            </property>
+            <property name="kind" stdset="0">
+             <string notr="true">income</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="lblIncomeTitle">
+            <property name="text">
+             <string>Tổng thu tháng</string>
+            </property>
+            <property name="property" stdset="0">
+             <string notr="true">class</string>
+             <string notr="true">card-title</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="spacerIncome">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="lblIncomeSparkline">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>26</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>56</width>
+              <height>26</height>
+             </size>
+            </property>
+            <property name="text">
+             <string />
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QLabel" name="lblTotalIncome">
@@ -306,13 +348,13 @@
        <property name="minimumSize">
         <size>
          <width>230</width>
-         <height>118</height>
+         <height>108</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
          <width>16777215</width>
-         <height>118</height>
+         <height>108</height>
         </size>
        </property>
       </widget>
@@ -333,50 +375,89 @@
         <string notr="true">card</string>
        </property>
        <layout class="QVBoxLayout" name="expenseLayout">
-        <item>
-         <widget class="IconBadge" name="badgeExpense">
-          <property name="minimumSize">
-           <size>
-            <width>36</width>
-            <height>36</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>36</width>
-            <height>36</height>
-           </size>
-          </property>
-          <property name="kind" stdset="0">
-           <string notr="true">expense</string>
-          </property>
-         </widget>
-        </item>
+        <property name="spacing">
+         <number>10</number>
+        </property>
         <property name="leftMargin">
          <number>20</number>
         </property>
         <property name="topMargin">
-         <number>20</number>
+         <number>16</number>
         </property>
         <property name="rightMargin">
          <number>20</number>
         </property>
         <property name="bottomMargin">
-         <number>20</number>
+         <number>16</number>
         </property>
         <item>
-         <widget class="QLabel" name="lblExpenseTitle">
-          <property name="text">
-           <string>Tổng chi tháng</string>
+         <layout class="QHBoxLayout" name="expenseTitleLayout">
+          <property name="spacing">
+           <number>8</number>
           </property>
-          <property name="property" stdset="0">
-           <string notr="true">class</string>
-           <string notr="true">card-title</string>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-         </widget>
+          <item>
+           <widget class="IconBadge" name="badgeExpense">
+            <property name="minimumSize">
+             <size>
+              <width>36</width>
+              <height>36</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>36</width>
+              <height>36</height>
+             </size>
+            </property>
+            <property name="kind" stdset="0">
+             <string notr="true">expense</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="lblExpenseTitle">
+            <property name="text">
+             <string>Tổng chi tháng</string>
+            </property>
+            <property name="property" stdset="0">
+             <string notr="true">class</string>
+             <string notr="true">card-title</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="spacerExpense">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="lblExpenseSparkline">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>26</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>56</width>
+              <height>26</height>
+             </size>
+            </property>
+            <property name="text">
+             <string />
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QLabel" name="lblTotalExpense">
@@ -393,13 +474,13 @@
        <property name="minimumSize">
         <size>
          <width>230</width>
-         <height>118</height>
+         <height>108</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
          <width>16777215</width>
-         <height>118</height>
+         <height>108</height>
         </size>
        </property>
       </widget>
@@ -420,50 +501,70 @@
         <string notr="true">card</string>
        </property>
        <layout class="QVBoxLayout" name="netLayout">
-        <item>
-         <widget class="IconBadge" name="badgeNet">
-          <property name="minimumSize">
-           <size>
-            <width>36</width>
-            <height>36</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>36</width>
-            <height>36</height>
-           </size>
-          </property>
-          <property name="kind" stdset="0">
-           <string notr="true">net</string>
-          </property>
-         </widget>
-        </item>
+        <property name="spacing">
+         <number>10</number>
+        </property>
         <property name="leftMargin">
          <number>20</number>
         </property>
         <property name="topMargin">
-         <number>20</number>
+         <number>16</number>
         </property>
         <property name="rightMargin">
          <number>20</number>
         </property>
         <property name="bottomMargin">
-         <number>20</number>
+         <number>16</number>
         </property>
         <item>
-         <widget class="QLabel" name="lblNetTitle">
-          <property name="property" stdset="0">
-           <string notr="true">class</string>
-           <string notr="true">card-title</string>
+         <layout class="QHBoxLayout" name="netTitleLayout">
+          <property name="spacing">
+           <number>8</number>
           </property>
-          <property name="text">
-           <string>Chênh lệch thu chi</string>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-         </widget>
+          <item>
+           <widget class="IconBadge" name="badgeNet">
+            <property name="minimumSize">
+             <size>
+              <width>36</width>
+              <height>36</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>36</width>
+              <height>36</height>
+             </size>
+            </property>
+            <property name="kind" stdset="0">
+             <string notr="true">net</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="lblNetTitle">
+            <property name="property" stdset="0">
+             <string notr="true">class</string>
+             <string notr="true">card-title</string>
+            </property>
+            <property name="text">
+             <string>Chênh lệch thu chi</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="spacerNet">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QLabel" name="lblNetTotal">
@@ -480,13 +581,13 @@
        <property name="minimumSize">
         <size>
          <width>230</width>
-         <height>118</height>
+         <height>108</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
          <width>16777215</width>
-         <height>118</height>
+         <height>108</height>
         </size>
        </property>
       </widget>
@@ -526,17 +627,44 @@
            <number>16</number>
           </property>
           <item>
-           <widget class="QLabel">
-            <property name="font">
-             <font>
-              <pointsize>12</pointsize>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>📅 Lịch chi tiêu theo ngày</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="calendarHeaderLayout">
+            <item>
+             <widget class="QLabel" name="lblCalendarTitle">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>📅 Lịch chi tiêu theo ngày</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="spacerCalHeader">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="lblCalendarLegend">
+              <property name="text">
+               <string>&lt;span style=&quot;color:#0E8F4F;&quot;&gt;●&lt;/span&gt; Dưới 100k &amp;nbsp;&amp;nbsp; &lt;span style=&quot;color:#FF9F1A;&quot;&gt;●&lt;/span&gt; 100k–500k &amp;nbsp;&amp;nbsp; &lt;span style=&quot;color:#E0173D;&quot;&gt;●&lt;/span&gt; Trên 500k</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: #5B6B8C; font-size: 12px;</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <widget class="CalendarWidget" name="calDaily" native="true">
@@ -549,7 +677,7 @@
             <property name="minimumSize">
              <size>
               <width>320</width>
-              <height>200</height>
+              <height>220</height>
              </size>
             </property>
            </widget>
@@ -580,7 +708,7 @@
            <number>16</number>
           </property>
           <property name="spacing">
-           <number>8</number>
+           <number>10</number>
           </property>
           <item>
            <layout class="QHBoxLayout" name="planHeaderLayout">
@@ -644,28 +772,54 @@
               <number>4</number>
              </property>
              <property name="spacing">
-              <number>6</number>
+              <number>8</number>
              </property>
              <item>
-              <widget class="QLabel" name="lblBudgetLabel">
-               <property name="font">
-                <font>
-                 <pointsize>9</pointsize>
-                 <bold>true</bold>
-                </font>
+              <layout class="QHBoxLayout" name="budgetHeaderRow">
+               <property name="spacing">
+                <number>8</number>
                </property>
-               <property name="text">
-                <string>Ngân sách chi tiêu tháng:</string>
-               </property>
-              </widget>
+               <item>
+                <widget class="QLabel" name="lblBudgetIcon">
+                 <property name="minimumSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string />
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="lblBudgetLabel">
+                 <property name="font">
+                  <font>
+                   <pointsize>9</pointsize>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Ngân sách chi tiêu tháng:</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
              <item>
               <widget class="QProgressBar" name="prgBudget">
                <property name="minimumHeight">
-                <number>8</number>
+                <number>12</number>
                </property>
                <property name="maximumHeight">
-                <number>8</number>
+                <number>12</number>
                </property>
                <property name="value">
                 <number>0</number>
@@ -676,25 +830,51 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="lblGoalLabel">
-               <property name="font">
-                <font>
-                 <pointsize>9</pointsize>
-                 <bold>true</bold>
-                </font>
+              <layout class="QHBoxLayout" name="goalHeaderRow">
+               <property name="spacing">
+                <number>8</number>
                </property>
-               <property name="text">
-                <string>Mục tiêu tiết kiệm:</string>
-               </property>
-              </widget>
+               <item>
+                <widget class="QLabel" name="lblGoalIcon">
+                 <property name="minimumSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string />
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="lblGoalLabel">
+                 <property name="font">
+                  <font>
+                   <pointsize>9</pointsize>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Mục tiêu tiết kiệm:</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
              <item>
               <widget class="QProgressBar" name="prgGoal">
                <property name="minimumHeight">
-                <number>8</number>
+                <number>12</number>
                </property>
                <property name="maximumHeight">
-                <number>8</number>
+                <number>12</number>
                </property>
                <property name="value">
                 <number>0</number>
@@ -766,12 +946,22 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="btnViewAll">
-            <property name="role" stdset="0">
-             <string notr="true">secondary</string>
+           <spacer name="spacerRecentHeader">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
             </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnViewAll">
             <property name="text">
-             <string>Xem tất cả</string>
+             <string>Xem tất cả →</string>
             </property>
            </widget>
           </item>
@@ -780,7 +970,7 @@
         <item>
          <widget class="QTableWidget" name="tblRecentTransactions">
           <attribute name="verticalHeaderDefaultSectionSize">
-           <number>42</number>
+           <number>48</number>
           </attribute>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>

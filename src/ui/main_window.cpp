@@ -19,7 +19,7 @@ MainWindow::MainWindow(MoneyManager& mm, const std::string& userDir, const std::
 
     // Thiet lap Logo App va kich thuoc icon nav
     ui->lblAppLogo->setPixmap(UiHelper::createAppLogoIcon(32).pixmap(32, 32));
-    QSize navIconSize(18, 18);
+    QSize navIconSize(22, 22);
     ui->btnNavDashboard->setIconSize(navIconSize);
     ui->btnNavTransactions->setIconSize(navIconSize);
     ui->btnNavWallets->setIconSize(navIconSize);

@@ -24,10 +24,10 @@ int CalendarWidget::gridRows() const {
 }
 
 QRect CalendarWidget::cellRect(int row, int col) const {
-    const int gap = 4, top = 26, legendSpace = 32;
+    const int gap = 6, top = 26;
     int cellW = qMax(10, (width() - 12 - 6 * gap) / 7);
     int left = (width() - 7 * cellW - 6 * gap) / 2;
-    int cellH = qMax(20, (height() - top - legendSpace - (gridRows() - 1) * gap) / gridRows());
+    int cellH = qMax(20, (height() - top - (gridRows() - 1) * gap) / gridRows());
     return QRect(left + col * (cellW + gap), top + row * (cellH + gap), cellW, cellH);
 }
 
@@ -43,31 +43,48 @@ void CalendarWidget::drawHeaders(QPainter& p) {
 
 void CalendarWidget::drawCell(QPainter& p, const QRect& r, int day, const Date& today) {
     long long amount = expenses[day - 1];
-    bool isToday = day == today.day && month == today.month && year == today.year;
-    QColor bg = amount == 0 ? QColor(isToday ? "#EAF2FF" : "#FFFFFF")
-              : amount < 100000 ? QColor("#E6FAF3")
-              : amount <= 500000 ? QColor("#FFF4E5")
-              : QColor("#FEECEB");
+    bool isToday = (day == today.day && month == today.month && year == today.year);
+    bool isSelected = (selectedDay == day);
+
+    // Nền ô màu trắng, viền #DCE8FA. Nếu được chọn thì viền xanh đậm 2px
+    QColor bg = isSelected ? QColor("#F4F8FF") : isToday ? QColor("#EAF2FF") : QColor("#FFFFFF");
     p.setBrush(bg);
-    QColor edge = (selectedDay == day || isToday) ? QColor("#1E6FFF")
-                : (hoveredDay == day) ? QColor("#1E6FFF")
-                : QColor("#DCE8FA");
-    p.setPen(QPen(edge, (selectedDay == day || isToday) ? 2 : 1));
+    QColor edge = (isSelected || isToday) ? QColor("#1E6FFF") : (hoveredDay == day) ? QColor("#93C5FD") : QColor("#DCE8FA");
+    p.setPen(QPen(edge, (isSelected || isToday) ? 2 : 1));
     p.drawRoundedRect(r.adjusted(1, 1, -1, -1), 10, 10);
 
-    QFont font = p.font(); font.setPixelSize(12); font.setBold(amount > 0); p.setFont(font);
+    // Số ngày ở góc trên bên trái
+    QFont font = p.font();
+    font.setPixelSize(12);
+    font.setBold(isSelected || isToday || amount > 0);
+    p.setFont(font);
     p.setPen(QColor("#0B2A6B"));
-    p.drawText(r.adjusted(8, 3, -4, -2), Qt::AlignLeft | Qt::AlignTop, QString::number(day));
+    p.drawText(r.adjusted(8, 4, -4, -2), Qt::AlignLeft | Qt::AlignTop, QString::number(day));
 
-    if (selectedDay == day) {
-        p.setBrush(QColor("#1E6FFF")); p.setPen(Qt::NoPen);
-        p.drawEllipse(r.right() - 10, r.top() + 6, 4, 4);
-    }
     if (amount <= 0) return;
 
-    font.setPixelSize(r.height() < 34 ? 12 : 14); font.setBold(true); p.setFont(font);
-    p.setPen(QColor(amount < 100000 ? "#0E8F4F" : amount <= 500000 ? "#FF9F1A" : "#E0173D"));
-    p.drawText(QRect(r.left() + 2, r.bottom() - 19, r.width() - 4, 17), Qt::AlignCenter, QString::fromStdString(formatShortMoney(amount)));
+    // Badge số tiền: bo góc nhỏ (pill) nền màu pastel và chữ đậm ở bên phải
+    QColor badgeBg = (amount < 100000) ? QColor("#E6FAF3") : (amount <= 500000) ? QColor("#FFF4E5") : QColor("#FEECEB");
+    QColor badgeText = (amount < 100000) ? QColor("#0E8F4F") : (amount <= 500000) ? QColor("#FF9F1A") : QColor("#E0173D");
+
+    QString shortText = QString::fromStdString(formatShortMoney(amount));
+    font.setPixelSize(11);
+    font.setBold(true);
+    p.setFont(font);
+    QFontMetrics fm(font);
+    int textW = fm.horizontalAdvance(shortText);
+    int badgeW = textW + 8;
+    int badgeH = 17;
+    int badgeX = r.right() - badgeW - 6;
+    int badgeY = r.top() + 4;
+
+    QRect badgeRect(badgeX, badgeY, badgeW, badgeH);
+    p.setBrush(badgeBg);
+    p.setPen(Qt::NoPen);
+    p.drawRoundedRect(badgeRect, 4, 4);
+
+    p.setPen(badgeText);
+    p.drawText(badgeRect, Qt::AlignCenter, shortText);
 }
 
 void CalendarWidget::drawCells(QPainter& p) {
@@ -124,7 +141,6 @@ void CalendarWidget::paintEvent(QPaintEvent*) {
     painter.setRenderHint(QPainter::Antialiasing);
     drawHeaders(painter);
     drawCells(painter);
-    drawLegend(painter);
 }
 
 void CalendarWidget::mousePressEvent(QMouseEvent* event) {

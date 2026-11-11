@@ -29,7 +29,7 @@
         <layout class="QHBoxLayout" name="navLayout">
          <property name="spacing"><number>6</number></property>
          <item><widget class="QPushButton" name="btnNavDashboard">
-          <property name="minimumSize"><size><width>94</width><height>42</height></size></property>
+          <property name="minimumSize"><size><width>120</width><height>42</height></size></property>
           <property name="text"><string>Tổng quan</string></property>
           <property name="checkable"><bool>true</bool></property>
           <property name="checked"><bool>true</bool></property>
@@ -37,7 +37,7 @@
           <attribute name="buttonGroup"><string notr="true">navButtonGroup</string></attribute>
          </widget></item>
          <item><widget class="QPushButton" name="btnNavTransactions">
-          <property name="minimumSize"><size><width>94</width><height>42</height></size></property>
+          <property name="minimumSize"><size><width>120</width><height>42</height></size></property>
           <property name="text"><string>Giao dịch</string></property>
           <property name="checkable"><bool>true</bool></property>
           <property name="checked"><bool>false</bool></property>
@@ -45,7 +45,7 @@
           <attribute name="buttonGroup"><string notr="true">navButtonGroup</string></attribute>
          </widget></item>
          <item><widget class="QPushButton" name="btnNavWallets">
-          <property name="minimumSize"><size><width>94</width><height>42</height></size></property>
+          <property name="minimumSize"><size><width>120</width><height>42</height></size></property>
           <property name="text"><string>Ví tiền</string></property>
           <property name="checkable"><bool>true</bool></property>
           <property name="checked"><bool>false</bool></property>
@@ -53,7 +53,7 @@
           <attribute name="buttonGroup"><string notr="true">navButtonGroup</string></attribute>
          </widget></item>
          <item><widget class="QPushButton" name="btnNavStats">
-          <property name="minimumSize"><size><width>94</width><height>42</height></size></property>
+          <property name="minimumSize"><size><width>120</width><height>42</height></size></property>
           <property name="text"><string>Thống kê</string></property>
           <property name="checkable"><bool>true</bool></property>
           <property name="checked"><bool>false</bool></property>
@@ -63,7 +63,7 @@
         </layout>
        </item>
        <item><spacer name="headerRightSpacer"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>20</height></size></property></spacer></item>
-       <item><widget class="QPushButton" name="btnNavSettings"><property name="minimumSize"><size><width>94</width><height>42</height></size></property><property name="text"><string>Cài đặt</string></property><property name="checkable"><bool>true</bool></property><property name="role" stdset="0"><string notr="true">nav</string></property><attribute name="buttonGroup"><string notr="true">navButtonGroup</string></attribute></widget></item>
+       <item><widget class="QPushButton" name="btnNavSettings"><property name="minimumSize"><size><width>105</width><height>42</height></size></property><property name="text"><string>Cài đặt</string></property><property name="checkable"><bool>true</bool></property><property name="role" stdset="0"><string notr="true">nav</string></property><attribute name="buttonGroup"><string notr="true">navButtonGroup</string></attribute></widget></item>
       </layout>
      </widget>
     </item>

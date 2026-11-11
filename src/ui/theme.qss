@@ -294,27 +294,33 @@ QLabel[property="amount-balance"], #lblTotalBalance, #lblNetTotal, #lblDayNet {
     font-weight: 700;
 }
 
+#cardBalance {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:0.65 #FFFFFF, stop:1 #EBF3FE);
+    border: 1px solid #DCE8FA;
+    border-radius: 18px;
+}
+
 #cardIncome {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #EAFBF3, stop:1 #FFFFFF);
-    border: 1px solid #B7EBCE;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:0.65 #FFFFFF, stop:1 #EAFBF3);
+    border: 1px solid #DCE8FA;
     border-radius: 18px;
 }
 
 #cardExpense {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF0F3, stop:1 #FFFFFF);
-    border: 1px solid #FFCCD5;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:0.65 #FFFFFF, stop:1 #FFF0F3);
+    border: 1px solid #DCE8FA;
     border-radius: 18px;
 }
 
 #cardNet {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #EBF3FF, stop:1 #FFFFFF);
-    border: 1px solid #CFE2FF;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:0.65 #FFFFFF, stop:1 #EBF3FE);
+    border: 1px solid #DCE8FA;
     border-radius: 18px;
 }
 
 #cardNet[netState="positive"] {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #EAFBF3, stop:1 #FFFFFF);
-    border: 1px solid #B7EBCE;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:0.65 #FFFFFF, stop:1 #EAFBF3);
+    border: 1px solid #DCE8FA;
 }
 
 #cardNet[netState="positive"] #lblNetTotal {
@@ -322,8 +328,8 @@ QLabel[property="amount-balance"], #lblTotalBalance, #lblNetTotal, #lblDayNet {
 }
 
 #cardNet[netState="negative"] {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF0F3, stop:1 #FFFFFF);
-    border: 1px solid #FFCCD5;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:0.65 #FFFFFF, stop:1 #FFF0F3);
+    border: 1px solid #DCE8FA;
 }
 
 #cardNet[netState="negative"] #lblNetTotal {
@@ -570,6 +576,28 @@ QTableWidget {
     gridline-color: #F1F6FF;
     selection-background-color: #E0EDFF;
     selection-color: #1E6FFF;
+}
+
+QTableWidget#tblRecentTransactions {
+    background-color: #FFFFFF;
+    border: none;
+    border-radius: 0px;
+    gridline-color: transparent;
+}
+
+QPushButton#btnViewAll {
+    border: 1.2px solid #1E6FFF;
+    color: #1E6FFF;
+    background-color: transparent;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 3px 12px;
+    min-height: 28px;
+}
+
+QPushButton#btnViewAll:hover {
+    background-color: #E0EDFF;
 }
 
 QTableWidget::item {

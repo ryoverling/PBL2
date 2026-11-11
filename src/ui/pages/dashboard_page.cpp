@@ -22,6 +22,11 @@ DashboardPage::DashboardPage(MoneyManager& mm, const std::string& dataDir, MainW
 
     ui->btnEditPlan->setIcon(UiHelper::createEditIcon(QColor("#1E6FFF")));
 
+    ui->lblIncomeSparkline->setPixmap(UiHelper::createSparkline(true, 56, 26));
+    ui->lblExpenseSparkline->setPixmap(UiHelper::createSparkline(false, 56, 26));
+    ui->lblBudgetIcon->setPixmap(UiHelper::createPlanBadge("budget", 24));
+    ui->lblGoalIcon->setPixmap(UiHelper::createPlanBadge("goal", 24));
+
     ui->prgBudget->setFixedHeight(12);
     ui->prgGoal->setFixedHeight(12);
 
@@ -34,6 +39,8 @@ DashboardPage::DashboardPage(MoneyManager& mm, const std::string& dataDir, MainW
     UiHelper::applyCardShadow(ui->frmPlanCard);
     UiHelper::applyCardShadow(ui->frmTableCard);
 
+    ui->tblRecentTransactions->setShowGrid(false);
+    ui->tblRecentTransactions->setIconSize(QSize(28, 28));
     ui->tblRecentTransactions->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     ui->tblRecentTransactions->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
     ui->tblRecentTransactions->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
@@ -69,7 +76,7 @@ void DashboardPage::addRecentRow(const Transaction* tx) {
     amount->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
     QString catName = category ? QString::fromStdString(category->getName()) : "Khác";
-    QString detail = UiHelper::getCategoryIcon(catName) + "  " + catName;
+    QString detail = catName;
     if (!tx->getNote().empty()) {
         detail += " • " + QString::fromStdString(tx->getNote());
     }
@@ -77,8 +84,11 @@ void DashboardPage::addRecentRow(const Transaction* tx) {
     auto* dateItem = new QTableWidgetItem(UiHelper::formatDate(tx->getDate()));
     dateItem->setForeground(QColor("#5B6B8C"));
 
-    auto* detailItem = new QTableWidgetItem(detail);
+    auto* detailItem = new QTableWidgetItem(UiHelper::createCategoryCircleIcon(catName, 28), detail);
     detailItem->setForeground(QColor("#0B2A6B"));
+    QFont fDetail = detailItem->font();
+    fDetail.setBold(true);
+    detailItem->setFont(fDetail);
     detailItem->setToolTip(detail);
 
     ui->tblRecentTransactions->setItem(row, 0, dateItem);

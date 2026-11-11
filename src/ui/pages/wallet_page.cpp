@@ -1,7 +1,7 @@
 #include "wallet_page.h"
 #include "ui_wallet_page.h"
 #include "../gui_helpers.h"
-#include "../gui_icons.h"
+#include "../gui_icons_wallet.h"
 #include "../main_window.h"
 #include "../widgets/wallet_card.h"
 #include "../dialogs/wallet_dialog.h"

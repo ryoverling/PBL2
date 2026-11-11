@@ -1,7 +1,7 @@
 #include "wallet_card.h"
 #include "ui_wallet_card.h"
 #include "../gui_helpers.h"
-#include "../gui_icons.h"
+#include "../gui_icons_wallet.h"
 #include "../../core/model/wallet.h"
 #include <QMouseEvent>
 #include <QResizeEvent>

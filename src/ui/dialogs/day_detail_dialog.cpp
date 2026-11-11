@@ -1,7 +1,8 @@
 #include "day_detail_dialog.h"
 #include "ui_day_detail_dialog.h"
 #include "../gui_helpers.h"
-#include "../gui_icons.h"
+#include "../gui_icons_kpi.h"
+#include "../gui_icons_nav.h"
 #include "../main_window.h"
 #include "../../core/app/money_manager.h"
 #include <QHeaderView>

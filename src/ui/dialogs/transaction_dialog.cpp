@@ -1,7 +1,7 @@
 #include "transaction_dialog.h"
 #include "ui_transaction_dialog.h"
 #include "../gui_helpers.h"
-#include "../gui_icons.h"
+#include "../gui_icons_kpi.h"
 #include "../widgets/date_picker_popup.h"
 #include "../../core/app/money_manager.h"
 #include "../../core/model/transaction.h"

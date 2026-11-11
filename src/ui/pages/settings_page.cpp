@@ -2,7 +2,8 @@
 #include "ui_settings_page.h"
 #include "../main_window.h"
 #include "../gui_helpers.h"
-#include "../gui_icons.h"
+#include "../gui_icons_wallet.h"
+#include "../gui_icons_nav.h"
 #include "../../core/app/money_manager.h"
 #include <QMessageBox>
 #include <QPushButton>

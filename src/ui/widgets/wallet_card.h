@@ -1,11 +1,13 @@
 #pragma once
 
 #include <QFrame>
+#include <QPushButton>
 #include <QString>
 
 class Wallet;
 class QMouseEvent;
 class QResizeEvent;
+class QPaintEvent;
 
 namespace Ui { class WalletCard; }
 
@@ -29,4 +31,11 @@ private:
     int id;
     QString fullName;
     void updateName();
+};
+
+class AddWalletCard : public QPushButton {
+public:
+    explicit AddWalletCard(QWidget* parent = nullptr);
+protected:
+    void paintEvent(QPaintEvent* event) override;
 };

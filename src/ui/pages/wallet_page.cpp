@@ -4,7 +4,6 @@
 #include "../gui_icons.h"
 #include "../main_window.h"
 #include "../widgets/wallet_card.h"
-#include "../widgets/add_wallet_card.h"
 #include "../dialogs/wallet_dialog.h"
 #include "../../core/app/money_manager.h"
 #include <QResizeEvent>

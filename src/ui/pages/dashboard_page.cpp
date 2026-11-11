@@ -130,6 +130,53 @@ void DashboardPage::updateCalendar() {
     ui->calDaily->setData(selectedMonth(), selectedYear(), daily.days);
 }
 
+void DashboardPage::updateBudgetProgress() {
+    if (currentPlan.monthlyBudget <= 0) {
+        ui->prgBudget->setValue(0);
+        ui->lblBudgetLabel->setText("Ngân sách chi tiêu tháng: Chưa thiết lập");
+        return;
+    }
+    long long income = 0, expense = 0;
+    moneyManager.getMonthlyTotals(selectedMonth(), selectedYear(), income, expense);
+    double pct = (double)expense / (double)currentPlan.monthlyBudget * 100.0;
+    int clampedVal = qBound(0, static_cast<int>(pct), 100);
+    ui->prgBudget->setValue(clampedVal);
+
+    const char* variant = (pct >= 100.0) ? "danger" : (pct >= 75.0) ? "warning" : "success";
+    ui->prgBudget->setProperty("variant", variant);
+    ui->prgBudget->style()->unpolish(ui->prgBudget);
+    ui->prgBudget->style()->polish(ui->prgBudget);
+
+    ui->lblBudgetLabel->setText(QString("Ngân sách chi tiêu tháng: %1 / %2 (%3%)")
+        .arg(UiHelper::formatMoneyVND(expense))
+        .arg(UiHelper::formatMoneyVND(currentPlan.monthlyBudget))
+        .arg(QString::number(pct, 'f', 1)));
+}
+
+void DashboardPage::updateGoalProgress() {
+    if (currentPlan.goalName.empty() || currentPlan.targetAmount <= 0) {
+        ui->prgGoal->setValue(0);
+        ui->lblGoalLabel->setText("Mục tiêu tiết kiệm: Chưa thiết lập");
+        return;
+    }
+    double pct = (double)currentPlan.currentSaved / (double)currentPlan.targetAmount * 100.0;
+    int clampedVal = qBound(0, static_cast<int>(pct), 100);
+    ui->prgGoal->setValue(clampedVal);
+    ui->prgGoal->setProperty("variant", "primary");
+    ui->prgGoal->style()->unpolish(ui->prgGoal);
+    ui->prgGoal->style()->polish(ui->prgGoal);
+
+    QString goalStr = QString("Mục tiêu \"%1\": %2 / %3 (%4%)")
+        .arg(QString::fromStdString(currentPlan.goalName))
+        .arg(UiHelper::formatMoneyVND(currentPlan.currentSaved))
+        .arg(UiHelper::formatMoneyVND(currentPlan.targetAmount))
+        .arg(QString::number(pct, 'f', 1));
+    if (!currentPlan.targetDate.empty()) {
+        goalStr += " (Hạn: " + QString::fromStdString(currentPlan.targetDate) + ")";
+    }
+    ui->lblGoalLabel->setText(goalStr);
+}
+
 void DashboardPage::updatePlanCard() {
     if (!currentPlan.hasPlan()) {
         ui->widgetPlanData->setVisible(false);
@@ -142,50 +189,8 @@ void DashboardPage::updatePlanCard() {
     ui->lblEmptyPlan->setVisible(false);
     ui->btnEditPlan->setText("Thiết lập");
 
-    // 1. Ngân sách chi tiêu tháng
-    if (currentPlan.monthlyBudget > 0) {
-        long long income = 0, expense = 0;
-        moneyManager.getMonthlyTotals(selectedMonth(), selectedYear(), income, expense);
-        double pct = (double)expense / (double)currentPlan.monthlyBudget * 100.0;
-        int clampedVal = qBound(0, static_cast<int>(pct), 100);
-        ui->prgBudget->setValue(clampedVal);
-
-        const char* variant = (pct >= 100.0) ? "danger" : (pct >= 75.0) ? "warning" : "success";
-        ui->prgBudget->setProperty("variant", variant);
-        ui->prgBudget->style()->unpolish(ui->prgBudget);
-        ui->prgBudget->style()->polish(ui->prgBudget);
-
-        ui->lblBudgetLabel->setText(QString("Ngân sách chi tiêu tháng: %1 / %2 (%3%)")
-            .arg(UiHelper::formatMoneyVND(expense))
-            .arg(UiHelper::formatMoneyVND(currentPlan.monthlyBudget))
-            .arg(QString::number(pct, 'f', 1)));
-    } else {
-        ui->prgBudget->setValue(0);
-        ui->lblBudgetLabel->setText("Ngân sách chi tiêu tháng: Chưa thiết lập");
-    }
-
-    // 2. Mục tiêu tiết kiệm
-    if (!currentPlan.goalName.empty() && currentPlan.targetAmount > 0) {
-        double pct = (double)currentPlan.currentSaved / (double)currentPlan.targetAmount * 100.0;
-        int clampedVal = qBound(0, static_cast<int>(pct), 100);
-        ui->prgGoal->setValue(clampedVal);
-        ui->prgGoal->setProperty("variant", "primary");
-        ui->prgGoal->style()->unpolish(ui->prgGoal);
-        ui->prgGoal->style()->polish(ui->prgGoal);
-
-        QString goalStr = QString("Mục tiêu \"%1\": %2 / %3 (%4%)")
-            .arg(QString::fromStdString(currentPlan.goalName))
-            .arg(UiHelper::formatMoneyVND(currentPlan.currentSaved))
-            .arg(UiHelper::formatMoneyVND(currentPlan.targetAmount))
-            .arg(QString::number(pct, 'f', 1));
-        if (!currentPlan.targetDate.empty()) {
-            goalStr += " (Hạn: " + QString::fromStdString(currentPlan.targetDate) + ")";
-        }
-        ui->lblGoalLabel->setText(goalStr);
-    } else {
-        ui->prgGoal->setValue(0);
-        ui->lblGoalLabel->setText("Mục tiêu tiết kiệm: Chưa thiết lập");
-    }
+    updateBudgetProgress();
+    updateGoalProgress();
 }
 
 void DashboardPage::refreshData() {

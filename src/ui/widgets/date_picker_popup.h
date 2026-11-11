@@ -50,6 +50,8 @@ private slots:
 
 private:
     void setupUi();
+    void setupHeaderRow(class QVBoxLayout* mainLayout);
+    void setupFooterRow(class QVBoxLayout* mainLayout);
     void setupDaysView();
     void setupMonthsView();
     void setupYearsView();

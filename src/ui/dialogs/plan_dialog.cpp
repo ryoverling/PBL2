@@ -61,19 +61,9 @@ PlanDialog::PlanDialog(const BudgetPlan& initialPlan, QWidget* parent)
     setupUi();
 }
 
-void PlanDialog::setupUi() {
-    auto* mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(24, 20, 24, 20);
-    mainLayout->setSpacing(16);
-
-    // Tiêu đề
-    auto* lblTitle = new QLabel("Thiết lập Kế hoạch tháng này", this);
-    lblTitle->setStyleSheet("font-size: 16px; font-weight: 700; color: #0B2A6B;");
-    mainLayout->addWidget(lblTitle);
-
-    // Group 1: Ngân sách tháng
+void PlanDialog::setupBudgetGroup(QVBoxLayout* mainLayout) {
     auto* grpBudget = new QGroupBox("Hạn mức ngân sách chi tiêu tháng", this);
-    grpBudget->setStyleSheet("QGroupBox { font-weight: 600; color: #0B2A6B; border: 1px solid #DCE8FA; border-radius: 12px; margin-top: 10px; padding-top: 14px; background: #FFFFFF; }");
+    grpBudget->setObjectName("grpBudget");
     auto* budgetLayout = new QFormLayout(grpBudget);
     budgetLayout->setContentsMargins(14, 16, 14, 14);
     budgetLayout->setSpacing(10);
@@ -86,10 +76,11 @@ void PlanDialog::setupUi() {
     }
     budgetLayout->addRow("Ngân sách (đ):", edtBudget);
     mainLayout->addWidget(grpBudget);
+}
 
-    // Group 2: Mục tiêu tiết kiệm
+void PlanDialog::setupGoalGroup(QVBoxLayout* mainLayout) {
     auto* grpGoal = new QGroupBox("Mục tiêu tiết kiệm", this);
-    grpGoal->setStyleSheet("QGroupBox { font-weight: 600; color: #0B2A6B; border: 1px solid #DCE8FA; border-radius: 12px; margin-top: 10px; padding-top: 14px; background: #FFFFFF; }");
+    grpGoal->setObjectName("grpGoal");
     auto* goalLayout = new QFormLayout(grpGoal);
     goalLayout->setContentsMargins(14, 16, 14, 14);
     goalLayout->setSpacing(10);
@@ -123,46 +114,49 @@ void PlanDialog::setupUi() {
     goalLayout->addRow("Số tiền mục tiêu (đ):", edtTargetAmount);
     goalLayout->addRow("Hạn dự kiến:", edtTargetDate);
     mainLayout->addWidget(grpGoal);
+}
 
-    // Footer buttons
+void PlanDialog::setupActionButtons(QVBoxLayout* mainLayout) {
     auto* footerLayout = new QHBoxLayout();
     footerLayout->setSpacing(10);
 
     btnDelete = new QPushButton("Xóa kế hoạch", this);
     btnDelete->setFixedHeight(40);
     btnDelete->setCursor(Qt::PointingHandCursor);
-    btnDelete->setStyleSheet(
-        "QPushButton { color: #E0173D; background-color: #FFFFFF; border: 1.5px solid #FFCCD5; "
-        "border-radius: 10px; padding: 0 14px; font-weight: 600; font-size: 13px; } "
-        "QPushButton:hover { background-color: #FFF0F3; }"
-    );
+    btnDelete->setProperty("role", "danger-outline");
     btnDelete->setVisible(m_plan.hasPlan());
 
     btnCancel = new QPushButton("Hủy", this);
     btnCancel->setFixedHeight(40);
     btnCancel->setMinimumWidth(80);
     btnCancel->setCursor(Qt::PointingHandCursor);
-    btnCancel->setStyleSheet(
-        "QPushButton { color: #5B6B8C; background-color: #FFFFFF; border: 1.5px solid #D5E1F5; "
-        "border-radius: 10px; padding: 0 16px; font-weight: 600; font-size: 13px; } "
-        "QPushButton:hover { background-color: #F1F6FF; }"
-    );
+    btnCancel->setProperty("role", "secondary");
 
     btnSave = new QPushButton("Lưu kế hoạch", this);
     btnSave->setFixedHeight(40);
     btnSave->setMinimumWidth(110);
     btnSave->setCursor(Qt::PointingHandCursor);
-    btnSave->setStyleSheet(
-        "QPushButton { color: #FFFFFF; background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #1E6FFF, stop:1 #155EEF); "
-        "border: none; border-radius: 10px; padding: 0 18px; font-weight: 700; font-size: 13px; } "
-        "QPushButton:hover { background: #155EEF; }"
-    );
+    btnSave->setProperty("role", "primary");
 
     footerLayout->addWidget(btnDelete);
     footerLayout->addStretch(1);
     footerLayout->addWidget(btnCancel);
     footerLayout->addWidget(btnSave);
     mainLayout->addLayout(footerLayout);
+}
+
+void PlanDialog::setupUi() {
+    auto* mainLayout = new QVBoxLayout(this);
+    mainLayout->setContentsMargins(24, 20, 24, 20);
+    mainLayout->setSpacing(16);
+
+    auto* lblTitle = new QLabel("Thiết lập Kế hoạch tháng này", this);
+    lblTitle->setObjectName("lblPlanDialogTitle");
+    mainLayout->addWidget(lblTitle);
+
+    setupBudgetGroup(mainLayout);
+    setupGoalGroup(mainLayout);
+    setupActionButtons(mainLayout);
 
     connect(btnCancel, &QPushButton::clicked, this, &QDialog::reject);
     connect(btnSave, &QPushButton::clicked, this, &PlanDialog::onSaveClicked);

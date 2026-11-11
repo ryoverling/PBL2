@@ -17,6 +17,7 @@ struct BudgetPlan {
 
 class QLineEdit;
 class QPushButton;
+class QVBoxLayout;
 
 class PlanDialog : public QDialog {
     Q_OBJECT
@@ -35,6 +36,9 @@ private slots:
 
 private:
     void setupUi();
+    void setupBudgetGroup(QVBoxLayout* mainLayout);
+    void setupGoalGroup(QVBoxLayout* mainLayout);
+    void setupActionButtons(QVBoxLayout* mainLayout);
 
     BudgetPlan m_plan;
     QLineEdit* edtBudget = nullptr;

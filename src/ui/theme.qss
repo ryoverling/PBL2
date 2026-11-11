@@ -15,6 +15,8 @@
    - Button & Input:          #FFFFFF (vien: #D5E1F5, bo goc: 12px, cao: 42px)
    - Chip / Badge:            bo goc dang pill (20px)
    - Bang du lieu:            Header #F1F6FF, hang cao 48px, hover #F8FAFD
+   - ScrollBar token:         Nen trong suot, tay cam #CBD5E1 (hover #94A3B8)
+   - Hover bang token:        Hang hover #F8FAFD, chon dong #E0EDFF (#1E6FFF)
    ========================================================================== */
 
 /* 1. Reset & Global Typography */
@@ -746,8 +748,8 @@ QFrame#WalletCard[selected="true"] {
 }
 
 #WalletCard #lblType[walletType="ewallet"] {
-    color: #8B5CF6;
-    background: #F3EDFF;
+    color: #8E3FD8;
+    background: #F0E3FF;
 }
 
 #WalletCard #lblType[walletType="tpbank"] {
@@ -985,5 +987,174 @@ QProgressBar[variant="warning"]::chunk {
 
 QProgressBar[variant="success"]::chunk {
     background-color: #0E8F4F;
+}
+
+/* PlanDialog Styles */
+#lblPlanDialogTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0B2A6B;
+}
+
+QGroupBox#grpBudget, QGroupBox#grpGoal {
+    font-weight: 600;
+    color: #0B2A6B;
+    border: 1px solid #DCE8FA;
+    border-radius: 12px;
+    margin-top: 10px;
+    padding-top: 14px;
+    background: #FFFFFF;
+}
+
+QPushButton[role="danger-outline"] {
+    color: #E0173D;
+    background-color: #FFFFFF;
+    border: 1.5px solid #FFCCD5;
+    border-radius: 10px;
+    padding: 0 14px;
+    font-weight: 600;
+    font-size: 13px;
+}
+QPushButton[role="danger-outline"]:hover {
+    background-color: #FFF0F3;
+}
+
+/* EyeButton Styles */
+EyeButton {
+    border: none;
+    background: transparent;
+}
+
+/* MonthPickerWidget Styles */
+MonthPickerWidget QPushButton {
+    background-color: #FFFFFF;
+    border: 1px solid #DCE6F2;
+    border-radius: 8px;
+    padding: 0;
+}
+MonthPickerWidget QPushButton:hover {
+    background-color: #F1F5F9;
+    border-color: #CBD5E1;
+}
+MonthPickerWidget QLineEdit {
+    background-color: #FFFFFF;
+    border: 1px solid #DCE6F2;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #102748;
+    padding: 0 28px 0 10px;
+}
+MonthPickerWidget QLineEdit:hover {
+    border-color: #1E6FFF;
+    background-color: #F8FAFC;
+}
+
+/* DatePickerPopup Header & Footer Styles */
+DatePickerPopup #btnPrevMonth, DatePickerPopup #btnNextMonth {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 0;
+}
+DatePickerPopup #btnPrevMonth:hover, DatePickerPopup #btnNextMonth:hover {
+    background-color: #F8FAFC;
+    border-color: #CBD5E1;
+}
+DatePickerPopup #btnTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: #102748;
+    background: transparent;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 8px;
+}
+DatePickerPopup #btnTitle:hover {
+    background-color: #F1F5F9;
+}
+DatePickerPopup #btnToday {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 0 16px;
+    color: #1E6FFF;
+    background-color: #FFFFFF;
+    border: 1.5px solid #D5E1F5;
+    border-radius: 10px;
+}
+DatePickerPopup #btnToday:hover {
+    background-color: #EBF3FE;
+    border-color: #1E6FFF;
+}
+DatePickerPopup #btnPopupCancel {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 0 18px;
+    border-radius: 10px;
+    color: #5B6B8C;
+    border: 1.5px solid #D5E1F5;
+    background-color: #FFFFFF;
+}
+DatePickerPopup #btnPopupCancel:hover {
+    background-color: #F1F6FF;
+    color: #0B2A6B;
+}
+DatePickerPopup #btnPopupSelect {
+    font-size: 13px;
+    font-weight: 700;
+    padding: 0 20px;
+    border-radius: 10px;
+    color: #FFFFFF;
+    background-color: #1E6FFF;
+    border: none;
+}
+DatePickerPopup #btnPopupSelect:hover {
+    background-color: #155EEF;
+}
+
+/* Segmented Buttons in TransactionDialog */
+#btnTypeExpense[active="true"] {
+    background-color: #EBF3FE;
+    border: 2px solid #1E6FFF;
+    color: #1E6FFF;
+    font-weight: 700;
+    border-radius: 12px;
+    font-size: 14px;
+    min-height: 44px;
+}
+#btnTypeExpense[active="false"] {
+    background-color: #FFFFFF;
+    border: 1.5px solid #D5E1F5;
+    color: #5B6B8C;
+    font-weight: 500;
+    border-radius: 12px;
+    font-size: 14px;
+    min-height: 44px;
+}
+#btnTypeExpense[active="false"]:hover {
+    background-color: #F1F6FF;
+    border-color: #BACFE8;
+}
+#btnTypeIncome[active="true"] {
+    background-color: #EAFBF3;
+    border: 2px solid #0E8F4F;
+    color: #0E8F4F;
+    font-weight: 700;
+    border-radius: 12px;
+    font-size: 14px;
+    min-height: 44px;
+}
+#btnTypeIncome[active="false"] {
+    background-color: #FFFFFF;
+    border: 1.5px solid #D5E1F5;
+    color: #5B6B8C;
+    font-weight: 500;
+    border-radius: 12px;
+    font-size: 14px;
+    min-height: 44px;
+}
+#btnTypeIncome[active="false"]:hover {
+    background-color: #F1F6FF;
+    border-color: #BACFE8;
 }
 

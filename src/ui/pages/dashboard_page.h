@@ -44,4 +44,6 @@ private:
     void updateCards();
     void updateCalendar();
     void updatePlanCard();
+    void updateBudgetProgress();
+    void updateGoalProgress();
 };

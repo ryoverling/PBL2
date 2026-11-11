@@ -5,6 +5,7 @@
 
 class MoneyManager;
 class MainWindow;
+class Transaction;
 
 namespace Ui {
 class DayDetailDialog;
@@ -28,5 +29,7 @@ private:
     MainWindow* mainWindow;
 
     void populateData();
+    void addDayRow(const Transaction* tx, int row);
+    void updateSummaryTotals(long long income, long long expense);
 };
 

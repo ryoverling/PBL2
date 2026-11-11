@@ -156,44 +156,29 @@ void DatePickerPopup::setSelectedDate(const QDate& date) {
     updateHeader();
 }
 
-void DatePickerPopup::setupUi() {
-    auto* mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(20, 16, 20, 18);
-    mainLayout->setSpacing(10);
-
-    // Header điều hướng với icon SVG chevron
+void DatePickerPopup::setupHeaderRow(QVBoxLayout* mainLayout) {
     auto* headerLayout = new QHBoxLayout();
     headerLayout->setSpacing(8);
 
     btnPrev = new QPushButton(this);
+    btnPrev->setObjectName("btnPrevMonth");
     btnPrev->setIcon(makeChevronIcon(true));
     btnPrev->setIconSize(QSize(18, 18));
     btnPrev->setFixedSize(38, 38);
     btnPrev->setCursor(Qt::PointingHandCursor);
-    btnPrev->setStyleSheet(
-        "QPushButton { background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 0; } "
-        "QPushButton:hover { background-color: #F8FAFC; border-color: #CBD5E1; }"
-    );
 
     btnTitle = new QPushButton(this);
+    btnTitle->setObjectName("btnTitle");
     btnTitle->setMinimumHeight(38);
     btnTitle->setCursor(Qt::PointingHandCursor);
     btnTitle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    btnTitle->setStyleSheet(
-        "QPushButton { font-size: 16px; font-weight: 700; color: #102748; background: transparent; "
-        "border: none; padding: 4px 10px; border-radius: 8px; } "
-        "QPushButton:hover { background-color: #F1F5F9; }"
-    );
 
     btnNext = new QPushButton(this);
+    btnNext->setObjectName("btnNextMonth");
     btnNext->setIcon(makeChevronIcon(false));
     btnNext->setIconSize(QSize(18, 18));
     btnNext->setFixedSize(38, 38);
     btnNext->setCursor(Qt::PointingHandCursor);
-    btnNext->setStyleSheet(
-        "QPushButton { background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 0; } "
-        "QPushButton:hover { background-color: #F8FAFC; border-color: #CBD5E1; }"
-    );
 
     headerLayout->addWidget(btnPrev);
     headerLayout->addWidget(btnTitle);
@@ -203,6 +188,46 @@ void DatePickerPopup::setupUi() {
     connect(btnPrev, &QPushButton::clicked, this, &DatePickerPopup::onPrevClicked);
     connect(btnNext, &QPushButton::clicked, this, &DatePickerPopup::onNextClicked);
     connect(btnTitle, &QPushButton::clicked, this, &DatePickerPopup::onTitleClicked);
+}
+
+void DatePickerPopup::setupFooterRow(QVBoxLayout* mainLayout) {
+    auto* footerLayout = new QHBoxLayout();
+    footerLayout->setSpacing(12);
+
+    btnToday = new QPushButton("Hôm nay", this);
+    btnToday->setObjectName("btnToday");
+    btnToday->setFixedHeight(40);
+    btnToday->setCursor(Qt::PointingHandCursor);
+
+    btnCancel = new QPushButton("Đóng", this);
+    btnCancel->setObjectName("btnPopupCancel");
+    btnCancel->setFixedHeight(40);
+    btnCancel->setMinimumWidth(82);
+    btnCancel->setCursor(Qt::PointingHandCursor);
+
+    btnSelect = new QPushButton("Chọn", this);
+    btnSelect->setObjectName("btnPopupSelect");
+    btnSelect->setFixedHeight(40);
+    btnSelect->setMinimumWidth(88);
+    btnSelect->setCursor(Qt::PointingHandCursor);
+
+    footerLayout->addWidget(btnToday);
+    footerLayout->addStretch(1);
+    footerLayout->addWidget(btnCancel);
+    footerLayout->addWidget(btnSelect);
+    mainLayout->addLayout(footerLayout);
+
+    connect(btnToday, &QPushButton::clicked, this, &DatePickerPopup::onTodayClicked);
+    connect(btnCancel, &QPushButton::clicked, this, &QDialog::reject);
+    connect(btnSelect, &QPushButton::clicked, this, &DatePickerPopup::onSelectClicked);
+}
+
+void DatePickerPopup::setupUi() {
+    auto* mainLayout = new QVBoxLayout(this);
+    mainLayout->setContentsMargins(20, 16, 20, 18);
+    mainLayout->setSpacing(10);
+
+    setupHeaderRow(mainLayout);
 
     // Stacked widget cho 3 chế độ xem (Ngày, Tháng, Năm)
     stackViews = new QStackedWidget(this);
@@ -215,48 +240,7 @@ void DatePickerPopup::setupUi() {
     stackViews->addWidget(pageYears);
     mainLayout->addWidget(stackViews, 1);
 
-    // Footer buttons chuẩn: "Hôm nay", "Đóng", "Chọn" bo góc viền tinh tế
-    auto* footerLayout = new QHBoxLayout();
-    footerLayout->setSpacing(12);
-
-    btnToday = new QPushButton("Hôm nay", this);
-    btnToday->setFixedHeight(40);
-    btnToday->setCursor(Qt::PointingHandCursor);
-    btnToday->setStyleSheet(
-        "QPushButton { font-size: 13px; font-weight: 600; padding: 0 16px; "
-        "color: #1E6FFF; background-color: #FFFFFF; border: 1.5px solid #D5E1F5; border-radius: 10px; } "
-        "QPushButton:hover { background-color: #EBF3FE; border-color: #1E6FFF; }"
-    );
-
-    btnCancel = new QPushButton("Đóng", this);
-    btnCancel->setFixedHeight(40);
-    btnCancel->setMinimumWidth(82);
-    btnCancel->setCursor(Qt::PointingHandCursor);
-    btnCancel->setStyleSheet(
-        "QPushButton { font-size: 13px; font-weight: 600; padding: 0 18px; border-radius: 10px; "
-        "color: #5B6B8C; border: 1.5px solid #D5E1F5; background-color: #FFFFFF; } "
-        "QPushButton:hover { background-color: #F1F6FF; color: #0B2A6B; }"
-    );
-
-    btnSelect = new QPushButton("Chọn", this);
-    btnSelect->setFixedHeight(40);
-    btnSelect->setMinimumWidth(88);
-    btnSelect->setCursor(Qt::PointingHandCursor);
-    btnSelect->setStyleSheet(
-        "QPushButton { font-size: 13px; font-weight: 700; padding: 0 20px; border-radius: 10px; "
-        "color: #FFFFFF; background-color: #1E6FFF; border: none; } "
-        "QPushButton:hover { background-color: #155EEF; }"
-    );
-
-    footerLayout->addWidget(btnToday);
-    footerLayout->addStretch(1);
-    footerLayout->addWidget(btnCancel);
-    footerLayout->addWidget(btnSelect);
-    mainLayout->addLayout(footerLayout);
-
-    connect(btnToday, &QPushButton::clicked, this, &DatePickerPopup::onTodayClicked);
-    connect(btnCancel, &QPushButton::clicked, this, &QDialog::reject);
-    connect(btnSelect, &QPushButton::clicked, this, &DatePickerPopup::onSelectClicked);
+    setupFooterRow(mainLayout);
 }
 
 void DatePickerPopup::setupDaysView() {

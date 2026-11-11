@@ -8,7 +8,7 @@ static const double kPi = 3.14159265358979323846;
 DonutWidget::DonutWidget(QWidget* parent) : QWidget(parent) { setMinimumHeight(200); }
 
 void DonutWidget::setData(const LinkedList<CategoryExpense>& categories, long long totalExpense) {
-    static const char* colors[6] = {"#1E6FFF", "#0E8F4F", "#E0173D", "#FF9F1A", "#8B5CF6", "#5B6B8C"};
+    static const char* colors[6] = {"#1E6FFF", "#0E8F4F", "#E0173D", "#FF9F1A", "#8E3FD8", "#5B6B8C"};
     count = 0;
     total = totalExpense;
     for (const Node<CategoryExpense>* cur = categories.getHead(); cur; cur = cur->next)

@@ -71,12 +71,12 @@ void IconBadge::paintEvent(QPaintEvent*) {
 
     QColor bg = (kind == "cash" || income) ? QColor("#E6FAF3")
               : expense ? QColor("#FEECEB")
-              : (kind == "ewallet") ? QColor("#F3EDFF")
+              : (kind == "ewallet") ? QColor("#F0E3FF")
               : QColor("#E0EDFF");
 
     QColor stroke = (kind == "cash" || income) ? QColor("#0E8F4F")
                   : expense ? QColor("#E0173D")
-                  : (kind == "ewallet") ? QColor("#8B5CF6")
+                  : (kind == "ewallet") ? QColor("#8E3FD8")
                   : QColor("#1E6FFF");
 
     p.setPen(Qt::NoPen);

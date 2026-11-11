@@ -5,7 +5,6 @@ EyeButton::EyeButton(QWidget *parent) : QPushButton(parent) {
     setCheckable(true);
     setCursor(Qt::PointingHandCursor);
     setFixedSize(28, 28);
-    setStyleSheet("QPushButton { border: none; background: transparent; }");
 }
 
 static void drawEye(QPainter& painter, qreal cx, qreal cy, qreal rx, qreal ry,

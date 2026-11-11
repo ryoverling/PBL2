@@ -2,6 +2,7 @@
 #include "ui_transaction_dialog.h"
 #include "../gui_helpers.h"
 #include "../gui_icons_kpi.h"
+#include "../gui_icons_nav.h"
 #include "../widgets/date_picker_popup.h"
 #include "../../core/app/money_manager.h"
 #include "../../core/model/transaction.h"
@@ -9,6 +10,7 @@
 #include <QButtonGroup>
 #include <QAction>
 #include <QMessageBox>
+#include <QStyle>
 
 TransactionDialog::TransactionDialog(MoneyManager& mm, int txId, QWidget *parent)
     : QDialog(parent), ui(new Ui::TransactionDialog), moneyManager(mm), editingTxId(txId) {
@@ -20,8 +22,10 @@ TransactionDialog::TransactionDialog(MoneyManager& mm, int txId, QWidget *parent
     typeGroup->addButton(ui->btnTypeExpense, 0);
     typeGroup->addButton(ui->btnTypeIncome, 1);
 
-    ui->btnTypeExpense->setText("🛒 Khoản chi");
-    ui->btnTypeIncome->setText("📥 Khoản thu");
+    ui->btnTypeExpense->setText("Khoản chi");
+    ui->btnTypeExpense->setIcon(GuiIcons::createArrowDownIcon(QColor("#E0173D")));
+    ui->btnTypeIncome->setText("Khoản thu");
+    ui->btnTypeIncome->setIcon(GuiIcons::createArrowUpIcon(QColor("#0E8F4F")));
     updateSegmentedStyle();
 
     // Thêm icon đồng xu bên phải ô nhập số tiền
@@ -30,8 +34,10 @@ TransactionDialog::TransactionDialog(MoneyManager& mm, int txId, QWidget *parent
     loadWallets();
     loadCategories();
     ui->lblDialogTitle->setText(txId > 0 ? "Sửa giao dịch" : "Thêm giao dịch mới");
-    ui->btnCancel->setText("✕ Hủy");
-    ui->btnSave->setText("💾 Lưu");
+    ui->btnCancel->setText("Hủy");
+    ui->btnCancel->setIcon(GuiIcons::createTrashIcon(QColor("#5B6B8C")));
+    ui->btnSave->setText("Lưu");
+    ui->btnSave->setIcon(GuiIcons::createPlusIcon(Qt::white));
 
     if (txId > 0) {
         setupEditData(moneyManager.getTransactionManager().findById(txId));
@@ -53,27 +59,12 @@ TransactionDialog::~TransactionDialog() {
 
 void TransactionDialog::updateSegmentedStyle() {
     bool isExpense = ui->btnTypeExpense->isChecked();
-    if (isExpense) {
-        ui->btnTypeExpense->setStyleSheet(
-            "QPushButton { background-color: #EBF3FE; border: 2px solid #1E6FFF; color: #1E6FFF; "
-            "font-weight: 700; border-radius: 12px; font-size: 14px; min-height: 44px; }"
-        );
-        ui->btnTypeIncome->setStyleSheet(
-            "QPushButton { background-color: #FFFFFF; border: 1.5px solid #D5E1F5; color: #5B6B8C; "
-            "font-weight: 500; border-radius: 12px; font-size: 14px; min-height: 44px; } "
-            "QPushButton:hover { background-color: #F1F6FF; border-color: #BACFE8; }"
-        );
-    } else {
-        ui->btnTypeIncome->setStyleSheet(
-            "QPushButton { background-color: #EAFBF3; border: 2px solid #0E8F4F; color: #0E8F4F; "
-            "font-weight: 700; border-radius: 12px; font-size: 14px; min-height: 44px; }"
-        );
-        ui->btnTypeExpense->setStyleSheet(
-            "QPushButton { background-color: #FFFFFF; border: 1.5px solid #D5E1F5; color: #5B6B8C; "
-            "font-weight: 500; border-radius: 12px; font-size: 14px; min-height: 44px; } "
-            "QPushButton:hover { background-color: #F1F6FF; border-color: #BACFE8; }"
-        );
-    }
+    ui->btnTypeExpense->setProperty("active", isExpense);
+    ui->btnTypeIncome->setProperty("active", !isExpense);
+    ui->btnTypeExpense->style()->unpolish(ui->btnTypeExpense);
+    ui->btnTypeExpense->style()->polish(ui->btnTypeExpense);
+    ui->btnTypeIncome->style()->unpolish(ui->btnTypeIncome);
+    ui->btnTypeIncome->style()->polish(ui->btnTypeIncome);
 }
 
 void TransactionDialog::setInitialType(TransactionType type) {

@@ -47,10 +47,6 @@ void MonthPickerWidget::setupUi() {
     btnPrev->setFixedSize(36, 36);
     btnPrev->setCursor(Qt::PointingHandCursor);
     btnPrev->setToolTip("Tháng trước");
-    btnPrev->setStyleSheet(
-        "QPushButton { background-color: #FFFFFF; border: 1px solid #DCE6F2; border-radius: 8px; padding: 0; } "
-        "QPushButton:hover { background-color: #F1F5F9; border-color: #CBD5E1; }"
-    );
 
     edtDisplay = new QLineEdit(this);
     edtDisplay->setFixedHeight(36);
@@ -59,13 +55,8 @@ void MonthPickerWidget::setupUi() {
     edtDisplay->setReadOnly(true);
     edtDisplay->setCursor(Qt::PointingHandCursor);
     edtDisplay->setAlignment(Qt::AlignCenter);
-    edtDisplay->setStyleSheet(
-        "QLineEdit { background-color: #FFFFFF; border: 1px solid #DCE6F2; border-radius: 8px; "
-        "font-size: 13px; font-weight: 600; color: #102748; padding: 0 28px 0 10px; } "
-        "QLineEdit:hover { border-color: #1A6BEB; background-color: #F8FAFC; }"
-    );
 
-    QAction* calAction = edtDisplay->addAction(UiHelper::createCalendarIcon(QColor("#1A6BEB")), QLineEdit::TrailingPosition);
+    QAction* calAction = edtDisplay->addAction(UiHelper::createCalendarIcon(QColor("#1E6FFF")), QLineEdit::TrailingPosition);
     calAction->setToolTip("Mở bộ chọn lịch tháng");
     connect(calAction, &QAction::triggered, this, &MonthPickerWidget::onFieldClicked);
 
@@ -75,10 +66,6 @@ void MonthPickerWidget::setupUi() {
     btnNext->setFixedSize(36, 36);
     btnNext->setCursor(Qt::PointingHandCursor);
     btnNext->setToolTip("Tháng tiếp theo");
-    btnNext->setStyleSheet(
-        "QPushButton { background-color: #FFFFFF; border: 1px solid #DCE6F2; border-radius: 8px; padding: 0; } "
-        "QPushButton:hover { background-color: #F1F5F9; border-color: #CBD5E1; }"
-    );
 
     layout->addWidget(btnPrev);
     layout->addWidget(edtDisplay);

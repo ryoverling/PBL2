@@ -29,6 +29,8 @@ private:
     MainWindow* mainWindow;
 
     void populateData();
+    void setupKpiBadges();
+    QWidget* createTypeBadgeWidget(bool isIncome);
     void addDayRow(const Transaction* tx, int row);
     void updateSummaryTotals(long long income, long long expense);
 };

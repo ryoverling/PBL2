@@ -7,7 +7,26 @@
 #include "../dialogs/plan_dialog.h"
 #include "../../core/app/money_manager.h"
 #include <QStyle>
-#include <QMessageBox>
+
+void DashboardPage::setupCardShadows() {
+    QWidget* cards[] = {
+        ui->cardBalance, ui->cardIncome, ui->cardExpense, ui->cardNet,
+        ui->frmCalendarCard, ui->frmPlanCard, ui->frmTableCard
+    };
+    for (QWidget* c : cards) {
+        UiHelper::applyCardShadow(c);
+    }
+}
+
+void DashboardPage::setupRecentTable() {
+    ui->tblRecentTransactions->setShowGrid(false);
+    ui->tblRecentTransactions->setIconSize(QSize(28, 28));
+    ui->tblRecentTransactions->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    ui->tblRecentTransactions->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    ui->tblRecentTransactions->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    ui->tblRecentTransactions->verticalHeader()->setVisible(false);
+    ui->tblRecentTransactions->verticalHeader()->setDefaultSectionSize(48);
+}
 
 DashboardPage::DashboardPage(MoneyManager& mm, const std::string& dataDir, MainWindow* mainWin, QWidget *parent)
     : QWidget(parent), ui(new Ui::DashboardPage), moneyManager(mm),
@@ -30,22 +49,8 @@ DashboardPage::DashboardPage(MoneyManager& mm, const std::string& dataDir, MainW
     ui->prgBudget->setFixedHeight(12);
     ui->prgGoal->setFixedHeight(12);
 
-    // Gan hieu ung do bong mem cho cac card Dashboard
-    UiHelper::applyCardShadow(ui->cardBalance);
-    UiHelper::applyCardShadow(ui->cardIncome);
-    UiHelper::applyCardShadow(ui->cardExpense);
-    UiHelper::applyCardShadow(ui->cardNet);
-    UiHelper::applyCardShadow(ui->frmCalendarCard);
-    UiHelper::applyCardShadow(ui->frmPlanCard);
-    UiHelper::applyCardShadow(ui->frmTableCard);
-
-    ui->tblRecentTransactions->setShowGrid(false);
-    ui->tblRecentTransactions->setIconSize(QSize(28, 28));
-    ui->tblRecentTransactions->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    ui->tblRecentTransactions->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
-    ui->tblRecentTransactions->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-    ui->tblRecentTransactions->verticalHeader()->setVisible(false);
-    ui->tblRecentTransactions->verticalHeader()->setDefaultSectionSize(48);
+    setupCardShadows();
+    setupRecentTable();
 
     Date today = Date::today();
     ui->monthPicker->setMonthYear(today.month, today.year);
@@ -66,7 +71,7 @@ void DashboardPage::addRecentRow(const Transaction* tx) {
     const Category* category = moneyManager.getCategoryManager().findById(tx->getCategoryId());
 
     QString amountPrefix = income ? "↑ + " : "↓ - ";
-    auto* amount = new QTableWidgetItem(amountPrefix + UiHelper::formatMoneyVND(tx->getAmount()));
+    QTableWidgetItem* amount = new QTableWidgetItem(amountPrefix + UiHelper::formatMoneyVND(tx->getAmount()));
     amount->setForeground(QColor(income ? "#0E8F4F" : "#E0173D"));
     QFont f = amount->font();
     f.setBold(true);
@@ -79,10 +84,10 @@ void DashboardPage::addRecentRow(const Transaction* tx) {
         detail += " • " + QString::fromStdString(tx->getNote());
     }
 
-    auto* dateItem = new QTableWidgetItem(UiHelper::formatDate(tx->getDate()));
+    QTableWidgetItem* dateItem = new QTableWidgetItem(UiHelper::formatDate(tx->getDate()));
     dateItem->setForeground(QColor("#5B6B8C"));
 
-    auto* detailItem = new QTableWidgetItem(UiHelper::createCategoryCircleIcon(catName, 28), detail);
+    QTableWidgetItem* detailItem = new QTableWidgetItem(UiHelper::createCategoryCircleIcon(catName, 28), detail);
     detailItem->setForeground(QColor("#0B2A6B"));
     QFont fDetail = detailItem->font();
     fDetail.setBold(true);

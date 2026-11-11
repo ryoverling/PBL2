@@ -70,9 +70,7 @@ namespace UiHelper {
     using GuiIcons::createPlusIcon;
     using GuiIcons::createEditIcon;
     using GuiIcons::createTrashIcon;
-    using GuiIcons::createListIcon;
     using GuiIcons::createCalendarIcon;
-    using GuiIcons::createSearchIcon;
     using GuiIcons::createFilterIcon;
     using GuiIcons::createWalletIcon;
     using GuiIcons::createTagIcon;

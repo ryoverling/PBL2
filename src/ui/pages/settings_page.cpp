@@ -42,58 +42,51 @@ static void setupPasswordEyeAction(QLineEdit* edt) {
     });
 }
 
-SettingsPage::SettingsPage(MoneyManager& mm, const std::string&, const std::string& baseDir, MainWindow* mainWin, QWidget *parent)
-    : QWidget(parent), ui(new Ui::SettingsPage), moneyManager(mm),
-      baseDataDirectory(baseDir), mainWindow(mainWin) {
-    ui->setupUi(this);
-
-    // Đổ bóng và thiết lập thuộc tính card cho các thẻ cài đặt
-    ui->cardAccount->setProperty("card", true);
-    ui->cardUtilities->setProperty("card", true);
-    ui->cardChangePassword->setProperty("card", true);
-    ui->cardAccount->setAttribute(Qt::WA_StyledBackground, true);
-    ui->cardUtilities->setAttribute(Qt::WA_StyledBackground, true);
-    ui->cardChangePassword->setAttribute(Qt::WA_StyledBackground, true);
-
-    UiHelper::applyCardShadow(ui->cardAccount);
-    UiHelper::applyCardShadow(ui->cardUtilities);
-    UiHelper::applyCardShadow(ui->cardChangePassword);
-
-    // Thiết lập biểu tượng cho nút bấm
+void SettingsPage::setupCards() {
+    QWidget* cards[] = {ui->cardAccount, ui->cardUtilities, ui->cardChangePassword};
+    for (QWidget* c : cards) {
+        c->setProperty("card", true);
+        c->setAttribute(Qt::WA_StyledBackground, true);
+        UiHelper::applyCardShadow(c);
+    }
     ui->btnLogout->setIcon(QIcon(GuiIcons::createLogoutIcon(16, QColor("#E0173D"))));
     ui->btnChangePassword->setIcon(QIcon(GuiIcons::createLockActionIcon(16, Qt::white)));
     ui->btnChangePassword->setText("Đổi mật khẩu →");
-
     ui->lblAccountHeading->setText("👤  Tài khoản");
     ui->lblSessionHeading->setText("🛡️  Phiên làm việc");
     ui->lblPasswordHeading->setText("🔒  Đổi mật khẩu");
+}
 
-    // Dấu sao đỏ cho các trường mật khẩu mới
+void SettingsPage::setupPasswordForm() {
     ui->lblNewPassword->setText("Mật khẩu mới <span style=\"color:#E0173D\">*</span>");
     ui->lblConfirmPassword->setText("Xác nhận mật khẩu mới <span style=\"color:#E0173D\">*</span>");
-
-    // Nút mắt trong từng ô mật khẩu
     setupPasswordEyeAction(ui->edtOldPassword);
     setupPasswordEyeAction(ui->edtNewPassword);
     setupPasswordEyeAction(ui->edtConfirmPassword);
 
-    // Nhãn báo lỗi nhỏ màu đỏ bên dưới
     lblPasswordError = new QLabel(this);
     lblPasswordError->setStyleSheet("color: #E0173D; font-size: 13px; font-weight: 500;");
     lblPasswordError->setVisible(false);
     ui->changePassLayout->insertWidget(ui->changePassLayout->count() - 1, lblPasswordError);
 
-    // Xóa viền đỏ khi người dùng gõ phím
-    auto clearErr = [this]() {
-        lblPasswordError->setVisible(false);
-        ui->edtOldPassword->setStyleSheet("");
-        ui->edtNewPassword->setStyleSheet("");
-        ui->edtConfirmPassword->setStyleSheet("");
-    };
-    connect(ui->edtOldPassword, &QLineEdit::textChanged, this, clearErr);
-    connect(ui->edtNewPassword, &QLineEdit::textChanged, this, clearErr);
-    connect(ui->edtConfirmPassword, &QLineEdit::textChanged, this, clearErr);
+    connect(ui->edtOldPassword, &QLineEdit::textChanged, this, &SettingsPage::clearPasswordErrors);
+    connect(ui->edtNewPassword, &QLineEdit::textChanged, this, &SettingsPage::clearPasswordErrors);
+    connect(ui->edtConfirmPassword, &QLineEdit::textChanged, this, &SettingsPage::clearPasswordErrors);
+}
 
+void SettingsPage::clearPasswordErrors() {
+    if (lblPasswordError) lblPasswordError->setVisible(false);
+    ui->edtOldPassword->setStyleSheet("");
+    ui->edtNewPassword->setStyleSheet("");
+    ui->edtConfirmPassword->setStyleSheet("");
+}
+
+SettingsPage::SettingsPage(MoneyManager& mm, const std::string&, const std::string& baseDir, MainWindow* mainWin, QWidget *parent)
+    : QWidget(parent), ui(new Ui::SettingsPage), moneyManager(mm),
+      baseDataDirectory(baseDir), mainWindow(mainWin) {
+    ui->setupUi(this);
+    setupCards();
+    setupPasswordForm();
     refreshData();
 }
 

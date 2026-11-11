@@ -4,10 +4,7 @@
 #include <QMouseEvent>
 #include <QFocusEvent>
 #include <QKeyEvent>
-#include <QPainter>
-#include <QPixmap>
 #include <QApplication>
-#include <QScreen>
 
 QIcon DatePickerField::createCalendarSvgIcon(const QColor& color) {
     return UiHelper::createCalendarIcon(color);
@@ -121,6 +118,28 @@ void DatePickerField::focusOutEvent(QFocusEvent* event) {
     updateAppearance();
 }
 
+void DatePickerField::handleDigitInput(QKeyEvent* event) {
+    int pos = cursorPosition();
+    QString curText = text();
+
+    // Tự động chèn dấu '/' khi người dùng gõ ngày hoặc tháng
+    if ((pos == 2 && curText.length() >= 2 && curText[1] != '/') ||
+        (pos == 5 && curText.length() >= 5 && curText[4] != '/')) {
+        insert("/");
+    }
+
+    QLineEdit::keyPressEvent(event);
+
+    QString after = text();
+    if (after.length() == 2 && !after.contains('/')) {
+        setText(after + "/");
+        setCursorPosition(3);
+    } else if (after.length() == 5 && after.count('/') == 1) {
+        setText(after + "/");
+        setCursorPosition(6);
+    }
+}
+
 void DatePickerField::keyPressEvent(QKeyEvent* event) {
     if (event->key() == Qt::Key_Backspace || event->key() == Qt::Key_Delete ||
         event->key() == Qt::Key_Left || event->key() == Qt::Key_Right ||
@@ -136,25 +155,7 @@ void DatePickerField::keyPressEvent(QKeyEvent* event) {
 
     QString inputChar = event->text();
     if (!inputChar.isEmpty() && inputChar[0].isDigit()) {
-        int pos = cursorPosition();
-        QString curText = text();
-
-        // Tự động chèn dấu '/' khi người dùng gõ ngày hoặc tháng
-        if ((pos == 2 && curText.length() >= 2 && curText[1] != '/') ||
-            (pos == 5 && curText.length() >= 5 && curText[4] != '/')) {
-            insert("/");
-        }
-
-        QLineEdit::keyPressEvent(event);
-
-        QString after = text();
-        if (after.length() == 2 && !after.contains('/')) {
-            setText(after + "/");
-            setCursorPosition(3);
-        } else if (after.length() == 5 && after.count('/') == 1) {
-            setText(after + "/");
-            setCursorPosition(6);
-        }
+        handleDigitInput(event);
         return;
     }
 
@@ -163,7 +164,6 @@ void DatePickerField::keyPressEvent(QKeyEvent* event) {
         return;
     }
 
-    // Bỏ qua các ký tự không phải số hoặc dấu '/'
     event->ignore();
 }
 

@@ -8,7 +8,6 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QGroupBox>
-#include <QMessageBox>
 #include <fstream>
 #include <sstream>
 

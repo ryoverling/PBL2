@@ -33,6 +33,7 @@ private:
     long long total = 0;
     void appendCategory(const CategoryExpense& item);
     void drawDonut(QPainter& painter);
+    void drawCenterHole(QPainter& painter, const QRectF& circle, int diameter, int inset);
     void drawPercentageLabels(QPainter& painter, const QRectF& circle, int diameter,
                               const int starts[], const int sweeps[]);
 };

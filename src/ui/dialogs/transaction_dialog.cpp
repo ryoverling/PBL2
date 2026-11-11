@@ -8,7 +8,6 @@
 #include "../../core/model/transaction.h"
 #include <QCompleter>
 #include <QButtonGroup>
-#include <QAction>
 #include <QMessageBox>
 #include <QStyle>
 
@@ -155,6 +154,43 @@ void TransactionDialog::on_cboCategory_editTextChanged(const QString& text) {
     ui->lblCategoryHint->setText(existing ? "" : "Danh mục mới sẽ được tạo khi lưu giao dịch");
 }
 
+void TransactionDialog::validateLiveNegativeWallet(long long curBal, const QString& walletName, bool isExpense, long long amt) {
+    ui->lblWalletBalance->setText(QString("⚠ Số dư khả dụng: %1 (Ví đang âm)").arg(UiHelper::formatMoneyVND(curBal)));
+    ui->lblWalletBalance->setStyleSheet("color: #EF4765; font-size: 12px; font-weight: 600; padding: 2px 0;");
+
+    if (isExpense) {
+        ui->lblAmountWarning->setText(QString("⚠ Ví %1 đang âm %2, cần đối soát dữ liệu trước khi chi thêm").arg(walletName, UiHelper::formatMoneyVND(std::abs(curBal))));
+        ui->lblAmountWarning->setStyleSheet("color: #EF4765; font-size: 12px; font-weight: 600; line-height: 130%;");
+        ui->btnSave->setEnabled(false);
+    } else {
+        ui->lblAmountWarning->setText("ℹ Khoản thu sẽ giúp bù đắp số dư âm của ví này.");
+        ui->lblAmountWarning->setStyleSheet("color: #059669; font-size: 12px; font-weight: 500;");
+        ui->btnSave->setEnabled(amt > 0);
+    }
+}
+
+void TransactionDialog::validateLiveNormalWallet(long long curBal, bool isExpense, long long amt) {
+    if (isExpense) {
+        ui->lblWalletBalance->setText(QString("Số dư khả dụng: %1").arg(UiHelper::formatMoneyVND(curBal)));
+        ui->lblWalletBalance->setStyleSheet("color: #536986; font-size: 12px; padding: 2px 0;");
+
+        if (amt > curBal) {
+            long long lack = amt - curBal;
+            ui->lblAmountWarning->setText(QString("⚠ Vượt quá số dư khả dụng (còn thiếu %1)").arg(UiHelper::formatMoneyVND(lack)));
+            ui->lblAmountWarning->setStyleSheet("color: #EF4765; font-size: 12px; font-weight: 600; line-height: 130%;");
+            ui->btnSave->setEnabled(false);
+        } else {
+            ui->lblAmountWarning->clear();
+            ui->btnSave->setEnabled(amt > 0);
+        }
+    } else {
+        ui->lblWalletBalance->setText(QString("Số dư hiện tại: %1").arg(UiHelper::formatMoneyVND(curBal)));
+        ui->lblWalletBalance->setStyleSheet("color: #536986; font-size: 12px; padding: 2px 0;");
+        ui->lblAmountWarning->clear();
+        ui->btnSave->setEnabled(amt > 0);
+    }
+}
+
 void TransactionDialog::validateLiveInput() {
     int walletId = getWalletId();
     const Wallet* w = moneyManager.getWalletManager().findById(walletId);
@@ -164,56 +200,48 @@ void TransactionDialog::validateLiveInput() {
     long long amt = getAmount();
 
     if (curBal < 0) {
-        ui->lblWalletBalance->setText(QString("⚠ Số dư khả dụng: %1 (Ví đang âm)").arg(UiHelper::formatMoneyVND(curBal)));
-        ui->lblWalletBalance->setStyleSheet("color: #EF4765; font-size: 12px; font-weight: 600; padding: 2px 0;");
-
-        if (isExpense) {
-            ui->lblAmountWarning->setText(QString("⚠ Ví %1 đang âm %2, cần đối soát dữ liệu trước khi chi thêm").arg(walletName, UiHelper::formatMoneyVND(std::abs(curBal))));
-            ui->lblAmountWarning->setStyleSheet("color: #EF4765; font-size: 12px; font-weight: 600; line-height: 130%;");
-            ui->btnSave->setEnabled(false);
-        } else {
-            ui->lblAmountWarning->setText("ℹ Khoản thu sẽ giúp bù đắp số dư âm của ví này.");
-            ui->lblAmountWarning->setStyleSheet("color: #059669; font-size: 12px; font-weight: 500;");
-            ui->btnSave->setEnabled(amt > 0);
-        }
+        validateLiveNegativeWallet(curBal, walletName, isExpense, amt);
     } else {
-        if (isExpense) {
-            ui->lblWalletBalance->setText(QString("Số dư khả dụng: %1").arg(UiHelper::formatMoneyVND(curBal)));
-            ui->lblWalletBalance->setStyleSheet("color: #536986; font-size: 12px; padding: 2px 0;");
-
-            if (amt > curBal) {
-                long long lack = amt - curBal;
-                ui->lblAmountWarning->setText(QString("⚠ Vượt quá số dư khả dụng (còn thiếu %1)").arg(UiHelper::formatMoneyVND(lack)));
-                ui->lblAmountWarning->setStyleSheet("color: #EF4765; font-size: 12px; font-weight: 600; line-height: 130%;");
-                ui->btnSave->setEnabled(false);
-            } else {
-                ui->lblAmountWarning->clear();
-                ui->btnSave->setEnabled(amt > 0);
-            }
-        } else {
-            ui->lblWalletBalance->setText(QString("Số dư hiện tại: %1").arg(UiHelper::formatMoneyVND(curBal)));
-            ui->lblWalletBalance->setStyleSheet("color: #536986; font-size: 12px; padding: 2px 0;");
-            ui->lblAmountWarning->clear();
-            ui->btnSave->setEnabled(amt > 0);
-        }
+        validateLiveNormalWallet(curBal, isExpense, amt);
     }
 }
 
-void TransactionDialog::on_btnSave_clicked() {
+bool TransactionDialog::validateInputFields() {
     QString name = UiHelper::cleanName(ui->cboCategory->currentText());
     if (getAmount() <= 0 || ui->cboWallet->currentIndex() < 0) {
         UiHelper::showError(this, "Vui lòng nhập số tiền hợp lệ và chọn ví thanh toán.");
-        return;
+        return false;
     }
     if (!ui->dteDate->isValidDate() || !getDate().isValid()) {
         UiHelper::showError(this, "Ngày giao dịch không hợp lệ. Vui lòng kiểm tra lại.");
-        return;
+        return false;
     }
     if (!UiHelper::isValidName(name) || getNote().find('|') != std::string::npos) {
         UiHelper::showError(this, "Danh mục hoặc ghi chú chứa ký tự không hợp lệ.");
-        return;
+        return false;
     }
+    return true;
+}
 
+void TransactionDialog::showBalanceErrorDialog(const BalanceValidationResult& valRes) {
+    QString title = "Không thể thực hiện giao dịch";
+    if (valRes.errorCode == ValidationErrorCode::INSUFFICIENT_FUNDS) {
+        title = "Số dư không đủ";
+    } else if (valRes.errorCode == ValidationErrorCode::WALLET_ALREADY_NEGATIVE) {
+        title = "Ví đang có số dư âm";
+    } else if (valRes.errorCode == ValidationErrorCode::WOULD_GO_NEGATIVE_ON_DATE) {
+        title = "Số dư sẽ bị âm trong lịch sử";
+    }
+    QMessageBox box(QMessageBox::Warning, title,
+                    QString::fromStdString(valRes.errorMessage), QMessageBox::Ok, this);
+    box.setStyleSheet("QLabel { font-size: 13px; color: #102748; line-height: 140%; }");
+    box.exec();
+}
+
+void TransactionDialog::on_btnSave_clicked() {
+    if (!validateInputFields()) return;
+
+    QString name = UiHelper::cleanName(ui->cboCategory->currentText());
     const Category* category = findCategory(name);
     resolvedCategoryName = category ? category->getName() : name.toStdString();
 
@@ -230,18 +258,7 @@ void TransactionDialog::on_btnSave_clicked() {
     }
 
     if (!valRes.isValid) {
-        QString title = "Không thể thực hiện giao dịch";
-        if (valRes.errorCode == ValidationErrorCode::INSUFFICIENT_FUNDS) {
-            title = "Số dư không đủ";
-        } else if (valRes.errorCode == ValidationErrorCode::WALLET_ALREADY_NEGATIVE) {
-            title = "Ví đang có số dư âm";
-        } else if (valRes.errorCode == ValidationErrorCode::WOULD_GO_NEGATIVE_ON_DATE) {
-            title = "Số dư sẽ bị âm trong lịch sử";
-        }
-        QMessageBox box(QMessageBox::Warning, title,
-                        QString::fromStdString(valRes.errorMessage), QMessageBox::Ok, this);
-        box.setStyleSheet("QLabel { font-size: 13px; color: #102748; line-height: 140%; }");
-        box.exec();
+        showBalanceErrorDialog(valRes);
         return;
     }
 

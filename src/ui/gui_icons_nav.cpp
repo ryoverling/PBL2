@@ -1,6 +1,5 @@
 #include "gui_icons_nav.h"
 #include <QPainter>
-#include <QPainterPath>
 
 namespace GuiIcons {
 

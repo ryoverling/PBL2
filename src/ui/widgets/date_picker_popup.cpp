@@ -243,13 +243,7 @@ void DatePickerPopup::setupUi() {
     setupFooterRow(mainLayout);
 }
 
-void DatePickerPopup::setupDaysView() {
-    pageDays = new QWidget(this);
-    auto* layout = new QVBoxLayout(pageDays);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(8);
-
-    // Hàng thứ trong tuần: T2, T3, T4, T5, T6, T7, CN (tuần bắt đầu từ T2, CN màu đỏ)
+void DatePickerPopup::setupWeekdayHeader(QVBoxLayout* layout) {
     auto* daysHeaderLayout = new QHBoxLayout();
     daysHeaderLayout->setSpacing(4);
     static const char* weekdays[7] = {"T2", "T3", "T4", "T5", "T6", "T7", "CN"};
@@ -261,6 +255,40 @@ void DatePickerPopup::setupDaysView() {
         daysHeaderLayout->addWidget(lbl, 1);
     }
     layout->addLayout(daysHeaderLayout);
+}
+
+void DatePickerPopup::onDayButtonClicked(int idx) {
+    selectedDate = dayButtonDates[idx];
+    displayMonth = selectedDate.month();
+    displayYear = selectedDate.year();
+    updateDaysGrid();
+    updateHeader();
+}
+
+void DatePickerPopup::onMonthButtonClicked(int monthNum) {
+    displayMonth = monthNum;
+    int daysInM = QDate(displayYear, displayMonth, 1).daysInMonth();
+    int day = qBound(1, selectedDate.day(), daysInM);
+    selectedDate = QDate(displayYear, displayMonth, day);
+    if (monthOnlyMode) {
+        updateMonthsGrid();
+    } else {
+        setViewMode(ViewMode::Days);
+    }
+}
+
+void DatePickerPopup::onYearButtonClicked(int year) {
+    displayYear = year;
+    setViewMode(ViewMode::Months);
+}
+
+void DatePickerPopup::setupDaysView() {
+    pageDays = new QWidget(this);
+    auto* layout = new QVBoxLayout(pageDays);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(8);
+
+    setupWeekdayHeader(layout);
 
     // Lưới 6 hàng x 7 cột các ngày (spacing 4px)
     daysGrid = new QGridLayout();
@@ -274,13 +302,7 @@ void DatePickerPopup::setupDaysView() {
             btn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             btn->setMinimumSize(40, 40);
             btn->setCursor(Qt::PointingHandCursor);
-            connect(btn, &QPushButton::clicked, this, [this, idx]() {
-                selectedDate = dayButtonDates[idx];
-                displayMonth = selectedDate.month();
-                displayYear = selectedDate.year();
-                updateDaysGrid();
-                updateHeader();
-            });
+            connect(btn, &QPushButton::clicked, this, [this, idx]() { onDayButtonClicked(idx); });
             daysGrid->addWidget(btn, r, c);
             dayButtons[idx] = btn;
         }
@@ -310,17 +332,7 @@ void DatePickerPopup::setupMonthsView() {
         btn->setCursor(Qt::PointingHandCursor);
         btn->setFont(QFont("Segoe UI", 10, QFont::DemiBold));
         int monthNum = i + 1;
-        connect(btn, &QPushButton::clicked, this, [this, monthNum]() {
-            displayMonth = monthNum;
-            int daysInM = QDate(displayYear, displayMonth, 1).daysInMonth();
-            int day = qBound(1, selectedDate.day(), daysInM);
-            selectedDate = QDate(displayYear, displayMonth, day);
-            if (monthOnlyMode) {
-                updateMonthsGrid();
-            } else {
-                setViewMode(ViewMode::Days);
-            }
-        });
+        connect(btn, &QPushButton::clicked, this, [this, monthNum]() { onMonthButtonClicked(monthNum); });
         monthsGrid->addWidget(btn, i / 3, i % 3);
         monthButtons[i] = btn;
     }
@@ -341,10 +353,8 @@ void DatePickerPopup::setupYearsView() {
         btn->setMinimumHeight(44);
         btn->setCursor(Qt::PointingHandCursor);
         btn->setFont(QFont("Segoe UI", 10, QFont::DemiBold));
-        connect(btn, &QPushButton::clicked, this, [this, i]() {
-            displayYear = decadeStartYear + i;
-            setViewMode(ViewMode::Months);
-        });
+        int targetYear = decadeStartYear + i;
+        connect(btn, &QPushButton::clicked, this, [this, targetYear]() { onYearButtonClicked(targetYear); });
         yearsGrid->addWidget(btn, i / 3, i % 3);
         yearButtons[i] = btn;
     }
@@ -507,6 +517,35 @@ void DatePickerPopup::onSelectClicked() {
     accept();
 }
 
+void DatePickerPopup::handleDaysKeyNavigation(int key, Qt::KeyboardModifiers modifiers) {
+    QDate newDate = selectedDate;
+    switch (key) {
+        case Qt::Key_Left:
+            newDate = newDate.addDays(-1);
+            break;
+        case Qt::Key_Right:
+            newDate = newDate.addDays(1);
+            break;
+        case Qt::Key_Up:
+            newDate = newDate.addDays(-7);
+            break;
+        case Qt::Key_Down:
+            newDate = newDate.addDays(7);
+            break;
+        case Qt::Key_PageUp:
+            newDate = (modifiers & Qt::ControlModifier) ? newDate.addYears(-1) : newDate.addMonths(-1);
+            break;
+        case Qt::Key_PageDown:
+            newDate = (modifiers & Qt::ControlModifier) ? newDate.addYears(1) : newDate.addMonths(1);
+            break;
+        default:
+            return;
+    }
+    if (newDate.isValid()) {
+        setSelectedDate(newDate);
+    }
+}
+
 void DatePickerPopup::keyPressEvent(QKeyEvent* event) {
     if (event->key() == Qt::Key_Escape) {
         reject();
@@ -518,41 +557,7 @@ void DatePickerPopup::keyPressEvent(QKeyEvent* event) {
     }
 
     if (currentMode == ViewMode::Days) {
-        QDate newDate = selectedDate;
-        switch (event->key()) {
-            case Qt::Key_Left:
-                newDate = newDate.addDays(-1);
-                break;
-            case Qt::Key_Right:
-                newDate = newDate.addDays(1);
-                break;
-            case Qt::Key_Up:
-                newDate = newDate.addDays(-7);
-                break;
-            case Qt::Key_Down:
-                newDate = newDate.addDays(7);
-                break;
-            case Qt::Key_PageUp:
-                if (event->modifiers() & Qt::ControlModifier) {
-                    newDate = newDate.addYears(-1);
-                } else {
-                    newDate = newDate.addMonths(-1);
-                }
-                break;
-            case Qt::Key_PageDown:
-                if (event->modifiers() & Qt::ControlModifier) {
-                    newDate = newDate.addYears(1);
-                } else {
-                    newDate = newDate.addMonths(1);
-                }
-                break;
-            default:
-                QDialog::keyPressEvent(event);
-                return;
-        }
-        if (newDate.isValid()) {
-            setSelectedDate(newDate);
-        }
+        handleDaysKeyNavigation(event->key(), event->modifiers());
     } else {
         QDialog::keyPressEvent(event);
     }

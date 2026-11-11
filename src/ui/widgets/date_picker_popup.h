@@ -27,7 +27,6 @@ public:
     void setSelectedDate(const QDate& date);
 
     void setMonthOnlyMode(bool enabled);
-    bool isMonthOnlyMode() const { return monthOnlyMode; }
 
     // Gắn popup chọn ngày nâng cao vào bất kỳ QDateEdit nào
     static void attachToDateEdit(QDateEdit* dateEdit);
@@ -47,14 +46,19 @@ private slots:
     void onTitleClicked();
     void onTodayClicked();
     void onSelectClicked();
+    void onDayButtonClicked(int idx);
+    void onMonthButtonClicked(int monthNum);
+    void onYearButtonClicked(int year);
 
 private:
     void setupUi();
     void setupHeaderRow(class QVBoxLayout* mainLayout);
     void setupFooterRow(class QVBoxLayout* mainLayout);
     void setupDaysView();
+    void setupWeekdayHeader(class QVBoxLayout* layout);
     void setupMonthsView();
     void setupYearsView();
+    void handleDaysKeyNavigation(int key, Qt::KeyboardModifiers modifiers);
 
     void updateHeader();
     void updateDaysGrid();

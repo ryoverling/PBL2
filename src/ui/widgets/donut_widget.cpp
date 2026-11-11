@@ -31,25 +31,10 @@ void DonutWidget::appendCategory(const CategoryExpense& item) {
     }
 }
 
-void DonutWidget::drawDonut(QPainter& painter) {
-    int diameter = qMin(216, qMin(width(), height()) - 16);
-    QRectF circle((width() - diameter) / 2.0, (height() - diameter) / 2.0, diameter, diameter);
-    int start = 90 * 16;
-    // Lưu góc bắt đầu và độ rộng của từng phần để đặt nhãn.
-    int starts[6], sweeps[6];
-    for (int i = 0; i < count; ++i) {
-        int sweep = i == count - 1 ? -5760 + (90 * 16 - start)
-                    : -static_cast<int>(std::round(slices[i].amount * 5760.0 / total));
-        starts[i] = start;
-        sweeps[i] = sweep;
-        painter.setBrush(slices[i].color);
-        painter.drawPie(circle, start, sweep);
-        start += sweep;
-    }
+void DonutWidget::drawCenterHole(QPainter& painter, const QRectF& circle, int diameter, int inset) {
     // Khoét tâm trắng và ghi tổng chi.
     painter.setBrush(QColor("#FFFFFF"));
     painter.setPen(QPen(QColor("#DCE8FA"), 1));
-    int inset = diameter * 0.23;
     painter.drawEllipse(circle.adjusted(inset, inset, -inset, -inset));
 
     // Vẽ biểu tượng ví tiền nhỏ ở tâm
@@ -72,6 +57,24 @@ void DonutWidget::drawDonut(QPainter& painter) {
     QRectF amountRect(circle.left() + inset / 2, circle.center().y() + 10, diameter - inset, 26);
     QString amount = painter.fontMetrics().elidedText(UiHelper::formatMoneyVND(total), Qt::ElideRight, amountRect.width());
     painter.drawText(amountRect, Qt::AlignCenter, amount);
+}
+
+void DonutWidget::drawDonut(QPainter& painter) {
+    int diameter = qMin(216, qMin(width(), height()) - 16);
+    QRectF circle((width() - diameter) / 2.0, (height() - diameter) / 2.0, diameter, diameter);
+    int start = 90 * 16;
+    int starts[6], sweeps[6];
+    for (int i = 0; i < count; ++i) {
+        int sweep = (i == count - 1) ? -5760 + (90 * 16 - start)
+                    : -static_cast<int>(std::round(slices[i].amount * 5760.0 / total));
+        starts[i] = start;
+        sweeps[i] = sweep;
+        painter.setBrush(slices[i].color);
+        painter.drawPie(circle, start, sweep);
+        start += sweep;
+    }
+    int inset = diameter * 0.23;
+    drawCenterHole(painter, circle, diameter, inset);
     drawPercentageLabels(painter, circle, diameter, starts, sweeps);
 }
 

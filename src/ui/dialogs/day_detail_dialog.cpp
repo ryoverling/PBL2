@@ -9,13 +9,49 @@
 #include <QLabel>
 #include <QHBoxLayout>
 
+void DayDetailDialog::setupKpiBadges() {
+    UiHelper::applyCardShadow(ui->cardIncome);
+    UiHelper::applyCardShadow(ui->cardExpense);
+    UiHelper::applyCardShadow(ui->cardNet);
+
+    QLabel* badgeInc = new QLabel(ui->cardIncome);
+    badgeInc->setPixmap(GuiIcons::createKpiBadge("income", 28));
+    ui->incomeLayout->insertWidget(0, badgeInc, 0, Qt::AlignRight);
+
+    QLabel* badgeExp = new QLabel(ui->cardExpense);
+    badgeExp->setPixmap(GuiIcons::createKpiBadge("expense", 28));
+    ui->expenseLayout->insertWidget(0, badgeExp, 0, Qt::AlignRight);
+
+    QLabel* badgeNet = new QLabel(ui->cardNet);
+    badgeNet->setPixmap(GuiIcons::createScaleBadge(28));
+    ui->netLayout->insertWidget(0, badgeNet, 0, Qt::AlignRight);
+}
+
+QWidget* DayDetailDialog::createTypeBadgeWidget(bool isIncome) {
+    QWidget* container = new QWidget(this);
+    container->setStyleSheet("background: transparent;");
+    QHBoxLayout* layout = new QHBoxLayout(container);
+    layout->setContentsMargins(6, 4, 6, 4);
+    layout->setAlignment(Qt::AlignCenter);
+
+    QLabel* lblBadge = new QLabel(isIncome ? "Thu nhập" : "Chi tiêu", container);
+    lblBadge->setAlignment(Qt::AlignCenter);
+    lblBadge->setFixedHeight(26);
+    lblBadge->setFixedWidth(86);
+    lblBadge->setStyleSheet(QString(
+        "background-color: %1; color: %2; font-weight: 700; font-size: 12px; "
+        "border-radius: 13px; border: none;"
+    ).arg(isIncome ? "#EAFBF3" : "#FFF0F3", isIncome ? "#0E8F4F" : "#E0173D"));
+    layout->addWidget(lblBadge);
+    return container;
+}
+
 DayDetailDialog::DayDetailDialog(MoneyManager& mm, const Date& date, MainWindow* mainWin, QWidget* parent)
     : QDialog(parent), ui(new Ui::DayDetailDialog), moneyManager(mm), targetDate(date), mainWindow(mainWin) {
     ui->setupUi(this);
     UiHelper::setupWindowTheme(this);
 
-    // Thêm biểu tượng lịch vào header
-    auto* lblCalIcon = new QLabel(this);
+    QLabel* lblCalIcon = new QLabel(this);
     lblCalIcon->setFixedSize(44, 44);
     lblCalIcon->setPixmap(GuiIcons::createCalendarBadge(44));
     ui->headerLayout->insertWidget(0, lblCalIcon);
@@ -23,25 +59,10 @@ DayDetailDialog::DayDetailDialog(MoneyManager& mm, const Date& date, MainWindow*
     ui->btnViewInTransactions->setIcon(QIcon(GuiIcons::createListIcon(16, QColor("#1E6FFF"))));
     ui->btnClose->setText("✕ Đóng");
 
-    UiHelper::applyCardShadow(ui->cardIncome);
-    UiHelper::applyCardShadow(ui->cardExpense);
-    UiHelper::applyCardShadow(ui->cardNet);
-
-    // Thêm huy hiệu icon nhỏ cho 3 thẻ KPI
-    auto* badgeInc = new QLabel(ui->cardIncome);
-    badgeInc->setPixmap(GuiIcons::createKpiBadge("income", 28));
-    ui->incomeLayout->insertWidget(0, badgeInc, 0, Qt::AlignRight);
-
-    auto* badgeExp = new QLabel(ui->cardExpense);
-    badgeExp->setPixmap(GuiIcons::createKpiBadge("expense", 28));
-    ui->expenseLayout->insertWidget(0, badgeExp, 0, Qt::AlignRight);
-
-    auto* badgeNet = new QLabel(ui->cardNet);
-    badgeNet->setPixmap(GuiIcons::createScaleBadge(28));
-    ui->netLayout->insertWidget(0, badgeNet, 0, Qt::AlignRight);
+    setupKpiBadges();
 
     ui->tblDayTransactions->setShowGrid(false);
-    auto* header = ui->tblDayTransactions->horizontalHeader();
+    QHeaderView* header = ui->tblDayTransactions->horizontalHeader();
     header->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     header->setSectionResizeMode(1, QHeaderView::Stretch);
     header->setSectionResizeMode(2, QHeaderView::ResizeToContents);
@@ -69,25 +90,8 @@ void DayDetailDialog::addDayRow(const Transaction* tx, int row) {
     ui->tblDayTransactions->setRowHeight(row, 48);
 
     // Cột 0: Badge Loại bo góc mềm mại
-    QWidget* badgeContainer = new QWidget(this);
-    badgeContainer->setStyleSheet("background: transparent;");
-    QHBoxLayout* badgeLayout = new QHBoxLayout(badgeContainer);
-    badgeLayout->setContentsMargins(6, 4, 6, 4);
-    badgeLayout->setAlignment(Qt::AlignCenter);
-
-    QLabel* lblBadge = new QLabel(isInc ? "Thu nhập" : "Chi tiêu", badgeContainer);
-    lblBadge->setAlignment(Qt::AlignCenter);
-    lblBadge->setFixedHeight(26);
-    lblBadge->setFixedWidth(86);
-    lblBadge->setStyleSheet(QString(
-        "background-color: %1; color: %2; font-weight: 700; font-size: 12px; "
-        "border-radius: 13px; border: none;"
-    ).arg(isInc ? "#EAFBF3" : "#FFF0F3", isInc ? "#0E8F4F" : "#E0173D"));
-    badgeLayout->addWidget(lblBadge);
-
-    auto* emptyCol0 = new QTableWidgetItem();
-    ui->tblDayTransactions->setItem(row, 0, emptyCol0);
-    ui->tblDayTransactions->setCellWidget(row, 0, badgeContainer);
+    ui->tblDayTransactions->setItem(row, 0, new QTableWidgetItem());
+    ui->tblDayTransactions->setCellWidget(row, 0, createTypeBadgeWidget(isInc));
 
     // Cột 1: Danh mục & Ghi chú
     const Category* cat = moneyManager.getCategoryManager().findById(tx->getCategoryId());

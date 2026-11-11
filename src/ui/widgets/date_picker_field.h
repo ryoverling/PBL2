@@ -45,6 +45,7 @@ private:
     void init();
     void updateAppearance();
     void updateIcon();
+    void handleDigitInput(QKeyEvent* event);
     static QIcon createCalendarSvgIcon(const QColor& color);
 
     QDate m_date;

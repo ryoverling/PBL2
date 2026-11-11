@@ -1,7 +1,6 @@
 #include "gui_helpers.h"
 #include <QMessageBox>
 #include <QPushButton>
-#include <QAbstractButton>
 #include <QRegularExpression>
 #include <QGraphicsDropShadowEffect>
 #include "../core/utils/utils.h"

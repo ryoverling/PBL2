@@ -25,6 +25,7 @@ private slots:
     void on_btnChangePassword_clicked();
     void on_btnLogout_clicked();
     void on_chkShowPassword_toggled(bool checked);
+    void clearPasswordErrors();
 
 private:
     Ui::SettingsPage *ui;
@@ -32,5 +33,7 @@ private:
     std::string baseDataDirectory;
     MainWindow* mainWindow;
     QLabel* lblPasswordError = nullptr;
+    void setupCards();
+    void setupPasswordForm();
     bool validatePasswords();
 };

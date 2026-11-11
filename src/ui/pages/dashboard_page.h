@@ -41,6 +41,8 @@ private:
 
     void populateRecentTable();
     void addRecentRow(const class Transaction* tx);
+    void setupCardShadows();
+    void setupRecentTable();
     void updateCards();
     void updateCalendar();
     void updatePlanCard();

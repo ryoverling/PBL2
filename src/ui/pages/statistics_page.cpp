@@ -6,7 +6,6 @@
 #include "../gui_icons_kpi.h"
 #include "../gui_icons_wallet.h"
 #include "../../core/app/money_manager.h"
-#include <QSignalBlocker>
 #include <QStyle>
 #include <cmath>
 

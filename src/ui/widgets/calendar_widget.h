@@ -34,6 +34,7 @@ private:
     void drawHeaders(class QPainter& p);
     void drawCells(class QPainter& p);
     void drawCell(class QPainter& p, const QRect& r, int day, const Date& today);
+    void drawExpenseBadge(class QPainter& p, const QRect& r, long long amount);
     void drawLegend(class QPainter& p);
 };
 

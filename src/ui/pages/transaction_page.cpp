@@ -11,7 +11,6 @@
 #include <QStyledItemDelegate>
 #include <QPainter>
 #include <QEvent>
-#include <QButtonGroup>
 #include <QSignalBlocker>
 
 class TypeBadgeDelegate : public QStyledItemDelegate {

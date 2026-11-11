@@ -48,4 +48,8 @@ private:
     void loadCategories();
     void setupEditData(const class Transaction* tx);
     const class Category* findCategory(const QString& name) const;
+    bool validateInputFields();
+    void showBalanceErrorDialog(const struct BalanceValidationResult& valRes);
+    void validateLiveNegativeWallet(long long curBal, const QString& walletName, bool isExpense, long long amt);
+    void validateLiveNormalWallet(long long curBal, bool isExpense, long long amt);
 };

@@ -7,8 +7,6 @@
 #include "../dialogs/wallet_dialog.h"
 #include "../../core/app/money_manager.h"
 #include <QResizeEvent>
-#include <QScrollArea>
-#include <QGridLayout>
 #include <QEvent>
 
 WalletPage::WalletPage(MoneyManager& mm, const std::string& dataDir, MainWindow* mainWin, QWidget *parent)

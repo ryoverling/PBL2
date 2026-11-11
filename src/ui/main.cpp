@@ -53,6 +53,102 @@ static std::string prepareUserDir(MoneyManager& mm, const std::string& dataDir) 
     return userDir;
 }
 
+static void captureScreenshots(QApplication& app, MoneyManager& mm, const std::string& dataDir, const QString& screenshotTarget) {
+    if (!mm.login("admin", "123456")) {
+        mm.login("thang", "552007");
+    }
+    std::string userDir = prepareUserDir(mm, dataDir);
+    QString subDir = (screenshotTarget == "125") ? "dpi125" : "dpi100";
+    QString outDir = "D:/Downloads/WORKSPACE/PBL2/build/screenshots/" + subDir;
+    QDir().mkpath(outDir);
+    QDir().mkpath("D:/Downloads/WORKSPACE/PBL2/build/screenshots");
+
+    QFile logFile(outDir + "/log.txt");
+    if (logFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        logFile.write(QString("Screenshot mode %1 starting...\n").arg(screenshotTarget).toUtf8());
+        logFile.close();
+    }
+
+    MainWindow mainWin(mm, userDir, dataDir);
+    mainWin.resize(1280, 800);
+    mainWin.show();
+    app.processEvents();
+
+    // 1-5. 5 tab chính
+    int pageIndices[] = {0, 1, 2, 3, 4};
+    const char* pageFiles[] = {"/01_dashboard.png", "/02_transactions.png", "/03_wallets.png", "/04_statistics.png", "/05_settings.png"};
+    for (int i = 0; i < 5; ++i) {
+        if (i == 2) UiHelper::balanceHidden = false;
+        mainWin.navigateToPage(pageIndices[i]);
+        app.processEvents();
+        mainWin.grab().save(outDir + pageFiles[i]);
+        if (screenshotTarget == "100") mainWin.grab().save(QString("D:/Downloads/WORKSPACE/PBL2/build/screenshots") + pageFiles[i]);
+    }
+
+    // 6-7. Popup chọn ngày
+    DatePickerPopup myPicker(QDate(2026, 11, 10), &mainWin);
+    myPicker.resize(380, 480);
+    myPicker.show();
+    app.processEvents();
+    myPicker.grab().save(outDir + "/06_month_year_picker.png");
+    myPicker.grab().save(outDir + "/07_date_picker_popup.png");
+    myPicker.close();
+
+    // 8. Hộp thoại chi tiết ngày
+    DayDetailDialog ddDialog(mm, Date(10, 11, 2026), &mainWin, &mainWin);
+    ddDialog.resize(780, 540);
+    ddDialog.show();
+    app.processEvents();
+    ddDialog.grab().save(outDir + "/08_day_detail_dialog.png");
+    ddDialog.close();
+
+    // 9. Hộp thoại Thêm/Sửa Giao dịch
+    TransactionDialog txDialog(mm, -1, &mainWin);
+    txDialog.resize(560, 680);
+    txDialog.show();
+    app.processEvents();
+    txDialog.grab().save(outDir + "/09_transaction_dialog.png");
+    txDialog.close();
+
+    // 10. Hộp thoại Thêm/Sửa Ví
+    WalletDialog wDialog(mm, -1, &mainWin);
+    wDialog.resize(480, 420);
+    wDialog.show();
+    app.processEvents();
+    wDialog.grab().save(outDir + "/10_wallet_dialog.png");
+    wDialog.close();
+
+    // 11. Hộp thoại Thiết lập kế hoạch
+    BudgetPlan plan;
+    PlanDialog::loadPlanFromFile(userDir, plan);
+    PlanDialog pDialog(plan, &mainWin);
+    pDialog.resize(480, 500);
+    pDialog.show();
+    app.processEvents();
+    pDialog.grab().save(outDir + "/11_plan_dialog.png");
+    pDialog.close();
+
+    // 12-13. Đăng nhập & Đăng ký
+    LoginWindow lWin(mm, dataDir);
+    lWin.resize(800, 500);
+    lWin.show();
+    app.processEvents();
+    lWin.grab().save(outDir + "/12_login_window.png");
+    lWin.close();
+
+    RegisterDialog rDialog(mm, dataDir, &mainWin);
+    rDialog.resize(420, 480);
+    rDialog.show();
+    app.processEvents();
+    rDialog.grab().save(outDir + "/13_register_dialog.png");
+    rDialog.close();
+
+    if (logFile.open(QIODevice::Append | QIODevice::Text)) {
+        logFile.write("All screenshots saved successfully!\n");
+        logFile.close();
+    }
+}
+
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
@@ -73,135 +169,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (!screenshotTarget.isEmpty()) {
-        if (!mm.login("admin", "123456")) {
-            mm.login("thang", "552007");
-        }
-        std::string userDir = prepareUserDir(mm, dataDir);
-        QString subDir = (screenshotTarget == "125") ? "dpi125" : "dpi100";
-        QString outDir = "D:/Downloads/WORKSPACE/PBL2/build/screenshots/" + subDir;
-        QDir().mkpath(outDir);
-        QDir().mkpath("D:/Downloads/WORKSPACE/PBL2/build/screenshots");
-
-        QFile logFile(outDir + "/log.txt");
-        if (logFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            logFile.write(QString("Screenshot mode %1 starting...\n").arg(screenshotTarget).toUtf8());
-            logFile.close();
-        }
-
-        MainWindow mainWin(mm, userDir, dataDir);
-        mainWin.resize(1280, 800);
-        mainWin.show();
-        app.processEvents();
-
-        // 1. Trang Tổng quan (Dashboard có hàng nút thao tác nhanh mới)
-        mainWin.navigateToPage(0);
-        app.processEvents();
-        mainWin.grab().save(outDir + "/01_dashboard.png");
-        if (screenshotTarget == "100") mainWin.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/01_dashboard.png");
-
-        // 2. Trang Giao dịch (Transactions có nút có icon & bộ lọc Từ ngày/Đến ngày)
-        mainWin.navigateToPage(1);
-        app.processEvents();
-        mainWin.grab().save(outDir + "/02_transactions.png");
-        if (screenshotTarget == "100") mainWin.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/02_transactions.png");
-
-        // 3. Trang Ví tiền (Wallets có cảnh báo đối soát rõ ràng)
-        UiHelper::balanceHidden = false;
-        mainWin.navigateToPage(2);
-        app.processEvents();
-        mainWin.grab().save(outDir + "/03_wallets.png");
-        if (screenshotTarget == "100") mainWin.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/03_wallets.png");
-
-        // 4. Trang Thống kê (Statistics)
-        mainWin.navigateToPage(3);
-        app.processEvents();
-        mainWin.grab().save(outDir + "/04_statistics.png");
-        if (screenshotTarget == "100") mainWin.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/04_statistics.png");
-
-        // 5. Trang Cài đặt (Settings)
-        mainWin.navigateToPage(4);
-        app.processEvents();
-        mainWin.grab().save(outDir + "/05_settings.png");
-        if (screenshotTarget == "100") mainWin.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/05_settings.png");
-
-        // 6. Bảng lịch chọn ngày chuẩn (DatePickerPopup hiển thị ngày 10/11/2026)
-        DatePickerPopup myPicker(QDate(2026, 11, 10), &mainWin);
-        myPicker.resize(380, 480);
-        myPicker.show();
-        app.processEvents();
-        myPicker.grab().save(outDir + "/06_month_year_picker.png");
-        if (screenshotTarget == "100") myPicker.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/06_month_year_picker.png");
-        myPicker.close();
-
-        // 7. Popup Lịch chọn ngày nâng cao (DatePickerPopup)
-        DatePickerPopup dpPopup(QDate(2026, 11, 10), &mainWin);
-        dpPopup.resize(380, 480);
-        dpPopup.show();
-        app.processEvents();
-        dpPopup.grab().save(outDir + "/07_date_picker_popup.png");
-        if (screenshotTarget == "100") dpPopup.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/07_date_picker_popup.png");
-        dpPopup.close();
-
-        // 8. Hộp thoại chi tiết ngày (DayDetailDialog)
-        DayDetailDialog ddDialog(mm, Date(10, 11, 2026), &mainWin, &mainWin);
-        ddDialog.resize(780, 540);
-        ddDialog.show();
-        app.processEvents();
-        ddDialog.grab().save(outDir + "/08_day_detail_dialog.png");
-        if (screenshotTarget == "100") ddDialog.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/08_day_detail_dialog.png");
-        ddDialog.close();
-
-        // 9. Hộp thoại Thêm/Sửa Giao dịch (TransactionDialog)
-        TransactionDialog txDialog(mm, -1, &mainWin);
-        txDialog.resize(560, 680);
-        txDialog.show();
-        app.processEvents();
-        txDialog.grab().save(outDir + "/09_transaction_dialog.png");
-        if (screenshotTarget == "100") txDialog.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/09_transaction_dialog.png");
-        txDialog.close();
-
-        // 10. Hộp thoại Thêm/Sửa Ví (WalletDialog)
-        WalletDialog wDialog(mm, -1, &mainWin);
-        wDialog.resize(480, 420);
-        wDialog.show();
-        app.processEvents();
-        wDialog.grab().save(outDir + "/10_wallet_dialog.png");
-        if (screenshotTarget == "100") wDialog.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/10_wallet_dialog.png");
-        wDialog.close();
-
-        // 11. Hộp thoại Thiết lập kế hoạch (PlanDialog)
-        BudgetPlan plan;
-        PlanDialog::loadPlanFromFile(userDir, plan);
-        PlanDialog pDialog(plan, &mainWin);
-        pDialog.resize(480, 500);
-        pDialog.show();
-        app.processEvents();
-        pDialog.grab().save(outDir + "/11_plan_dialog.png");
-        if (screenshotTarget == "100") pDialog.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/11_plan_dialog.png");
-        pDialog.close();
-
-        // 12. Cửa sổ Đăng nhập (LoginWindow)
-        LoginWindow lWin(mm, dataDir);
-        lWin.resize(800, 500);
-        lWin.show();
-        app.processEvents();
-        lWin.grab().save(outDir + "/12_login_window.png");
-        if (screenshotTarget == "100") lWin.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/12_login_window.png");
-        lWin.close();
-
-        // 13. Hộp thoại Đăng ký (RegisterDialog)
-        RegisterDialog rDialog(mm, dataDir, &mainWin);
-        rDialog.resize(420, 480);
-        rDialog.show();
-        app.processEvents();
-        rDialog.grab().save(outDir + "/13_register_dialog.png");
-        if (screenshotTarget == "100") rDialog.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/13_register_dialog.png");
-        rDialog.close();
-
-        if (logFile.open(QIODevice::Append | QIODevice::Text)) {
-            logFile.write("All screenshots saved successfully!\n");
-            logFile.close();
-        }
+        captureScreenshots(app, mm, dataDir, screenshotTarget);
         return 0;
     }
 

@@ -41,6 +41,32 @@ void CalendarWidget::drawHeaders(QPainter& p) {
     }
 }
 
+void CalendarWidget::drawExpenseBadge(QPainter& p, const QRect& r, long long amount) {
+    QColor badgeBg = (amount < 100000) ? QColor("#E6FAF3") : (amount <= 500000) ? QColor("#FFF4E5") : QColor("#FEECEB");
+    QColor badgeText = (amount < 100000) ? QColor("#0E8F4F") : (amount <= 500000) ? QColor("#FF9F1A") : QColor("#E0173D");
+
+    QString shortText = QString::fromStdString(formatShortMoney(amount));
+    QFont font = p.font();
+    font.setPixelSize(11);
+    font.setBold(true);
+    p.setFont(font);
+
+    QFontMetrics fm(font);
+    int textW = fm.horizontalAdvance(shortText);
+    int badgeW = textW + 8;
+    int badgeH = 17;
+    int badgeX = r.right() - badgeW - 6;
+    int badgeY = r.top() + 4;
+
+    QRect badgeRect(badgeX, badgeY, badgeW, badgeH);
+    p.setBrush(badgeBg);
+    p.setPen(Qt::NoPen);
+    p.drawRoundedRect(badgeRect, 4, 4);
+
+    p.setPen(badgeText);
+    p.drawText(badgeRect, Qt::AlignCenter, shortText);
+}
+
 void CalendarWidget::drawCell(QPainter& p, const QRect& r, int day, const Date& today) {
     long long amount = expenses[day - 1];
     bool isToday = (day == today.day && month == today.month && year == today.year);
@@ -61,30 +87,9 @@ void CalendarWidget::drawCell(QPainter& p, const QRect& r, int day, const Date& 
     p.setPen(QColor("#0B2A6B"));
     p.drawText(r.adjusted(8, 4, -4, -2), Qt::AlignLeft | Qt::AlignTop, QString::number(day));
 
-    if (amount <= 0) return;
-
-    // Badge số tiền: bo góc nhỏ (pill) nền màu pastel và chữ đậm ở bên phải
-    QColor badgeBg = (amount < 100000) ? QColor("#E6FAF3") : (amount <= 500000) ? QColor("#FFF4E5") : QColor("#FEECEB");
-    QColor badgeText = (amount < 100000) ? QColor("#0E8F4F") : (amount <= 500000) ? QColor("#FF9F1A") : QColor("#E0173D");
-
-    QString shortText = QString::fromStdString(formatShortMoney(amount));
-    font.setPixelSize(11);
-    font.setBold(true);
-    p.setFont(font);
-    QFontMetrics fm(font);
-    int textW = fm.horizontalAdvance(shortText);
-    int badgeW = textW + 8;
-    int badgeH = 17;
-    int badgeX = r.right() - badgeW - 6;
-    int badgeY = r.top() + 4;
-
-    QRect badgeRect(badgeX, badgeY, badgeW, badgeH);
-    p.setBrush(badgeBg);
-    p.setPen(Qt::NoPen);
-    p.drawRoundedRect(badgeRect, 4, 4);
-
-    p.setPen(badgeText);
-    p.drawText(badgeRect, Qt::AlignCenter, shortText);
+    if (amount > 0) {
+        drawExpenseBadge(p, r, amount);
+    }
 }
 
 void CalendarWidget::drawCells(QPainter& p) {

@@ -6,7 +6,10 @@
    - Mau chu phu (Muted):     #5B6B8C (chu phu, nhan mo ta, placeholder)
    - Khoan Thu (Income):      #0E8F4F / #19B26B (nen: #EAFBF3, border: #B7EBCE)
    - Khoan Chi (Expense):     #E0173D / #FF4D6A (nen: #FFF0F3, border: #FFCCD5)
-   - Can bang / Vang:         #F59E0B (amber accent)
+   - The Vi Tien Mat:         #0E8F4F (nen pastel: #EAFBF3)
+   - The Vi Ngan Hang:        #1E6FFF (nen pastel: #EBF3FE)
+   - The Vi MoMo / Dien tu:   #8E3FD8 (nen pastel: #F0E3FF)
+   - The Vi TPBank / Cam:     #FF9F1A (nen pastel: #FFF0D6)
    - Nen cua so & Content:    qlineargradient(#EAF2FF -> #F8FBFF)
    - Card container:          #FFFFFF (vien: #DCE8FA, bo goc: 18px)
    - Button & Input:          #FFFFFF (vien: #D5E1F5, bo goc: 12px, cao: 42px)
@@ -705,13 +708,13 @@ QFrame#WalletCard[walletType="bank"] {
 }
 
 QFrame#WalletCard[walletType="ewallet"] {
-    border-top: 4px solid #8B5CF6;
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:0.75 #FFFFFF, stop:1 #FAF5FF);
+    border-top: 4px solid #8E3FD8;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:0.75 #FFFFFF, stop:1 #F0E3FF);
 }
 
 QFrame#WalletCard[walletType="tpbank"] {
     border-top: 4px solid #FF9F1A;
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:0.75 #FFFFFF, stop:1 #FFF7ED);
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:0.75 #FFFFFF, stop:1 #FFF0D6);
 }
 
 QFrame#WalletCard:hover {
@@ -785,7 +788,7 @@ QFrame#WalletCard[selected="true"] {
 
 #WalletPage #lblTotalBalance {
     color: #1E6FFF;
-    font-size: 36px;
+    font-size: 40px;
     font-weight: 700;
 }
 

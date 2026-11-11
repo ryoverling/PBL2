@@ -338,14 +338,14 @@ QPixmap createWalletCardIcon(const QString& walletName, int walletType, int size
     bool isPhone = false;
 
     if (lower.contains("momo") || walletType == 3) {
-        bg = QColor("#F3EDFF");
-        fg = QColor("#8B5CF6");
+        bg = QColor("#F0E3FF");
+        fg = QColor("#8E3FD8");
         isPhone = true;
     } else if (lower.contains("tiền mặt") || walletType == 1) {
         bg = QColor("#E4F8EE");
         fg = QColor("#0E8F4F");
     } else if (lower.contains("tp") || lower.contains("tpbank") || lower.contains("tp bank")) {
-        bg = QColor("#FFF4E6");
+        bg = QColor("#FFF0D6");
         fg = QColor("#FF9F1A");
     }
 

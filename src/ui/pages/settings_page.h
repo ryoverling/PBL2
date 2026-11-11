@@ -5,6 +5,7 @@
 
 class MoneyManager;
 class MainWindow;
+class QLabel;
 
 namespace Ui {
 class SettingsPage;
@@ -30,5 +31,6 @@ private:
     MoneyManager& moneyManager;
     std::string baseDataDirectory;
     MainWindow* mainWindow;
+    QLabel* lblPasswordError = nullptr;
     bool validatePasswords();
 };

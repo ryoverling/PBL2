@@ -53,8 +53,9 @@ void StatisticsPage::updateCategories() {
     if (categories.isEmpty()) {
         ui->tblCategories->setRowCount(1);
         ui->tblCategories->setSpan(0, 0, 1, 3);
-        auto* empty = new QTableWidgetItem("Chưa có khoản chi trong tháng này");
+        auto* empty = new QTableWidgetItem("Chưa có dữ liệu");
         empty->setTextAlignment(Qt::AlignCenter);
+        empty->setForeground(QColor("#5B6B8C"));
         ui->tblCategories->setItem(0, 0, empty);
         ui->lblTopCategory->setText("Danh mục chi nhiều nhất: Chưa có dữ liệu");
     } else {

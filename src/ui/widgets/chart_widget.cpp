@@ -1,9 +1,13 @@
 #include "chart_widget.h"
 #include "../gui_helpers.h"
 #include <QPainter>
+#include <QMouseEvent>
+#include <QToolTip>
 #include <algorithm>
 
-ChartWidget::ChartWidget(QWidget* parent) : QWidget(parent) {}
+ChartWidget::ChartWidget(QWidget* parent) : QWidget(parent) {
+    setMouseTracking(true);
+}
 
 void ChartWidget::setData(const MonthStat inStats[6]) {
     for (int i = 0; i < 6; ++i) stats[i] = inStats[i];
@@ -22,11 +26,20 @@ long long ChartWidget::findMaxAmount() const {
 
 void ChartWidget::drawBar(QPainter& painter, const QRect& plot, int x, int width,
                           long long amount, long long maximum, const QColor& color) {
-    // Số tiền bằng 0 không vẽ cột; không nâng chiều cao giả.
     if (amount <= 0) return;
     double height = static_cast<double>(amount) / maximum * plot.height();
     painter.setPen(Qt::NoPen);
-    painter.setBrush(color);
+
+    // Gradient thẳng đứng nhẹ nhàng cho cột
+    QLinearGradient grad(x, plot.bottom() - height, x, plot.bottom());
+    if (color == QColor("#0E8F4F")) {
+        grad.setColorAt(0, QColor("#19B26B"));
+        grad.setColorAt(1, QColor("#0E8F4F"));
+    } else {
+        grad.setColorAt(0, QColor("#FF4D6A"));
+        grad.setColorAt(1, QColor("#E0173D"));
+    }
+    painter.setBrush(grad);
     painter.drawRoundedRect(QRectF(x, plot.bottom() - height, width, height), 4, 4);
 }
 
@@ -106,4 +119,26 @@ void ChartWidget::paintEvent(QPaintEvent*) {
     drawLegend(painter);
     drawAxes(painter, plot, maximum);
     drawColumns(painter, plot, maximum);
+}
+
+void ChartWidget::mouseMoveEvent(QMouseEvent* event) {
+    if (!hasData) return;
+    long long maximum = findMaxAmount();
+    QFontMetrics fm(QFont("Segoe UI", 9));
+    int left = fm.horizontalAdvance(UiHelper::formatMoneyVND(maximum)) + 14;
+    QRect plot(left, 40, width() - left - 12, height() - 76);
+    if (!plot.contains(event->pos())) {
+        QToolTip::hideText();
+        return;
+    }
+    int groupWidth = plot.width() / 6;
+    int idx = (event->pos().x() - plot.left()) / groupWidth;
+    if (idx >= 0 && idx < 6) {
+        QString tip = QString("Tháng %1/%2\n• Thu: %3\n• Chi: %4")
+            .arg(stats[idx].month)
+            .arg(stats[idx].year)
+            .arg(UiHelper::formatMoneyVND(stats[idx].totalIncome))
+            .arg(UiHelper::formatMoneyVND(stats[idx].totalExpense));
+        QToolTip::showText(event->globalPosition().toPoint(), tip, this);
+    }
 }

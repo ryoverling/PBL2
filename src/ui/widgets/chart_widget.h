@@ -20,6 +20,7 @@ private:
                  long long amount, long long maximum, const QColor& color);
 protected:
     void paintEvent(QPaintEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
 public:
     explicit ChartWidget(QWidget* parent = nullptr);
     void setData(const MonthStat inStats[6]);

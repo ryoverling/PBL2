@@ -8,8 +8,8 @@
 #include <QPushButton>
 #include <QPainter>
 
-// Tạo ảnh đại diện bo góc với gradient xanh nhạt
-static QPixmap createAvatarPixmap(const QString& username, int size = 52) {
+// Tạo ảnh đại diện hình vuông bo góc với gradient xanh nhạt
+static QPixmap createAvatarPixmap(const QString& username, int size = 54) {
     QPixmap pix(size, size);
     pix.fill(Qt::transparent);
     QPainter p(&pix);
@@ -20,7 +20,8 @@ static QPixmap createAvatarPixmap(const QString& username, int size = 52) {
     grad.setColorAt(1, QColor("#C7DEFF"));
     p.setBrush(grad);
     p.setPen(QPen(QColor("#B8D5FA"), 1.5));
-    p.drawRoundedRect(QRectF(1, 1, size - 2, size - 2), 16, 16);
+    // Bo góc 14px tạo hình vuông bo góc hiện đại (không tròn)
+    p.drawRoundedRect(QRectF(1, 1, size - 2, size - 2), 14, 14);
 
     p.setPen(QColor("#1E6FFF"));
     QFont f("Segoe UI", 18, QFont::Bold);
@@ -28,6 +29,16 @@ static QPixmap createAvatarPixmap(const QString& username, int size = 52) {
     QString letter = username.isEmpty() ? "?" : username.left(1).toUpper();
     p.drawText(pix.rect(), Qt::AlignCenter, letter);
     return pix;
+}
+
+// Cài đặt nút mắt xem mật khẩu cho từng ô nhập
+static void setupPasswordEyeAction(QLineEdit* edt) {
+    QAction* act = edt->addAction(QIcon(GuiIcons::createEyeActionIcon(true)), QLineEdit::TrailingPosition);
+    QObject::connect(act, &QAction::triggered, edt, [edt, act]() {
+        bool isHidden = (edt->echoMode() == QLineEdit::Password);
+        edt->setEchoMode(isHidden ? QLineEdit::Normal : QLineEdit::Password);
+        act->setIcon(QIcon(GuiIcons::createEyeActionIcon(!isHidden)));
+    });
 }
 
 SettingsPage::SettingsPage(MoneyManager& mm, const std::string&, const std::string& baseDir, MainWindow* mainWin, QWidget *parent)
@@ -56,6 +67,32 @@ SettingsPage::SettingsPage(MoneyManager& mm, const std::string&, const std::stri
     ui->lblSessionHeading->setText("🛡️  Phiên làm việc");
     ui->lblPasswordHeading->setText("🔒  Đổi mật khẩu");
 
+    // Dấu sao đỏ cho các trường mật khẩu mới
+    ui->lblNewPassword->setText("Mật khẩu mới <span style=\"color:#E0173D\">*</span>");
+    ui->lblConfirmPassword->setText("Xác nhận mật khẩu mới <span style=\"color:#E0173D\">*</span>");
+
+    // Nút mắt trong từng ô mật khẩu
+    setupPasswordEyeAction(ui->edtOldPassword);
+    setupPasswordEyeAction(ui->edtNewPassword);
+    setupPasswordEyeAction(ui->edtConfirmPassword);
+
+    // Nhãn báo lỗi nhỏ màu đỏ bên dưới
+    lblPasswordError = new QLabel(this);
+    lblPasswordError->setStyleSheet("color: #E0173D; font-size: 13px; font-weight: 500;");
+    lblPasswordError->setVisible(false);
+    ui->changePassLayout->insertWidget(ui->changePassLayout->count() - 1, lblPasswordError);
+
+    // Xóa viền đỏ khi người dùng gõ phím
+    auto clearErr = [this]() {
+        lblPasswordError->setVisible(false);
+        ui->edtOldPassword->setStyleSheet("");
+        ui->edtNewPassword->setStyleSheet("");
+        ui->edtConfirmPassword->setStyleSheet("");
+    };
+    connect(ui->edtOldPassword, &QLineEdit::textChanged, this, clearErr);
+    connect(ui->edtNewPassword, &QLineEdit::textChanged, this, clearErr);
+    connect(ui->edtConfirmPassword, &QLineEdit::textChanged, this, clearErr);
+
     refreshData();
 }
 
@@ -76,19 +113,35 @@ void SettingsPage::refreshData() {
 }
 
 bool SettingsPage::validatePasswords() {
-    if (ui->edtOldPassword->text().isEmpty() || ui->edtNewPassword->text().isEmpty() ||
-        ui->edtConfirmPassword->text().isEmpty()) {
+    if (ui->edtOldPassword->text().isEmpty()) {
+        ui->edtOldPassword->setStyleSheet("QLineEdit { border: 1.5px solid #E0173D; }");
+        lblPasswordError->setText("Vui lòng nhập mật khẩu hiện tại.");
+        lblPasswordError->setVisible(true);
         UiHelper::showError(this, "Vui lòng nhập đầy đủ thông tin.");
         return false;
     }
-    if (ui->edtNewPassword->text() != ui->edtConfirmPassword->text()) {
-        UiHelper::showError(this, "Mật khẩu nhập lại không khớp.");
+    if (ui->edtNewPassword->text().isEmpty()) {
+        ui->edtNewPassword->setStyleSheet("QLineEdit { border: 1.5px solid #E0173D; }");
+        lblPasswordError->setText("Vui lòng nhập mật khẩu mới.");
+        lblPasswordError->setVisible(true);
+        UiHelper::showError(this, "Vui lòng nhập đầy đủ thông tin.");
         return false;
     }
     if (ui->edtNewPassword->text().size() < 4) {
+        ui->edtNewPassword->setStyleSheet("QLineEdit { border: 1.5px solid #E0173D; }");
+        lblPasswordError->setText("Mật khẩu mới cần ít nhất 4 ký tự.");
+        lblPasswordError->setVisible(true);
         UiHelper::showError(this, "Mật khẩu mới cần ít nhất 4 ký tự.");
         return false;
     }
+    if (ui->edtNewPassword->text() != ui->edtConfirmPassword->text()) {
+        ui->edtConfirmPassword->setStyleSheet("QLineEdit { border: 1.5px solid #E0173D; }");
+        lblPasswordError->setText("Mật khẩu nhập lại không khớp.");
+        lblPasswordError->setVisible(true);
+        UiHelper::showError(this, "Mật khẩu nhập lại không khớp.");
+        return false;
+    }
+    lblPasswordError->setVisible(false);
     return true;
 }
 

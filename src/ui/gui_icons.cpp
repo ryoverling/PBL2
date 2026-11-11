@@ -501,6 +501,29 @@ QPixmap createLockActionIcon(int size, const QColor& color) {
     return pix;
 }
 
+QPixmap createEyeActionIcon(bool slash, int size, const QColor& color) {
+    QPixmap pix(size, size);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+
+    p.setPen(QPen(color, 1.5, Qt::SolidLine, Qt::RoundCap));
+    p.setBrush(Qt::NoBrush);
+
+    // Vẽ hình dáng con mắt
+    p.drawArc(2, 4, size - 4, size - 8, 45 * 16, 90 * 16);
+    p.drawArc(2, 4, size - 4, size - 8, 225 * 16, 90 * 16);
+    p.setBrush(color);
+    p.drawEllipse(QPointF(size / 2.0, size / 2.0), 2.2, 2.2);
+
+    // Gạch chéo nếu ở chế độ ẩn
+    if (slash) {
+        p.setBrush(Qt::NoBrush);
+        p.drawLine(3, 4, size - 3, size - 4);
+    }
+    return pix;
+}
+
 QPixmap createWalletBadgeIcon(const QString& walletName, int walletType, int size) {
     QPixmap pix(size, size);
     pix.fill(Qt::transparent);

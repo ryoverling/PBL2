@@ -174,6 +174,7 @@ BalanceValidationResult TransactionManager::validateUpdate(int id, long long new
                                                            int newWalletId, const Wallet* oldWallet, const Wallet* newWallet,
                                                            const Category* newCategory) const {
     BalanceValidationResult res;
+    // [BƯỚC 1] Kiểm tra tính hợp lệ của dữ liệu đầu vào
     const Transaction* oldTx = findById(id);
     if (!oldTx || !oldWallet || !newWallet || !newCategory) {
         res.isValid = false;
@@ -192,7 +193,7 @@ BalanceValidationResult TransactionManager::validateUpdate(int id, long long new
         return res;
     }
 
-    // Xử lý ví đang âm:
+    // [BƯỚC 2] Kiểm tra ràng buộc khi ví đang có số dư âm
     if (oldWallet->getId() == newWalletId && oldWallet->getBalance() < 0) {
         if (oldTx->getType() == TransactionType::EXPENSE && newAmount > oldTx->getAmount()) {
             res.isValid = false;
@@ -212,6 +213,7 @@ BalanceValidationResult TransactionManager::validateUpdate(int id, long long new
         }
     }
 
+    // [BƯỚC 3] Tạo đối tượng giao dịch giả định để mô phỏng
     Expense tempExpense(id, newAmount, newDate, "", newWalletId, newCategory->getId());
     Income tempIncome(id, newAmount, newDate, "", newWalletId, newCategory->getId());
     Transaction* tempTx = (oldTx->getType() == TransactionType::INCOME)
@@ -219,6 +221,7 @@ BalanceValidationResult TransactionManager::validateUpdate(int id, long long new
                         : static_cast<Transaction*>(&tempExpense);
 
     if (oldWallet->getId() == newWallet->getId()) {
+        // [BƯỚC 4A] Trường hợp 1: Sửa giao dịch trên cùng một ví
         long long initBal = getWalletInitialBalance(oldWallet->getId(), oldWallet->getBalance());
         LinkedList<Transaction*> simList;
         for (const Node<Transaction*>* cur = transactions.getHead(); cur != nullptr; cur = cur->next) {
@@ -244,7 +247,7 @@ BalanceValidationResult TransactionManager::validateUpdate(int id, long long new
         }
         return simRes;
     } else {
-        // Đổi sang ví khác:
+        // [BƯỚC 4B] Trường hợp 2: Sửa giao dịch và đổi sang ví khác
         if (newWallet->getBalance() < 0 && tempTx->getType() == TransactionType::EXPENSE) {
             res.isValid = false;
             res.errorCode = ValidationErrorCode::WALLET_ALREADY_NEGATIVE;
@@ -416,19 +419,24 @@ bool TransactionManager::deleteTransaction(int id, Wallet* wallet) {
     // 1. Đảo ngược số dư ví đúng chiều (Xóa Chi -> cộng lại; Xóa Thu -> trừ đi)
     applyToWallet(tx, wallet, true);
 
-    // 2. Xóa khỏi danh sách và giải phóng vùng nhớ
-    struct MatchTxId {
-        int targetId;
-        bool operator()(Transaction* item) const {
-            if (item && item->getId() == targetId) {
-                delete item;
-                return true;
-            }
-            return false;
+    // 2. Xóa khỏi danh sách và giải phóng vùng nhớ bằng vòng lặp tường minh
+    std::vector<Transaction*> kept;
+    bool found = false;
+    for (Node<Transaction*>* cur = transactions.getHead(); cur != nullptr; cur = cur->next) {
+        if (!found && cur->data && cur->data->getId() == id) {
+            delete cur->data;
+            found = true;
+        } else {
+            kept.push_back(cur->data);
         }
-    };
-    MatchTxId matcher{id};
-    return transactions.removeIf(matcher);
+    }
+    if (!found) return false;
+
+    transactions.clear();
+    for (Transaction* item : kept) {
+        transactions.pushBack(item);
+    }
+    return true;
 }
 
 Transaction* TransactionManager::findById(int id) {

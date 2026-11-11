@@ -9,6 +9,9 @@
 #include "gui_helpers.h"
 #include "dialogs/day_detail_dialog.h"
 #include "dialogs/transaction_dialog.h"
+#include "dialogs/wallet_dialog.h"
+#include "dialogs/plan_dialog.h"
+#include "dialogs/register_dialog.h"
 #include "widgets/date_picker_popup.h"
 #include <QDir>
 #include <iostream>
@@ -150,12 +153,50 @@ int main(int argc, char *argv[]) {
 
         // 9. Hộp thoại Thêm/Sửa Giao dịch (TransactionDialog)
         TransactionDialog txDialog(mm, -1, &mainWin);
-        txDialog.resize(520, 680);
+        txDialog.resize(560, 680);
         txDialog.show();
         app.processEvents();
         txDialog.grab().save(outDir + "/09_transaction_dialog.png");
         if (screenshotTarget == "100") txDialog.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/09_transaction_dialog.png");
         txDialog.close();
+
+        // 10. Hộp thoại Thêm/Sửa Ví (WalletDialog)
+        WalletDialog wDialog(mm, -1, &mainWin);
+        wDialog.resize(480, 420);
+        wDialog.show();
+        app.processEvents();
+        wDialog.grab().save(outDir + "/10_wallet_dialog.png");
+        if (screenshotTarget == "100") wDialog.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/10_wallet_dialog.png");
+        wDialog.close();
+
+        // 11. Hộp thoại Thiết lập kế hoạch (PlanDialog)
+        BudgetPlan plan;
+        PlanDialog::loadPlanFromFile(userDir, plan);
+        PlanDialog pDialog(plan, &mainWin);
+        pDialog.resize(480, 500);
+        pDialog.show();
+        app.processEvents();
+        pDialog.grab().save(outDir + "/11_plan_dialog.png");
+        if (screenshotTarget == "100") pDialog.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/11_plan_dialog.png");
+        pDialog.close();
+
+        // 12. Cửa sổ Đăng nhập (LoginWindow)
+        LoginWindow lWin(mm, dataDir);
+        lWin.resize(800, 500);
+        lWin.show();
+        app.processEvents();
+        lWin.grab().save(outDir + "/12_login_window.png");
+        if (screenshotTarget == "100") lWin.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/12_login_window.png");
+        lWin.close();
+
+        // 13. Hộp thoại Đăng ký (RegisterDialog)
+        RegisterDialog rDialog(mm, dataDir, &mainWin);
+        rDialog.resize(420, 480);
+        rDialog.show();
+        app.processEvents();
+        rDialog.grab().save(outDir + "/13_register_dialog.png");
+        if (screenshotTarget == "100") rDialog.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/13_register_dialog.png");
+        rDialog.close();
 
         if (logFile.open(QIODevice::Append | QIODevice::Text)) {
             logFile.write("All screenshots saved successfully!\n");

@@ -524,6 +524,75 @@ QPixmap createEyeActionIcon(bool slash, int size, const QColor& color) {
     return pix;
 }
 
+QPixmap createCalendarBadge(int size) {
+    QPixmap pix(size, size);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+
+    p.setPen(Qt::NoPen);
+    p.setBrush(QColor("#E0EDFF"));
+    p.drawRoundedRect(0, 0, size, size, 12, 12);
+
+    int m = size * 0.22;
+    int w = size - m * 2;
+    int h = size - m * 2;
+
+    p.setPen(QPen(QColor("#1E6FFF"), 1.8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    p.setBrush(Qt::NoBrush);
+    p.drawRoundedRect(m, m + 2, w, h - 2, 3, 3);
+    p.drawLine(m, m + 8, m + w, m + 8);
+
+    // Quai treo lịch
+    p.drawLine(m + 4, m, m + 4, m + 4);
+    p.drawLine(m + w - 4, m, m + w - 4, m + 4);
+
+    // Các chấm ngày
+    p.drawPoint(m + 5, m + 13);
+    p.drawPoint(m + 11, m + 13);
+    p.drawPoint(m + 17, m + 13);
+
+    return pix;
+}
+
+QPixmap createPlusCircleBadge(int size) {
+    QPixmap pix(size, size);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+
+    p.setPen(Qt::NoPen);
+    p.setBrush(QColor("#1E6FFF"));
+    p.drawEllipse(0, 0, size, size);
+
+    p.setPen(QPen(Qt::white, 2, Qt::SolidLine, Qt::RoundCap));
+    int c = size / 2;
+    int r = size * 0.28;
+    p.drawLine(c, c - r, c, c + r);
+    p.drawLine(c - r, c, c + r, c);
+
+    return pix;
+}
+
+QPixmap createListIcon(int size, const QColor& color) {
+    QPixmap pix(size, size);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+
+    p.setPen(QPen(color, 1.6, Qt::SolidLine, Qt::RoundCap));
+    p.drawLine(2, 4, 4, 4);
+    p.drawLine(7, 4, size - 2, 4);
+
+    p.drawLine(2, size / 2, 4, size / 2);
+    p.drawLine(7, size / 2, size - 2, size / 2);
+
+    p.drawLine(2, size - 4, 4, size - 4);
+    p.drawLine(7, size - 4, size - 2, size - 4);
+
+    return pix;
+}
+
 QPixmap createWalletBadgeIcon(const QString& walletName, int walletType, int size) {
     QPixmap pix(size, size);
     pix.fill(Qt::transparent);

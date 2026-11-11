@@ -49,6 +49,11 @@ QPixmap createLogoutIcon(int size = 16, const QColor& color = QColor("#E0173D"))
 QPixmap createLockActionIcon(int size = 16, const QColor& color = Qt::white);
 QPixmap createEyeActionIcon(bool slash = false, int size = 18, const QColor& color = QColor("#5B6B8C"));
 
+// Icon cho các hộp thoại (Dialogs)
+QPixmap createCalendarBadge(int size = 44);
+QPixmap createPlusCircleBadge(int size = 28);
+QPixmap createListIcon(int size = 16, const QColor& color = QColor("#1E6FFF"));
+
 // Icon nhỏ kèm tiêu đề header bảng giao dịch
 QIcon createSortHeaderIcon();
 QIcon createCoinHeaderIcon();

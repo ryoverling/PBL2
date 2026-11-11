@@ -224,8 +224,8 @@ void DatePickerPopup::setupUi() {
     btnToday->setCursor(Qt::PointingHandCursor);
     btnToday->setStyleSheet(
         "QPushButton { font-size: 13px; font-weight: 600; padding: 0 16px; "
-        "color: #1A6BEB; background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; } "
-        "QPushButton:hover { background-color: #F0F6FE; border-color: #1A6BEB; }"
+        "color: #1E6FFF; background-color: #FFFFFF; border: 1.5px solid #D5E1F5; border-radius: 10px; } "
+        "QPushButton:hover { background-color: #EBF3FE; border-color: #1E6FFF; }"
     );
 
     btnCancel = new QPushButton("Đóng", this);
@@ -234,8 +234,8 @@ void DatePickerPopup::setupUi() {
     btnCancel->setCursor(Qt::PointingHandCursor);
     btnCancel->setStyleSheet(
         "QPushButton { font-size: 13px; font-weight: 600; padding: 0 18px; border-radius: 10px; "
-        "color: #536986; border: 1px solid #E2E8F0; background-color: #FFFFFF; } "
-        "QPushButton:hover { background-color: #F8FAFC; border-color: #94A3B8; color: #0F172A; }"
+        "color: #5B6B8C; border: 1.5px solid #D5E1F5; background-color: #FFFFFF; } "
+        "QPushButton:hover { background-color: #F1F6FF; color: #0B2A6B; }"
     );
 
     btnSelect = new QPushButton("Chọn", this);
@@ -244,8 +244,8 @@ void DatePickerPopup::setupUi() {
     btnSelect->setCursor(Qt::PointingHandCursor);
     btnSelect->setStyleSheet(
         "QPushButton { font-size: 13px; font-weight: 700; padding: 0 20px; border-radius: 10px; "
-        "color: #FFFFFF; background-color: #1A6BEB; border: 1px solid #1A6BEB; } "
-        "QPushButton:hover { background-color: #1557BF; border-color: #1557BF; }"
+        "color: #FFFFFF; background-color: #1E6FFF; border: none; } "
+        "QPushButton:hover { background-color: #155EEF; }"
     );
 
     footerLayout->addWidget(btnToday);
@@ -273,7 +273,7 @@ void DatePickerPopup::setupDaysView() {
         QLabel* lbl = new QLabel(QString::fromUtf8(weekdays[i]), pageDays);
         lbl->setAlignment(Qt::AlignCenter);
         lbl->setFont(QFont("Segoe UI", 10, QFont::DemiBold));
-        lbl->setStyleSheet(i == 6 ? "color: #EF4444; font-weight: 700; font-size: 13px;" : "color: #334155; font-weight: 600; font-size: 13px;");
+        lbl->setStyleSheet(i == 6 ? "color: #E0173D; font-weight: 700; font-size: 13px;" : "color: #5B6B8C; font-weight: 600; font-size: 13px;");
         daysHeaderLayout->addWidget(lbl, 1);
     }
     layout->addLayout(daysHeaderLayout);
@@ -409,17 +409,17 @@ void DatePickerPopup::updateDaysGrid() {
 
         QString style;
         if (isSelected) {
-            style = "QPushButton { background-color: #1A6BEB; color: #FFFFFF; font-weight: 700; border-radius: 10px; border: none; font-size: 14px; padding: 0; }";
+            style = "QPushButton { background-color: #1E6FFF; color: #FFFFFF; font-weight: 700; border-radius: 10px; border: none; font-size: 14px; padding: 0; }";
         } else if (!isCurrentMonth) {
-            // Ngày tháng khác màu xám nhạt (#94A3B8)
-            style = "QPushButton { background-color: transparent; color: #94A3B8; border: none; border-radius: 10px; font-size: 14px; padding: 0; } QPushButton:hover { background-color: #F0F6FE; color: #1A6BEB; }";
+            // Ngày tháng khác màu xám nhạt (#A0AEC0)
+            style = "QPushButton { background-color: transparent; color: #A0AEC0; border: none; border-radius: 10px; font-size: 14px; padding: 0; } QPushButton:hover { background-color: #EBF3FE; color: #1E6FFF; }";
         } else if (isSunday) {
-            // Chủ nhật màu đỏ (#EF4444)
-            style = "QPushButton { background-color: transparent; color: #EF4444; font-weight: 600; border: none; border-radius: 10px; font-size: 14px; padding: 0; } QPushButton:hover { background-color: #F0F6FE; color: #1A6BEB; }";
+            // Chủ nhật màu đỏ (#E0173D)
+            style = "QPushButton { background-color: transparent; color: #E0173D; font-weight: 600; border: none; border-radius: 10px; font-size: 14px; padding: 0; } QPushButton:hover { background-color: #EBF3FE; color: #1E6FFF; }";
         } else if (isToday) {
-            style = "QPushButton { background-color: #F0F6FE; color: #1A6BEB; font-weight: 700; border-radius: 10px; border: 1.5px solid #1A6BEB; font-size: 14px; padding: 0; } QPushButton:hover { background-color: #E2ECF8; }";
+            style = "QPushButton { background-color: #EBF3FE; color: #1E6FFF; font-weight: 700; border-radius: 10px; border: 1.5px solid #1E6FFF; font-size: 14px; padding: 0; } QPushButton:hover { background-color: #DCE8FA; }";
         } else {
-            style = "QPushButton { background-color: transparent; color: #1E293B; font-weight: 500; border: none; border-radius: 10px; font-size: 14px; padding: 0; } QPushButton:hover { background-color: #F0F6FE; color: #1A6BEB; }";
+            style = "QPushButton { background-color: transparent; color: #0B2A6B; font-weight: 500; border: none; border-radius: 10px; font-size: 14px; padding: 0; } QPushButton:hover { background-color: #EBF3FE; color: #1E6FFF; }";
         }
         btn->setStyleSheet(style);
     }

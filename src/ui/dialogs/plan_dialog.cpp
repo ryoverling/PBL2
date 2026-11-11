@@ -68,12 +68,12 @@ void PlanDialog::setupUi() {
 
     // Tiêu đề
     auto* lblTitle = new QLabel("Thiết lập Kế hoạch tháng này", this);
-    lblTitle->setStyleSheet("font-size: 16px; font-weight: 700; color: #102748;");
+    lblTitle->setStyleSheet("font-size: 16px; font-weight: 700; color: #0B2A6B;");
     mainLayout->addWidget(lblTitle);
 
     // Group 1: Ngân sách tháng
     auto* grpBudget = new QGroupBox("Hạn mức ngân sách chi tiêu tháng", this);
-    grpBudget->setStyleSheet("QGroupBox { font-weight: 600; color: #1E293B; margin-top: 8px; }");
+    grpBudget->setStyleSheet("QGroupBox { font-weight: 600; color: #0B2A6B; border: 1px solid #DCE8FA; border-radius: 12px; margin-top: 10px; padding-top: 14px; background: #FFFFFF; }");
     auto* budgetLayout = new QFormLayout(grpBudget);
     budgetLayout->setContentsMargins(14, 16, 14, 14);
     budgetLayout->setSpacing(10);
@@ -89,7 +89,7 @@ void PlanDialog::setupUi() {
 
     // Group 2: Mục tiêu tiết kiệm
     auto* grpGoal = new QGroupBox("Mục tiêu tiết kiệm", this);
-    grpGoal->setStyleSheet("QGroupBox { font-weight: 600; color: #1E293B; margin-top: 8px; }");
+    grpGoal->setStyleSheet("QGroupBox { font-weight: 600; color: #0B2A6B; border: 1px solid #DCE8FA; border-radius: 12px; margin-top: 10px; padding-top: 14px; background: #FFFFFF; }");
     auto* goalLayout = new QFormLayout(grpGoal);
     goalLayout->setContentsMargins(14, 16, 14, 14);
     goalLayout->setSpacing(10);
@@ -129,33 +129,33 @@ void PlanDialog::setupUi() {
     footerLayout->setSpacing(10);
 
     btnDelete = new QPushButton("Xóa kế hoạch", this);
-    btnDelete->setFixedHeight(38);
+    btnDelete->setFixedHeight(40);
     btnDelete->setCursor(Qt::PointingHandCursor);
     btnDelete->setStyleSheet(
-        "QPushButton { color: #EF4444; background-color: #FFFFFF; border: 1px solid #FECACA; "
-        "border-radius: 8px; padding: 0 14px; font-weight: 600; font-size: 13px; } "
-        "QPushButton:hover { background-color: #FEF2F2; border-color: #EF4444; }"
+        "QPushButton { color: #E0173D; background-color: #FFFFFF; border: 1.5px solid #FFCCD5; "
+        "border-radius: 10px; padding: 0 14px; font-weight: 600; font-size: 13px; } "
+        "QPushButton:hover { background-color: #FFF0F3; }"
     );
     btnDelete->setVisible(m_plan.hasPlan());
 
     btnCancel = new QPushButton("Hủy", this);
-    btnCancel->setFixedHeight(38);
+    btnCancel->setFixedHeight(40);
     btnCancel->setMinimumWidth(80);
     btnCancel->setCursor(Qt::PointingHandCursor);
     btnCancel->setStyleSheet(
-        "QPushButton { color: #536986; background-color: #FFFFFF; border: 1px solid #DCE6F2; "
-        "border-radius: 8px; padding: 0 16px; font-weight: 600; font-size: 13px; } "
-        "QPushButton:hover { background-color: #F8FAFC; }"
+        "QPushButton { color: #5B6B8C; background-color: #FFFFFF; border: 1.5px solid #D5E1F5; "
+        "border-radius: 10px; padding: 0 16px; font-weight: 600; font-size: 13px; } "
+        "QPushButton:hover { background-color: #F1F6FF; }"
     );
 
     btnSave = new QPushButton("Lưu kế hoạch", this);
-    btnSave->setFixedHeight(38);
+    btnSave->setFixedHeight(40);
     btnSave->setMinimumWidth(110);
     btnSave->setCursor(Qt::PointingHandCursor);
     btnSave->setStyleSheet(
-        "QPushButton { color: #FFFFFF; background-color: #1A6BEB; border: 1px solid #1A6BEB; "
-        "border-radius: 8px; padding: 0 18px; font-weight: 700; font-size: 13px; } "
-        "QPushButton:hover { background-color: #1557BF; border-color: #1557BF; }"
+        "QPushButton { color: #FFFFFF; background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #1E6FFF, stop:1 #155EEF); "
+        "border: none; border-radius: 10px; padding: 0 18px; font-weight: 700; font-size: 13px; } "
+        "QPushButton:hover { background: #155EEF; }"
     );
 
     footerLayout->addWidget(btnDelete);

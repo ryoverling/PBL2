@@ -1,24 +1,35 @@
 #include "transaction_dialog.h"
 #include "ui_transaction_dialog.h"
 #include "../gui_helpers.h"
+#include "../gui_icons.h"
 #include "../widgets/date_picker_popup.h"
 #include "../../core/app/money_manager.h"
 #include <QCompleter>
 #include <QButtonGroup>
+#include <QAction>
 
 TransactionDialog::TransactionDialog(MoneyManager& mm, int txId, QWidget *parent)
     : QDialog(parent), ui(new Ui::TransactionDialog), moneyManager(mm), editingTxId(txId) {
     ui->setupUi(this);
     UiHelper::setupWindowTheme(this);
+    resize(620, 540);
 
     typeGroup = new QButtonGroup(this);
     typeGroup->addButton(ui->btnTypeExpense, 0);
     typeGroup->addButton(ui->btnTypeIncome, 1);
+
+    ui->btnTypeExpense->setText("🛒 Khoản chi");
+    ui->btnTypeIncome->setText("📥 Khoản thu");
     updateSegmentedStyle();
+
+    // Thêm icon đồng xu bên phải ô nhập số tiền
+    ui->edtAmount->addAction(QIcon(GuiIcons::createCoinHeaderIcon()), QLineEdit::TrailingPosition);
 
     loadWallets();
     loadCategories();
     ui->lblDialogTitle->setText(txId > 0 ? "Sửa giao dịch" : "Thêm giao dịch mới");
+    ui->btnCancel->setText("✕ Hủy");
+    ui->btnSave->setText("💾 Lưu");
 
     if (txId > 0) {
         setupEditData(moneyManager.getTransactionManager().findById(txId));
@@ -42,23 +53,23 @@ void TransactionDialog::updateSegmentedStyle() {
     bool isExpense = ui->btnTypeExpense->isChecked();
     if (isExpense) {
         ui->btnTypeExpense->setStyleSheet(
-            "QPushButton { background-color: #FFF0F3; border: 2px solid #F43F5E; color: #E11D48; "
-            "font-weight: 700; border-radius: 10px; font-size: 14px; min-height: 44px; }"
+            "QPushButton { background-color: #EBF3FE; border: 2px solid #1E6FFF; color: #1E6FFF; "
+            "font-weight: 700; border-radius: 12px; font-size: 14px; min-height: 44px; }"
         );
         ui->btnTypeIncome->setStyleSheet(
-            "QPushButton { background-color: #F8FAFC; border: 1px solid #CBD5E1; color: #64748B; "
-            "font-weight: 500; border-radius: 10px; font-size: 14px; min-height: 44px; } "
-            "QPushButton:hover { background-color: #F1F5F9; border-color: #94A3B8; }"
+            "QPushButton { background-color: #FFFFFF; border: 1.5px solid #D5E1F5; color: #5B6B8C; "
+            "font-weight: 500; border-radius: 12px; font-size: 14px; min-height: 44px; } "
+            "QPushButton:hover { background-color: #F1F6FF; border-color: #BACFE8; }"
         );
     } else {
         ui->btnTypeIncome->setStyleSheet(
-            "QPushButton { background-color: #E7FAF3; border: 2px solid #10B981; color: #059669; "
-            "font-weight: 700; border-radius: 10px; font-size: 14px; min-height: 44px; }"
+            "QPushButton { background-color: #EAFBF3; border: 2px solid #0E8F4F; color: #0E8F4F; "
+            "font-weight: 700; border-radius: 12px; font-size: 14px; min-height: 44px; }"
         );
         ui->btnTypeExpense->setStyleSheet(
-            "QPushButton { background-color: #F8FAFC; border: 1px solid #CBD5E1; color: #64748B; "
-            "font-weight: 500; border-radius: 10px; font-size: 14px; min-height: 44px; } "
-            "QPushButton:hover { background-color: #F1F5F9; border-color: #94A3B8; }"
+            "QPushButton { background-color: #FFFFFF; border: 1.5px solid #D5E1F5; color: #5B6B8C; "
+            "font-weight: 500; border-radius: 12px; font-size: 14px; min-height: 44px; } "
+            "QPushButton:hover { background-color: #F1F6FF; border-color: #BACFE8; }"
         );
     }
 }

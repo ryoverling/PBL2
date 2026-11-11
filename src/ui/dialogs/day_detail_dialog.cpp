@@ -1,6 +1,7 @@
 #include "day_detail_dialog.h"
 #include "ui_day_detail_dialog.h"
 #include "../gui_helpers.h"
+#include "../gui_icons.h"
 #include "../main_window.h"
 #include "../../core/app/money_manager.h"
 #include <QHeaderView>
@@ -12,6 +13,33 @@ DayDetailDialog::DayDetailDialog(MoneyManager& mm, const Date& date, MainWindow*
     ui->setupUi(this);
     UiHelper::setupWindowTheme(this);
 
+    // Thêm biểu tượng lịch vào header
+    auto* lblCalIcon = new QLabel(this);
+    lblCalIcon->setFixedSize(44, 44);
+    lblCalIcon->setPixmap(GuiIcons::createCalendarBadge(44));
+    ui->headerLayout->insertWidget(0, lblCalIcon);
+
+    ui->btnViewInTransactions->setIcon(QIcon(GuiIcons::createListIcon(16, QColor("#1E6FFF"))));
+    ui->btnClose->setText("✕ Đóng");
+
+    UiHelper::applyCardShadow(ui->cardIncome);
+    UiHelper::applyCardShadow(ui->cardExpense);
+    UiHelper::applyCardShadow(ui->cardNet);
+
+    // Thêm huy hiệu icon nhỏ cho 3 thẻ KPI
+    auto* badgeInc = new QLabel(ui->cardIncome);
+    badgeInc->setPixmap(GuiIcons::createKpiBadge("income", 28));
+    ui->incomeLayout->insertWidget(0, badgeInc, 0, Qt::AlignRight);
+
+    auto* badgeExp = new QLabel(ui->cardExpense);
+    badgeExp->setPixmap(GuiIcons::createKpiBadge("expense", 28));
+    ui->expenseLayout->insertWidget(0, badgeExp, 0, Qt::AlignRight);
+
+    auto* badgeNet = new QLabel(ui->cardNet);
+    badgeNet->setPixmap(GuiIcons::createScaleBadge(28));
+    ui->netLayout->insertWidget(0, badgeNet, 0, Qt::AlignRight);
+
+    ui->tblDayTransactions->setShowGrid(false);
     auto* header = ui->tblDayTransactions->horizontalHeader();
     header->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     header->setSectionResizeMode(1, QHeaderView::Stretch);
@@ -69,7 +97,7 @@ void DayDetailDialog::populateData() {
         lblBadge->setStyleSheet(QString(
             "background-color: %1; color: %2; font-weight: 700; font-size: 12px; "
             "border-radius: 13px; border: none;"
-        ).arg(isInc ? "#E7FAF3" : "#FFF0F3", isInc ? "#059669" : "#E11D48"));
+        ).arg(isInc ? "#EAFBF3" : "#FFF0F3", isInc ? "#0E8F4F" : "#E0173D"));
         badgeLayout->addWidget(lblBadge);
 
         // Dummy item rỗng ở cột 0 để tránh delegate vẽ đè
@@ -99,7 +127,7 @@ void DayDetailDialog::populateData() {
         // Cột 3: Số tiền
         QString sign = isInc ? "+ " : "- ";
         auto* amountItem = new QTableWidgetItem(sign + UiHelper::formatMoneyVND(tx->getAmount()));
-        amountItem->setForeground(QColor(isInc ? "#059669" : "#E11D48"));
+        amountItem->setForeground(QColor(isInc ? "#0E8F4F" : "#E0173D"));
         amountItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
         QFont f = amountItem->font();
         f.setBold(true);
@@ -112,7 +140,7 @@ void DayDetailDialog::populateData() {
         ui->tblDayTransactions->setSpan(0, 0, 1, 4);
         auto* emptyItem = new QTableWidgetItem("Không có giao dịch nào trong ngày này");
         emptyItem->setTextAlignment(Qt::AlignCenter);
-        emptyItem->setForeground(QColor("#536986"));
+        emptyItem->setForeground(QColor("#5B6B8C"));
         QFont ef = emptyItem->font();
         ef.setItalic(true);
         emptyItem->setFont(ef);
@@ -124,7 +152,7 @@ void DayDetailDialog::populateData() {
     ui->lblDayIncome->setText(UiHelper::formatMoneyVND(income));
     ui->lblDayExpense->setText(UiHelper::formatMoneyVND(expense));
     ui->lblDayNet->setText(UiHelper::formatMoneyVND(net));
-    ui->lblDayNet->setStyleSheet(QString("color: %1;").arg(net > 0 ? "#12B886" : net < 0 ? "#EF4765" : "#1769EE"));
+    ui->lblDayNet->setStyleSheet(QString("color: %1;").arg(net > 0 ? "#0E8F4F" : net < 0 ? "#E0173D" : "#1E6FFF"));
 }
 
 void DayDetailDialog::on_btnClose_clicked() {

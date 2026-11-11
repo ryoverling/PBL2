@@ -36,6 +36,20 @@ long long TransactionManager::getWalletInitialBalance(int walletId, long long cu
     return currentBalance - sumSigned;
 }
 
+// So sánh thứ tự thời gian hai giao dịch theo chuẩn:
+// 1. Ngày tăng dần
+// 2. Cùng ngày: Khoản Thu trước Khoản Chi (tiền vào trước tiền ra)
+// 3. Cùng ngày và cùng loại: theo ID tăng dần
+static bool compareTxChronological(const Transaction* a, const Transaction* b) {
+    if (!a || !b) return false;
+    if (a->getDate() < b->getDate()) return true;
+    if (b->getDate() < a->getDate()) return false;
+    bool aInc = (a->getType() == TransactionType::INCOME);
+    bool bInc = (b->getType() == TransactionType::INCOME);
+    if (aInc != bInc) return aInc;
+    return a->getId() < b->getId();
+}
+
 BalanceValidationResult TransactionManager::validateWalletTimeline(
     int walletId,
     long long initialBalance,
@@ -59,19 +73,7 @@ BalanceValidationResult TransactionManager::validateWalletTimeline(
         }
     }
 
-    // Sắp xếp trình tự thời gian theo quy tắc ổn định:
-    // 1. Ngày tăng dần
-    // 2. Cùng ngày: Khoản Thu trước Khoản Chi (tiền vào trước khi tiền ra)
-    // 3. Cùng ngày và cùng loại: theo ID tăng dần
-    std::sort(sorted.begin(), sorted.end(), [](const Transaction* a, const Transaction* b) {
-        if (!a || !b) return false;
-        if (a->getDate() < b->getDate()) return true;
-        if (b->getDate() < a->getDate()) return false;
-        bool aInc = (a->getType() == TransactionType::INCOME);
-        bool bInc = (b->getType() == TransactionType::INCOME);
-        if (aInc != bInc) return aInc;
-        return a->getId() < b->getId();
-    });
+    std::sort(sorted.begin(), sorted.end(), compareTxChronological);
 
     long long runningBalance = initialBalance;
     for (const Transaction* tx : sorted) {
@@ -415,13 +417,18 @@ bool TransactionManager::deleteTransaction(int id, Wallet* wallet) {
     applyToWallet(tx, wallet, true);
 
     // 2. Xóa khỏi danh sách và giải phóng vùng nhớ
-    return transactions.removeIf([id](Transaction* item) {
-        if (item && item->getId() == id) {
-            delete item;
-            return true;
+    struct MatchTxId {
+        int targetId;
+        bool operator()(Transaction* item) const {
+            if (item && item->getId() == targetId) {
+                delete item;
+                return true;
+            }
+            return false;
         }
-        return false;
-    });
+    };
+    MatchTxId matcher{id};
+    return transactions.removeIf(matcher);
 }
 
 Transaction* TransactionManager::findById(int id) {

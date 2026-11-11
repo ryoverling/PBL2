@@ -47,8 +47,9 @@ void SettingsPage::setupCards() {
     for (QWidget* c : cards) {
         c->setProperty("card", true);
         c->setAttribute(Qt::WA_StyledBackground, true);
-        UiHelper::applyCardShadow(c);
     }
+    UiHelper::applyCardShadows({ui->cardAccount, ui->cardUtilities, ui->cardChangePassword});
+
     ui->btnLogout->setIcon(QIcon(GuiIcons::createLogoutIcon(16, QColor("#E0173D"))));
     ui->btnChangePassword->setIcon(QIcon(GuiIcons::createLockActionIcon(16, Qt::white)));
     ui->btnChangePassword->setText("Đổi mật khẩu →");

@@ -308,7 +308,7 @@ void TransactionPage::on_btnDelete_clicked() {
 
     BalanceValidationResult valRes = moneyManager.validateDeleteTransaction(id);
     if (!valRes.isValid) {
-        UiHelper::showError(this, QString::fromStdString(valRes.errorMessage));
+        UiHelper::showBalanceError(this, valRes);
         return;
     }
 

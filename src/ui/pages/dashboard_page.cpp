@@ -9,13 +9,10 @@
 #include <QStyle>
 
 void DashboardPage::setupCardShadows() {
-    QWidget* cards[] = {
+    UiHelper::applyCardShadows({
         ui->cardBalance, ui->cardIncome, ui->cardExpense, ui->cardNet,
         ui->frmCalendarCard, ui->frmPlanCard, ui->frmTableCard
-    };
-    for (QWidget* c : cards) {
-        UiHelper::applyCardShadow(c);
-    }
+    });
 }
 
 void DashboardPage::setupRecentTable() {

@@ -4,6 +4,7 @@
 #include <QRegularExpression>
 #include <QGraphicsDropShadowEffect>
 #include "../core/utils/utils.h"
+#include "../core/manager/transaction_manager.h"
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -124,6 +125,21 @@ void setupWindowTheme(QWidget* widget) {
 #endif
 }
 
+void showBalanceError(QWidget* parent, const BalanceValidationResult& res) {
+    QString title = "Không thể thực hiện giao dịch";
+    if (res.errorCode == ValidationErrorCode::INSUFFICIENT_FUNDS) {
+        title = "Số dư không đủ";
+    } else if (res.errorCode == ValidationErrorCode::WALLET_ALREADY_NEGATIVE) {
+        title = "Ví đang có số dư âm";
+    } else if (res.errorCode == ValidationErrorCode::WOULD_GO_NEGATIVE_ON_DATE) {
+        title = "Số dư sẽ bị âm trong lịch sử";
+    }
+    QMessageBox box(QMessageBox::Warning, title,
+                    QString::fromStdString(res.errorMessage), QMessageBox::Ok, parent);
+    box.setStyleSheet("QLabel { font-size: 13px; color: #102748; line-height: 140%; }");
+    box.exec();
+}
+
 void applyCardShadow(QWidget* target, int blurRadius, int offsetY, qreal opacity) {
     if (!target) return;
     auto* shadow = new QGraphicsDropShadowEffect(target);
@@ -133,10 +149,18 @@ void applyCardShadow(QWidget* target, int blurRadius, int offsetY, qreal opacity
     target->setGraphicsEffect(shadow);
 }
 
-QColor colorPrimary() { return QColor("#1E6FFF"); }
-QColor colorNavy()    { return QColor("#0B2A6B"); }
-QColor colorIncome()  { return QColor("#0E8F4F"); }
-QColor colorExpense() { return QColor("#E0173D"); }
+void applyCardShadows(const std::initializer_list<QWidget*>& targets, int blurRadius, int offsetY, qreal opacity) {
+    for (QWidget* w : targets) {
+        applyCardShadow(w, blurRadius, offsetY, opacity);
+    }
+}
+
+QColor colorPrimary()   { return QColor("#1E6FFF"); }
+QColor colorNavy()      { return QColor("#0B2A6B"); }
+QColor colorIncome()    { return QColor("#0E8F4F"); }
+QColor colorExpense()   { return QColor("#E0173D"); }
+QColor colorIncomeBg()  { return QColor("#EAFBF3"); }
+QColor colorExpenseBg() { return QColor("#FFF0F3"); }
 
 QString getCategoryIcon(const QString& name) {
     QString lower = name.toLower();

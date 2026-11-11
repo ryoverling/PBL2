@@ -223,21 +223,6 @@ bool TransactionDialog::validateInputFields() {
     return true;
 }
 
-void TransactionDialog::showBalanceErrorDialog(const BalanceValidationResult& valRes) {
-    QString title = "Không thể thực hiện giao dịch";
-    if (valRes.errorCode == ValidationErrorCode::INSUFFICIENT_FUNDS) {
-        title = "Số dư không đủ";
-    } else if (valRes.errorCode == ValidationErrorCode::WALLET_ALREADY_NEGATIVE) {
-        title = "Ví đang có số dư âm";
-    } else if (valRes.errorCode == ValidationErrorCode::WOULD_GO_NEGATIVE_ON_DATE) {
-        title = "Số dư sẽ bị âm trong lịch sử";
-    }
-    QMessageBox box(QMessageBox::Warning, title,
-                    QString::fromStdString(valRes.errorMessage), QMessageBox::Ok, this);
-    box.setStyleSheet("QLabel { font-size: 13px; color: #102748; line-height: 140%; }");
-    box.exec();
-}
-
 void TransactionDialog::on_btnSave_clicked() {
     if (!validateInputFields()) return;
 
@@ -258,7 +243,7 @@ void TransactionDialog::on_btnSave_clicked() {
     }
 
     if (!valRes.isValid) {
-        showBalanceErrorDialog(valRes);
+        UiHelper::showBalanceError(this, valRes);
         return;
     }
 

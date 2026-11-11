@@ -10,9 +10,7 @@
 #include <QHBoxLayout>
 
 void DayDetailDialog::setupKpiBadges() {
-    UiHelper::applyCardShadow(ui->cardIncome);
-    UiHelper::applyCardShadow(ui->cardExpense);
-    UiHelper::applyCardShadow(ui->cardNet);
+    UiHelper::applyCardShadows({ui->cardIncome, ui->cardExpense, ui->cardNet});
 
     QLabel* badgeInc = new QLabel(ui->cardIncome);
     badgeInc->setPixmap(GuiIcons::createKpiBadge("income", 28));
@@ -41,7 +39,8 @@ QWidget* DayDetailDialog::createTypeBadgeWidget(bool isIncome) {
     lblBadge->setStyleSheet(QString(
         "background-color: %1; color: %2; font-weight: 700; font-size: 12px; "
         "border-radius: 13px; border: none;"
-    ).arg(isIncome ? "#EAFBF3" : "#FFF0F3", isIncome ? "#0E8F4F" : "#E0173D"));
+    ).arg(isIncome ? UiHelper::colorIncomeBg().name() : UiHelper::colorExpenseBg().name(),
+          isIncome ? UiHelper::colorIncome().name() : UiHelper::colorExpense().name()));
     layout->addWidget(lblBadge);
     return container;
 }

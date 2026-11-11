@@ -9,6 +9,9 @@
 #include "gui_icons_nav.h"
 #include "gui_icons_kpi.h"
 #include "gui_icons_wallet.h"
+#include <initializer_list>
+
+struct BalanceValidationResult;
 
 // Các hàm tiện ích thuần túy cho giao diện Qt (chuẩn sinh viên năm 2)
 namespace UiHelper {
@@ -23,6 +26,9 @@ namespace UiHelper {
 
     // Định dạng ngày tháng hiển thị (DD/MM/YYYY)
     QString formatDate(const Date& date);
+
+    // Hiển thị hộp thoại lỗi kiểm tra số dư ví
+    void showBalanceError(QWidget* parent, const BalanceValidationResult& res);
 
     // Hiển thị hộp thoại thông báo lỗi (restyle QMessageBox)
     void showError(QWidget* parent, const QString& message);
@@ -44,12 +50,15 @@ namespace UiHelper {
 
     // Gắn hiệu ứng đổ bóng mềm cho thẻ Card
     void applyCardShadow(QWidget* target, int blurRadius = 14, int offsetY = 2, qreal opacity = 0.08);
+    void applyCardShadows(const std::initializer_list<QWidget*>& targets, int blurRadius = 14, int offsetY = 2, qreal opacity = 0.08);
 
     // Bảng màu chuẩn hệ thống MoneyManager
-    QColor colorPrimary();  // #1E6FFF
-    QColor colorNavy();     // #0B2A6B
-    QColor colorIncome();   // #0E8F4F
-    QColor colorExpense();  // #E0173D
+    QColor colorPrimary();    // #1E6FFF
+    QColor colorNavy();       // #0B2A6B
+    QColor colorIncome();     // #0E8F4F
+    QColor colorExpense();    // #E0173D
+    QColor colorIncomeBg();   // #EAFBF3 (nền nhạt thu nhập)
+    QColor colorExpenseBg();  // #FFF0F3 (nền nhạt chi tiêu)
 
     // Biểu tượng chuỗi danh mục và ví tiền
     QString getCategoryIcon(const QString& categoryName);

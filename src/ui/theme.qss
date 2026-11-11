@@ -695,17 +695,22 @@ QFrame#WalletCard {
 
 QFrame#WalletCard[walletType="cash"] {
     border-top: 4px solid #0E8F4F;
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F4FBF7, stop:1 #FFFFFF);
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:0.75 #FFFFFF, stop:1 #EAFBF3);
 }
 
 QFrame#WalletCard[walletType="bank"] {
     border-top: 4px solid #1E6FFF;
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F4F8FE, stop:1 #FFFFFF);
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:0.75 #FFFFFF, stop:1 #EBF3FE);
 }
 
 QFrame#WalletCard[walletType="ewallet"] {
     border-top: 4px solid #8B5CF6;
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FAF6FE, stop:1 #FFFFFF);
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:0.75 #FFFFFF, stop:1 #FAF5FF);
+}
+
+QFrame#WalletCard[walletType="tpbank"] {
+    border-top: 4px solid #FF9F1A;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:0.75 #FFFFFF, stop:1 #FFF7ED);
 }
 
 QFrame#WalletCard:hover {
@@ -718,27 +723,32 @@ QFrame#WalletCard[selected="true"] {
 
 #WalletCard #lblName {
     color: #0B2A6B;
-    font-size: 17px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 700;
 }
 
 #WalletCard #lblType {
-    color: #0E8F4F;
-    background: #E6FAF3;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 3px 10px;
-}
-
-#WalletCard #lblType[walletType="bank"] {
     color: #1E6FFF;
     background: #E0EDFF;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+}
+
+#WalletCard #lblType[walletType="cash"] {
+    color: #0E8F4F;
+    background: #E6FAF3;
 }
 
 #WalletCard #lblType[walletType="ewallet"] {
     color: #8B5CF6;
     background: #F3EDFF;
+}
+
+#WalletCard #lblType[walletType="tpbank"] {
+    color: #FF9F1A;
+    background: #FFF4E6;
 }
 
 #WalletCard #lblBalanceCaption {
@@ -748,7 +758,7 @@ QFrame#WalletCard[selected="true"] {
 
 #WalletCard #lblBalance {
     color: #0B2A6B;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
 }
 
@@ -760,14 +770,34 @@ QFrame#WalletCard[selected="true"] {
     font-size: 12px;
 }
 
+#WalletPage #cardBalance {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:0.60 #FFFFFF, stop:1 #EAF2FF);
+    border: 1px solid #DCE8FA;
+    border-radius: 18px;
+}
+
+#WalletPage #lblBalanceTitle {
+    color: #0B2A6B;
+    font-size: 15px;
+    font-weight: 700;
+}
+
 #WalletPage #lblTotalBalance {
     color: #1E6FFF;
-    font-size: 32px;
+    font-size: 36px;
     font-weight: 700;
 }
 
 #WalletPage #lblWalletCount {
     color: #5B6B8C;
+    font-size: 13px;
+}
+
+#WalletPage #lblEyeCaption {
+    color: #5B6B8C;
+    font-size: 13px;
+    font-weight: 500;
+}
     font-size: 13px;
 }
 

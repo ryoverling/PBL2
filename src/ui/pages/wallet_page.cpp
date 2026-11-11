@@ -1,6 +1,7 @@
 #include "wallet_page.h"
 #include "ui_wallet_page.h"
 #include "../gui_helpers.h"
+#include "../gui_icons.h"
 #include "../main_window.h"
 #include "../widgets/wallet_card.h"
 #include "../widgets/add_wallet_card.h"
@@ -14,9 +15,32 @@
 WalletPage::WalletPage(MoneyManager& mm, const std::string& dataDir, MainWindow* mainWin, QWidget *parent)
     : QWidget(parent), ui(new Ui::WalletPage), moneyManager(mm), dataDirectory(dataDir), mainWindow(mainWin) {
     ui->setupUi(this);
+
+    // Gắn icon tiêu đề trang và đổ bóng
+    ui->lblHeaderIcon->setPixmap(GuiIcons::createWalletPageHeaderIcon(44));
+    UiHelper::applyCardShadow(ui->cardBalance);
+    ui->lblHeroIllustration->setPixmap(GuiIcons::createHeroWalletIllustration(130, 95));
+
+    // Thiết lập các nút hành động
+    ui->btnAdd->setText(QString::fromUtf8("Thêm ví"));
+    ui->btnAdd->setIcon(UiHelper::createPlusIcon(Qt::white));
+    ui->btnAdd->setIconSize(QSize(14, 14));
+    ui->btnAdd->setCursor(Qt::PointingHandCursor);
+
+    ui->btnEdit->setIcon(UiHelper::createEditIcon(QColor("#0B2A6B")));
+    ui->btnEdit->setIconSize(QSize(16, 16));
+    ui->btnEdit->setToolTip("Chỉnh sửa ví đang chọn");
+    ui->btnEdit->setCursor(Qt::PointingHandCursor);
+
+    ui->btnDelete->setIcon(UiHelper::createTrashIcon(QColor("#E0173D")));
+    ui->btnDelete->setIconSize(QSize(16, 16));
+    ui->btnDelete->setToolTip("Xóa ví đang chọn");
+    ui->btnDelete->setCursor(Qt::PointingHandCursor);
+
     addCard = new AddWalletCard(ui->walletContainer);
     connect(addCard, &QPushButton::clicked, this, &WalletPage::on_btnAdd_clicked);
     ui->scrollWallets->viewport()->installEventFilter(this);
+
     refreshData();
 }
 
@@ -52,7 +76,9 @@ void WalletPage::resizeEvent(QResizeEvent* event) {
 }
 
 bool WalletPage::eventFilter(QObject* watched, QEvent* event) {
-    if (watched == ui->scrollWallets->viewport() && event->type() == QEvent::Resize) reflowCards();
+    if (watched == ui->scrollWallets->viewport() && event->type() == QEvent::Resize) {
+        reflowCards();
+    }
     return QWidget::eventFilter(watched, event);
 }
 
@@ -75,8 +101,11 @@ void WalletPage::saveAndRefresh() {
 void WalletPage::on_btnAdd_clicked() {
     WalletDialog dialog(moneyManager, -1, this);
     if (dialog.exec() != QDialog::Accepted) return;
-    if (moneyManager.addWallet(dialog.getName(), dialog.getType(), dialog.getBalance())) saveAndRefresh();
-    else UiHelper::showError(this, "Không thể thêm ví. Kiểm tra lại tên ví.");
+    if (moneyManager.addWallet(dialog.getName(), dialog.getType(), dialog.getBalance())) {
+        saveAndRefresh();
+    } else {
+        UiHelper::showError(this, "Không thể thêm ví. Kiểm tra lại tên ví.");
+    }
 }
 
 void WalletPage::on_btnEdit_clicked() {
@@ -84,8 +113,11 @@ void WalletPage::on_btnEdit_clicked() {
     if (id < 0) return;
     WalletDialog dialog(moneyManager, id, this);
     if (dialog.exec() != QDialog::Accepted) return;
-    if (moneyManager.updateWallet(id, dialog.getName(), dialog.getType())) saveAndRefresh();
-    else UiHelper::showError(this, "Không thể sửa ví. Kiểm tra lại tên ví.");
+    if (moneyManager.updateWallet(id, dialog.getName(), dialog.getType())) {
+        saveAndRefresh();
+    } else {
+        UiHelper::showError(this, "Không thể sửa ví. Kiểm tra lại tên ví.");
+    }
 }
 
 void WalletPage::on_btnDelete_clicked() {
@@ -95,8 +127,11 @@ void WalletPage::on_btnDelete_clicked() {
     if (!wallet) return;
     QString name = QString::fromStdString(wallet->getName());
     if (!UiHelper::askConfirmation(this, "Xác nhận xóa ví", "Bạn có chắc muốn xóa ví \"" + name + "\"?")) return;
-    if (moneyManager.deleteWallet(id)) saveAndRefresh();
-    else UiHelper::showError(this, "Ví đang có giao dịch, không thể xóa.");
+    if (moneyManager.deleteWallet(id)) {
+        saveAndRefresh();
+    } else {
+        UiHelper::showError(this, "Ví đang có giao dịch, không thể xóa.");
+    }
 }
 
 void WalletPage::addWalletCard(const Wallet& wallet) {
@@ -112,8 +147,12 @@ void WalletPage::populateCards() {
         delete card;
     }
     cards.clear();
+
     const auto& wallets = moneyManager.getWalletManager().getWallets();
-    for (const Node<Wallet>* cur = wallets.getHead(); cur; cur = cur->next) addWalletCard(cur->data);
+    for (const Node<Wallet>* cur = wallets.getHead(); cur; cur = cur->next) {
+        addWalletCard(cur->data);
+    }
+
     ui->lblWalletCount->setText(QString::number(cards.size()) + " ví");
     ui->lblTotalBalance->setText(UiHelper::formatBalance(moneyManager.getWalletManager().getTotalBalance()));
     ui->btnEye->setChecked(UiHelper::balanceHidden);
@@ -126,13 +165,18 @@ void WalletPage::reflowCards() {
     if (cards.isEmpty() || !isVisible() || reflowing) return;
     reflowing = true;
     int available = ui->scrollWallets->viewport()->width();
-    int columns = qBound(1, (available + 20) / 296, 4);
+    int columns = qBound(1, (available + 20) / 290, 3);
+
     ui->walletGrid->removeWidget(addCard);
     for (WalletCard* card : cards) ui->walletGrid->removeWidget(card);
-    for (int i = 0; i < cards.size(); ++i)
+
+    for (int i = 0; i < cards.size(); ++i) {
         ui->walletGrid->addWidget(cards.at(i), i / columns, i % columns);
+    }
     ui->walletGrid->addWidget(addCard, cards.size() / columns, cards.size() % columns);
-    for (int column = 0; column <= cards.size(); ++column)
-        ui->walletGrid->setColumnStretch(column, column < columns ? 1 : 0);
+
+    for (int col = 0; col < columns; ++col) {
+        ui->walletGrid->setColumnStretch(col, 1);
+    }
     reflowing = false;
 }

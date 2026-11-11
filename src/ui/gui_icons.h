@@ -23,6 +23,18 @@ QPixmap createMiniBars(int width = 80, int height = 36, const QColor& color = QC
 // Badge vuông bo góc cho 3 thẻ KPI (income, expense, count)
 QPixmap createKpiBadge(const QString& kind, int size = 44);
 
+// Icon tiêu đề trang Ví tiền: nền xanh pastel bo góc 44px
+QPixmap createWalletPageHeaderIcon(int size = 44);
+
+// Minh họa ví tiền + xu vàng cho Card Hero tổng tài sản
+QPixmap createHeroWalletIllustration(int width = 130, int height = 95);
+
+// Nút chevron tròn > ở góc dưới mỗi thẻ ví
+QPixmap createChevronCircle(int size = 32);
+
+// Icon badge bo góc cho từng thẻ ví (Tiền mặt, Techcombank, MoMo, TP BANK...)
+QPixmap createWalletCardIcon(const QString& walletName, int walletType, int size = 42);
+
 // Icon nhỏ kèm tiêu đề header bảng giao dịch
 QIcon createSortHeaderIcon();
 QIcon createCoinHeaderIcon();

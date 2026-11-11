@@ -238,6 +238,142 @@ QIcon createNoteHeaderIcon() {
     });
 }
 
+QPixmap createWalletPageHeaderIcon(int size) {
+    QPixmap pix(size, size);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+
+    p.setPen(Qt::NoPen);
+    p.setBrush(QColor("#E0EDFF"));
+    p.drawRoundedRect(0, 0, size, size, 12, 12);
+
+    p.setPen(QPen(QColor("#1E6FFF"), 2.0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    p.setBrush(Qt::NoBrush);
+    p.drawRoundedRect(10, 13, size - 20, size - 26, 4, 4);
+    p.drawLine(10, 19, size - 10, 19);
+    p.setBrush(QColor("#1E6FFF"));
+    p.drawEllipse(size - 18, size / 2 - 2, 4, 4);
+
+    return pix;
+}
+
+QPixmap createHeroWalletIllustration(int width, int height) {
+    QPixmap pix(width, height);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+
+    // Vẽ ví màu xanh dương 3D
+    QRect walletRect(25, 18, 85, 58);
+    QLinearGradient wGrad(walletRect.topLeft(), walletRect.bottomRight());
+    wGrad.setColorAt(0.0, QColor("#5B9DFF"));
+    wGrad.setColorAt(1.0, QColor("#1E6FFF"));
+
+    p.setPen(Qt::NoPen);
+    p.setBrush(wGrad);
+    p.drawRoundedRect(walletRect, 14, 14);
+
+    // Nắp gập của ví
+    QRect flapRect(25, 18, 85, 26);
+    QLinearGradient fGrad(flapRect.topLeft(), flapRect.bottomLeft());
+    fGrad.setColorAt(0.0, QColor("#7CB3FF"));
+    fGrad.setColorAt(1.0, QColor("#3B82F6"));
+    p.setBrush(fGrad);
+    p.drawRoundedRect(flapRect, 14, 14);
+
+    // Khóa ví tròn màu trắng
+    p.setBrush(QColor("#FFFFFF"));
+    p.drawRoundedRect(88, 38, 18, 14, 6, 6);
+    p.setBrush(QColor("#1E6FFF"));
+    p.drawEllipse(94, 42, 6, 6);
+
+    // Chồng 2 đồng xu vàng phía trước bên trái
+    auto drawCoin = [&](int cx, int cy, int cw, int ch) {
+        QLinearGradient cGrad(cx, cy - ch/2, cx, cy + ch/2);
+        cGrad.setColorAt(0.0, QColor("#FFE066"));
+        cGrad.setColorAt(1.0, QColor("#F59E0B"));
+        p.setBrush(cGrad);
+        p.setPen(QPen(QColor("#D97706"), 1.2));
+        p.drawEllipse(QPoint(cx, cy), cw, ch);
+        p.setPen(QPen(QColor("#FBBF24"), 1.0));
+        p.setBrush(Qt::NoBrush);
+        p.drawEllipse(QPoint(cx, cy), cw - 3, ch - 2);
+    };
+
+    drawCoin(22, 66, 16, 8);
+    drawCoin(38, 70, 18, 9);
+    drawCoin(38, 64, 18, 9);
+
+    return pix;
+}
+
+QPixmap createChevronCircle(int size) {
+    QPixmap pix(size, size);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+
+    p.setPen(QPen(QColor("#E2E8F0"), 1.2));
+    p.setBrush(QColor("#FFFFFF"));
+    p.drawEllipse(1, 1, size - 2, size - 2);
+
+    p.setPen(QPen(QColor("#5B6B8C"), 1.8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    int c = size / 2;
+    p.drawLine(c - 2, c - 4, c + 2, c);
+    p.drawLine(c + 2, c, c - 2, c + 4);
+
+    return pix;
+}
+
+QPixmap createWalletCardIcon(const QString& walletName, int walletType, int size) {
+    QPixmap pix(size, size);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+
+    QString lower = walletName.toLower();
+    QColor bg("#EBF3FE");
+    QColor fg("#1E6FFF");
+    bool isPhone = false;
+
+    if (lower.contains("momo") || walletType == 3) {
+        bg = QColor("#F3EDFF");
+        fg = QColor("#8B5CF6");
+        isPhone = true;
+    } else if (lower.contains("tiền mặt") || walletType == 1) {
+        bg = QColor("#E4F8EE");
+        fg = QColor("#0E8F4F");
+    } else if (lower.contains("tp") || lower.contains("tpbank") || lower.contains("tp bank")) {
+        bg = QColor("#FFF4E6");
+        fg = QColor("#FF9F1A");
+    }
+
+    p.setPen(Qt::NoPen);
+    p.setBrush(bg);
+    p.drawRoundedRect(0, 0, size, size, 12, 12);
+
+    p.setPen(QPen(fg, 1.8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    p.setBrush(Qt::NoBrush);
+
+    if (isPhone) {
+        // Icon điện thoại smartphone
+        p.drawRoundedRect(size / 2 - 7, 8, 14, size - 16, 3, 3);
+        p.drawLine(size / 2 - 3, size - 11, size / 2 + 3, size - 11);
+    } else {
+        // Icon ngân hàng: mái tam giác + 3 cột + đế
+        p.drawLine(9, size - 11, size - 9, size - 11);
+        p.drawLine(10, 15, size - 10, 15);
+        p.drawLine(size / 2, 9, 9, 15);
+        p.drawLine(size / 2, 9, size - 9, 15);
+        p.drawLine(12, 15, 12, size - 11);
+        p.drawLine(size / 2, 15, size / 2, size - 11);
+        p.drawLine(size - 12, 15, size - 12, size - 11);
+    }
+
+    return pix;
+}
+
 QPixmap createWalletBadgeIcon(const QString& walletName, int walletType, int size) {
     QPixmap pix(size, size);
     pix.fill(Qt::transparent);

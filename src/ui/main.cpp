@@ -6,6 +6,7 @@
 #include "../core/app/money_manager.h"
 #include "login_window.h"
 #include "main_window.h"
+#include "gui_helpers.h"
 #include "dialogs/day_detail_dialog.h"
 #include "dialogs/transaction_dialog.h"
 #include "widgets/date_picker_popup.h"
@@ -102,6 +103,7 @@ int main(int argc, char *argv[]) {
         if (screenshotTarget == "100") mainWin.grab().save("D:/Downloads/WORKSPACE/PBL2/build/screenshots/02_transactions.png");
 
         // 3. Trang Ví tiền (Wallets có cảnh báo đối soát rõ ràng)
+        UiHelper::balanceHidden = false;
         mainWin.navigateToPage(2);
         app.processEvents();
         mainWin.grab().save(outDir + "/03_wallets.png");

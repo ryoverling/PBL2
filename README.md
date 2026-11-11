@@ -22,7 +22,7 @@ Khi chưa có `data/users.dat`, hãy đăng ký tài khoản trong ứng dụng 
 - Thêm, sửa, xóa ví; xem tổng số dư và các giao dịch. Giao dịch chi tiêu bị từ chối nếu làm số dư ví âm.
 - Thêm, sửa, xóa và lọc giao dịch theo ngày, ví, danh mục, loại; có thể nhập tên danh mục mới khi thêm giao dịch.
 - Dashboard và trang Statistics dùng chung `MoneyManager::getMonthlyTotals` → `StatUtils::getMonthlyTotals`. Biểu đồ 6 tháng và thống kê danh mục tái dùng tổng tháng; lịch hiển thị chi theo ngày.
-- Dữ liệu người dùng được đọc/ghi qua `FileStorage` trong thư mục `data/<username>/`.
+- Dữ liệu người dùng được đọc/ghi qua `FileStorage` trong thư mục `data/<username>/` bằng các tệp tin văn bản `.dat` (mỗi dòng một bản ghi, ngăn cách bằng dấu `|`). Dự án hoàn toàn không sử dụng cơ sở dữ liệu ngoài.
 
 ### Cấu trúc mã nguồn Core (Chuẩn OOP PBL2)
 

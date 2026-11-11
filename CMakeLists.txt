@@ -47,29 +47,12 @@ target_include_directories(console_test PRIVATE
 # 3. TARGET GIAO DIEN (Desktop Qt Widgets)
 # Chi khoi tao khi tim thay Qt6 va da co file src/ui/main.cpp
 # ==============================================================================
-find_package(Qt6 COMPONENTS Widgets Core Gui Sql QUIET)
+find_package(Qt6 COMPONENTS Widgets Core Gui QUIET)
 if(Qt6_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/ui/main.cpp")
     message(STATUS "Da tim thay Qt6 va src/ui/main.cpp -> Tao target GUI MoneyManager")
     set(CMAKE_AUTOMOC ON)
     set(CMAKE_AUTOUIC ON)
     set(CMAKE_AUTORCC ON)
-
-    add_library(sql_storage STATIC
-        src/database/sql_server_store.cpp
-        src/database/sql_server_store.h
-        src/core/storage/data_store.h
-    )
-    target_link_libraries(sql_storage PUBLIC Qt6::Core Qt6::Sql)
-    target_include_directories(sql_storage PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/core
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/database
-    )
-
-    add_executable(sql_storage_test tests/sql_storage_test.cpp)
-    target_link_libraries(sql_storage_test PRIVATE sql_storage)
-
-    add_executable(sql_connection_probe tests/sql_connection_probe.cpp)
-    target_link_libraries(sql_connection_probe PRIVATE Qt6::Core Qt6::Sql)
 
     file(GLOB_RECURSE UI_SOURCES CONFIGURE_DEPENDS
         "src/ui/*.cpp"
@@ -94,5 +77,5 @@ if(Qt6_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/ui/main.cpp")
         target_compile_options(MoneyManager PRIVATE /utf-8)
     endif()
 else()
-    message(STATUS "Che do Core/Console: Chua co src/ui/main.cpp hoac chua co Qt6 Widgets/Sql.")
+    message(STATUS "Che do Core/Console: Chua co src/ui/main.cpp hoac chua co Qt6 Widgets.")
 endif()

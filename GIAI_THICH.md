@@ -74,8 +74,8 @@ Thanh menu ngang gồm Tổng quan, Giao dịch, Ví tiền, Thống kê và Cà
 
 1. **Vì sao core không include Qt?** Nghiệp vụ C++ biên dịch và được kiểm thử độc lập; Qt chỉ trình bày dữ liệu ở `src/ui/`.
 2. **Vì sao dùng LinkedList và Selection Sort?** Để thực hành cấu trúc dữ liệu và thuật toán của học phần; Selection Sort phù hợp bộ dữ liệu nhỏ của đồ án.
-3. **Vì sao ví được phép âm?** Khoản chi vượt số dư vẫn phản ánh đúng chi tiêu hoặc khoản nợ; số dư âm được hiển thị màu đỏ.
-4. **Vì sao mật khẩu lưu chữ thường?** Đồ án học tập dùng định dạng văn bản local đơn giản. Đây là hạn chế bảo mật; sản phẩm thực tế cần băm có salt và chuyển đổi dữ liệu cũ.
+3. **Quy tắc kiểm soát số dư ví:** Bất biến nghiệp vụ là không bao giờ để số dư ví bị âm ở bất kỳ mốc thời gian nào. Mọi thao tác thêm/sửa/xóa đều được thẩm định qua `validateWalletTimeline` và từ chối nếu vi phạm.
+4. **Vì sao lưu dữ liệu bằng file .dat?** Đồ án hướng tới sự đơn giản, độc lập và bám sát kiến thức OOP năm 2: sử dụng `FileStorage` đọc/ghi file văn bản tuần tự (mỗi dòng một bản ghi, các trường phân tách bởi ký tự `|`). Ứng dụng hoàn toàn không sử dụng cơ sở dữ liệu ngoài, giúp việc cài đặt, chạy thử và chấm đồ án nhanh chóng trên mọi máy tính.
 5. **Vì sao tạo danh mục trong form giao dịch?** Người dùng có thể nhập tên mới ngay lúc ghi Thu/Chi; core kiểm tra rồi tạo hoặc dùng lại danh mục cùng loại.
 6. **Vì sao Tổng quan và Thống kê gọi cùng một hàm?** Cả hai gọi `MoneyManager::getMonthlyTotals`, tránh hai cách tính tổng tháng khác nhau.
 7. **Vì sao tỷ trọng phần trăm không dồn phần dư?** Mỗi danh mục được làm tròn độc lập; tổng có thể là 99% hoặc 101%, phản ánh đúng quy tắc làm tròn đã chọn.

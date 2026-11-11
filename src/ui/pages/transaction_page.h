@@ -39,7 +39,6 @@ private slots:
     void on_cboWallet_currentIndexChanged(int index);
     void on_cboCategory_currentIndexChanged(int index);
     void on_edtKeyword_textChanged(const QString &text);
-    void on_chkDateFilter_toggled(bool checked);
     void on_dteFrom_dateChanged(const QDate& date);
     void on_dteTo_dateChanged(const QDate& date);
     void on_tblTransactions_itemSelectionChanged();
@@ -57,6 +56,9 @@ private:
     void loadFilterCombos();
     void loadWalletFilter();
     void loadCategoryFilter();
+    void initHeaderAndActions();
+    void initSummaryCards();
+    void initTableAndFilters();
     void populateTable();
     bool loadFilteredTransactions(LinkedList<Transaction*>& list);
     void updateSummary(const LinkedList<Transaction*>& list);

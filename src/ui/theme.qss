@@ -263,7 +263,7 @@ QLabel#lblPageSubtitle {
 }
 
 /* 8. Cards & Containers (Bo goc 18px) */
-QFrame[property="card"], #frmFilter, #frmChart, #frmDonut, #frmCalendarCard {
+QFrame[property="card"], #frmFilter, #frmChart, #frmDonut, #frmCalendarCard, #frmTableCard {
     background-color: #FFFFFF;
     border: 1px solid #DCE8FA;
     border-radius: 18px;
@@ -347,20 +347,20 @@ QLabel[property="amount-balance"], #lblTotalBalance, #lblNetTotal, #lblDayNet {
 }
 
 #cardFilteredIncome {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #EAFBF3, stop:1 #FFFFFF);
-    border: 1px solid #B7EBCE;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:0.60 #FFFFFF, stop:1 #EAFBF3);
+    border: 1px solid #DCE8FA;
     border-radius: 18px;
 }
 
 #cardFilteredExpense {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFF0F3, stop:1 #FFFFFF);
-    border: 1px solid #FFCCD5;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:0.60 #FFFFFF, stop:1 #FFF0F3);
+    border: 1px solid #DCE8FA;
     border-radius: 18px;
 }
 
 #cardFilteredCount {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #EBF3FF, stop:1 #FFFFFF);
-    border: 1px solid #CFE2FF;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:0.60 #FFFFFF, stop:1 #EBF3FF);
+    border: 1px solid #DCE8FA;
     border-radius: 18px;
 }
 
@@ -487,10 +487,30 @@ QPushButton[role="chip"]:hover {
 }
 
 QPushButton[role="chip"]:checked {
-    background-color: #E0EDFF;
+    background-color: #1E6FFF;
+    border: 1px solid #1E6FFF;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+QPushButton[role="reset"] {
+    background-color: #FFFFFF;
     border: 1.5px solid #1E6FFF;
     color: #1E6FFF;
+    font-size: 13px;
     font-weight: 600;
+    border-radius: 12px;
+    padding: 0 14px;
+    min-height: 36px;
+}
+
+QPushButton[role="reset"]:hover {
+    background-color: #E0EDFF;
+    border-color: #155EEF;
+}
+
+QPushButton[role="reset"]:pressed {
+    background-color: #CFE2FF;
 }
 
 QPushButton:disabled {
@@ -578,10 +598,10 @@ QTableWidget {
     selection-color: #1E6FFF;
 }
 
-QTableWidget#tblRecentTransactions {
+QTableWidget#tblRecentTransactions, #frmTableCard QTableWidget {
     background-color: #FFFFFF;
     border: none;
-    border-radius: 0px;
+    border-radius: 18px;
     gridline-color: transparent;
 }
 

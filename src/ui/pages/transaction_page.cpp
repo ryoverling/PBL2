@@ -1,6 +1,7 @@
 #include "transaction_page.h"
 #include "ui_transaction_page.h"
 #include "../gui_helpers.h"
+#include "../gui_icons.h"
 #include "../main_window.h"
 #include "../widgets/date_picker_popup.h"
 #include "../../core/app/money_manager.h"
@@ -29,9 +30,9 @@ public:
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing);
         painter->setPen(Qt::NoPen);
-        painter->setBrush(QColor(income ? "#E7FAF3" : "#FFF0F3"));
+        painter->setBrush(QColor(income ? "#E6FAF3" : "#FEECEB"));
         painter->drawRoundedRect(pill, 13, 13);
-        painter->setPen(QColor(income ? "#059669" : "#E11D48"));
+        painter->setPen(QColor(income ? "#0E8F4F" : "#E0173D"));
         QFont font = painter->font();
         font.setBold(true);
         font.setPointSize(9);
@@ -41,47 +42,77 @@ public:
     }
 };
 
-TransactionPage::TransactionPage(MoneyManager& mm, const std::string& dataDir, MainWindow* mainWin, QWidget *parent)
-    : QWidget(parent), ui(new Ui::TransactionPage), moneyManager(mm), dataDirectory(dataDir), mainWindow(mainWin) {
-    ui->setupUi(this);
-
-    auto* header = ui->tblTransactions->horizontalHeader();
-    header->setSectionResizeMode(QHeaderView::Fixed);
-    header->setFixedHeight(40);
-    ui->tblTransactions->setItemDelegateForColumn(0, new TypeBadgeDelegate(ui->tblTransactions));
-    ui->tblTransactions->viewport()->installEventFilter(this);
-    ui->tblTransactions->setTextElideMode(Qt::ElideRight);
-    ui->tblTransactions->verticalHeader()->setVisible(false);
-    ui->tblTransactions->verticalHeader()->setDefaultSectionSize(42);
-
-    ui->dateFilterLayout->setSpacing(12);
-    ui->dteFrom->setMinimumSize(125, 38);
-    ui->dteTo->setMinimumSize(125, 38);
-
-    // Gắn icon cho các ô lọc
-    ui->cboType->setItemIcon(0, UiHelper::createFilterIcon());
-    ui->cboType->setItemIcon(1, UiHelper::createArrowUpIcon());
-    ui->cboType->setItemIcon(2, UiHelper::createArrowDownIcon());
-
+void TransactionPage::initHeaderAndActions() {
+    ui->lblHeaderIcon->setPixmap(GuiIcons::createExchangeBadge(44));
     ui->btnAdd->setText(QString::fromUtf8("Thêm giao dịch"));
     ui->btnAdd->setIcon(UiHelper::createPlusIcon(Qt::white));
-    ui->btnAdd->setIconSize(QSize(16, 16));
-    ui->btnAdd->setProperty("role", "primary");
+    ui->btnAdd->setIconSize(QSize(14, 14));
     ui->btnAdd->setCursor(Qt::PointingHandCursor);
 
     ui->btnEdit->setText(QString::fromUtf8("Sửa"));
-    ui->btnEdit->setIcon(UiHelper::createEditIcon(QColor("#1769EE")));
+    ui->btnEdit->setIcon(UiHelper::createEditIcon(QColor("#0B2A6B")));
     ui->btnEdit->setIconSize(QSize(16, 16));
-    ui->btnEdit->setProperty("role", "secondary");
     ui->btnEdit->setToolTip("Chỉnh sửa giao dịch đang chọn");
     ui->btnEdit->setCursor(Qt::PointingHandCursor);
 
     ui->btnDelete->setText(QString::fromUtf8("Xóa"));
-    ui->btnDelete->setIcon(UiHelper::createTrashIcon(QColor("#EF4765")));
+    ui->btnDelete->setIcon(UiHelper::createTrashIcon(QColor("#E0173D")));
     ui->btnDelete->setIconSize(QSize(16, 16));
-    ui->btnDelete->setProperty("role", "danger");
     ui->btnDelete->setToolTip("Xóa giao dịch đang chọn");
     ui->btnDelete->setCursor(Qt::PointingHandCursor);
+}
+
+void TransactionPage::initSummaryCards() {
+    ui->iconIncomeBadge->setPixmap(GuiIcons::createKpiBadge("income", 44));
+    ui->iconExpenseBadge->setPixmap(GuiIcons::createKpiBadge("expense", 44));
+    ui->iconCountBadge->setPixmap(GuiIcons::createKpiBadge("count", 44));
+
+    ui->lblIncomeSparkline->setPixmap(GuiIcons::createWaveSparkline(true, 80, 36));
+    ui->lblExpenseSparkline->setPixmap(GuiIcons::createWaveSparkline(false, 80, 36));
+    ui->lblCountMiniBars->setPixmap(GuiIcons::createMiniBars(80, 36, QColor("#1E6FFF")));
+}
+
+void TransactionPage::initTableAndFilters() {
+    ui->tblTransactions->setShowGrid(false);
+    ui->tblTransactions->setIconSize(QSize(24, 24));
+    auto* header = ui->tblTransactions->horizontalHeader();
+    header->setSectionResizeMode(QHeaderView::Fixed);
+    header->setFixedHeight(44);
+    ui->tblTransactions->setItemDelegateForColumn(0, new TypeBadgeDelegate(ui->tblTransactions));
+    ui->tblTransactions->viewport()->installEventFilter(this);
+    ui->tblTransactions->setTextElideMode(Qt::ElideRight);
+    ui->tblTransactions->verticalHeader()->setVisible(false);
+    ui->tblTransactions->verticalHeader()->setDefaultSectionSize(48);
+
+    ui->tblTransactions->horizontalHeaderItem(0)->setIcon(GuiIcons::createSortHeaderIcon());
+    ui->tblTransactions->horizontalHeaderItem(1)->setIcon(GuiIcons::createCoinHeaderIcon());
+    ui->tblTransactions->horizontalHeaderItem(2)->setIcon(GuiIcons::createCalendarHeaderIcon());
+    ui->tblTransactions->horizontalHeaderItem(3)->setIcon(GuiIcons::createWalletHeaderIcon());
+    ui->tblTransactions->horizontalHeaderItem(4)->setIcon(GuiIcons::createTagHeaderIcon());
+    ui->tblTransactions->horizontalHeaderItem(5)->setIcon(GuiIcons::createNoteHeaderIcon());
+
+    ui->cboType->setItemIcon(0, UiHelper::createFilterIcon());
+    ui->cboType->setItemIcon(1, UiHelper::createArrowUpIcon());
+    ui->cboType->setItemIcon(2, UiHelper::createArrowDownIcon());
+
+    ui->btnResetFilter->setIcon(GuiIcons::createResetIcon(14, QColor("#1E6FFF")));
+    ui->btnResetFilter->setIconSize(QSize(14, 14));
+    ui->btnResetFilter->setCursor(Qt::PointingHandCursor);
+}
+
+TransactionPage::TransactionPage(MoneyManager& mm, const std::string& dataDir, MainWindow* mainWin, QWidget *parent)
+    : QWidget(parent), ui(new Ui::TransactionPage), moneyManager(mm), dataDirectory(dataDir), mainWindow(mainWin) {
+    ui->setupUi(this);
+
+    UiHelper::applyCardShadow(ui->frmFilter);
+    UiHelper::applyCardShadow(ui->cardFilteredIncome);
+    UiHelper::applyCardShadow(ui->cardFilteredExpense);
+    UiHelper::applyCardShadow(ui->cardFilteredCount);
+    UiHelper::applyCardShadow(ui->frmTableCard);
+
+    initHeaderAndActions();
+    initSummaryCards();
+    initTableAndFilters();
 
     resetDates();
     refreshData();
@@ -91,7 +122,7 @@ TransactionPage::TransactionPage(MoneyManager& mm, const std::string& dataDir, M
 void TransactionPage::updateColumnWidths() {
     int width = ui->tblTransactions->viewport()->width();
     if (width < 500) return;
-    const int share[5] = {12, 17, 13, 17, 20};
+    const int share[5] = {14, 20, 14, 18, 18};
     int used = 0;
     for (int i = 0; i < 5; ++i) {
         int column = width * share[i] / 100;
@@ -150,15 +181,15 @@ void TransactionPage::clearQuickFilterChip() {
 }
 
 void TransactionPage::applyQuickDateRange(const QDate& from, const QDate& to) {
-    QSignalBlocker checkBlocker(ui->chkDateFilter);
     QSignalBlocker fromBlocker(ui->dteFrom);
     QSignalBlocker toBlocker(ui->dteTo);
-    bool active = from.isValid() && to.isValid();
-    ui->chkDateFilter->setChecked(active);
-    if (active) { ui->dteFrom->setDate(from); ui->dteTo->setDate(to); }
-    else resetDates();
-    ui->dteFrom->setEnabled(active);
-    ui->dteTo->setEnabled(active);
+    if (from.isValid() && to.isValid()) {
+        ui->dteFrom->setDate(from);
+        ui->dteTo->setDate(to);
+    } else {
+        ui->dteFrom->clearDate();
+        ui->dteTo->clearDate();
+    }
     refreshData();
 }
 
@@ -189,9 +220,8 @@ void TransactionPage::on_btnQuickSevenDays_clicked() {
 void TransactionPage::resetDates() {
     QSignalBlocker first(ui->dteFrom);
     QSignalBlocker last(ui->dteTo);
-    QDate today = QDate::currentDate();
-    ui->dteFrom->setDate(QDate(today.year(), today.month(), 1));
-    ui->dteTo->setDate(today);
+    ui->dteFrom->clearDate();
+    ui->dteTo->clearDate();
 }
 
 void TransactionPage::on_btnResetFilter_clicked() {
@@ -199,27 +229,12 @@ void TransactionPage::on_btnResetFilter_clicked() {
     QSignalBlocker type(ui->cboType);
     QSignalBlocker wallet(ui->cboWallet);
     QSignalBlocker category(ui->cboCategory);
-    QSignalBlocker dateFilter(ui->chkDateFilter);
     ui->edtKeyword->clear();
     ui->cboType->setCurrentIndex(0);
     ui->cboWallet->setCurrentIndex(0);
     ui->cboCategory->setCurrentIndex(0);
-    ui->chkDateFilter->setChecked(false);
     resetDates();
-    on_chkDateFilter_toggled(false);
     ui->btnQuickAll->setChecked(true);
-}
-
-void TransactionPage::on_chkDateFilter_toggled(bool checked) {
-    clearQuickFilterChip();
-    if (checked && (!ui->dteFrom->date().isValid() || !ui->dteTo->date().isValid())) {
-        resetDates();
-    }
-    ui->dteFrom->setEnabled(checked);
-    ui->dteTo->setEnabled(checked);
-    QString tip = checked ? "" : QString::fromUtf8("Bật 'Lọc theo ngày' để chọn");
-    ui->dteFrom->setToolTip(tip);
-    ui->dteTo->setToolTip(tip);
     refreshData();
 }
 

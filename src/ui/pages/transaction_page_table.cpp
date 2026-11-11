@@ -1,6 +1,7 @@
 #include "transaction_page.h"
 #include "ui_transaction_page.h"
 #include "../gui_helpers.h"
+#include "../gui_icons.h"
 #include "../../core/app/money_manager.h"
 #include <QSignalBlocker>
 
@@ -8,6 +9,7 @@ static QTableWidgetItem* noteItem(const Transaction* tx) {
     QString note = QString::fromStdString(tx->getNote());
     auto* item = new QTableWidgetItem(note);
     item->setToolTip(note);
+    item->setForeground(QColor("#5B6B8C"));
     return item;
 }
 
@@ -15,7 +17,7 @@ void TransactionPage::loadWalletFilter() {
     QSignalBlocker blocker(ui->cboWallet);
     int id = ui->cboWallet->currentData().toInt();
     ui->cboWallet->clear();
-    ui->cboWallet->addItem(UiHelper::createWalletIcon(), "Tất cả ví", 0);
+    ui->cboWallet->addItem(UiHelper::createWalletIcon(), "Ví: Tất cả", 0);
     const auto& wallets = moneyManager.getWalletManager().getWallets();
     for (const Node<Wallet>* cur = wallets.getHead(); cur; cur = cur->next) {
         QString wName = QString::fromStdString(cur->data.getName());
@@ -30,7 +32,7 @@ void TransactionPage::loadCategoryFilter() {
     QSignalBlocker blocker(ui->cboCategory);
     int id = ui->cboCategory->currentData().toInt();
     ui->cboCategory->clear();
-    ui->cboCategory->addItem(UiHelper::createTagIcon(), "Tất cả danh mục", 0);
+    ui->cboCategory->addItem(UiHelper::createTagIcon(), "Danh mục: Tất cả", 0);
     const auto& categories = moneyManager.getCategoryManager().getCategories();
     for (const Node<Category>* cur = categories.getHead(); cur; cur = cur->next) {
         QString cName = QString::fromStdString(cur->data.getName());
@@ -52,34 +54,47 @@ void TransactionPage::addTxRow(const Transaction* tx) {
     bool income = tx->getType() == TransactionType::INCOME;
     const Wallet* wallet = moneyManager.getWalletManager().findById(tx->getWalletId());
     const Category* category = moneyManager.getCategoryManager().findById(tx->getCategoryId());
+
+    // Cột 0: Loại (TypeBadgeDelegate vẽ pill)
     auto* type = new QTableWidgetItem(income ? "↑ Thu nhập" : "↓ Chi tiêu");
     type->setData(Qt::UserRole, tx->getId());
 
+    // Cột 1: Số tiền (Bold, màu chuẩn prompt)
     QString prefix = income ? "↑ + " : "↓ - ";
     auto* amount = new QTableWidgetItem(prefix + UiHelper::formatMoneyVND(tx->getAmount()));
-    amount->setForeground(QColor(income ? "#059669" : "#E11D48"));
+    amount->setForeground(QColor(income ? "#0E8F4F" : "#E0173D"));
     QFont amountFont = amount->font();
     amountFont.setBold(true);
     amount->setFont(amountFont);
-    amount->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    amount->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 
+    // Cột 2: Ngày
+    auto* dateItem = new QTableWidgetItem(UiHelper::formatDate(tx->getDate()));
+    dateItem->setForeground(QColor("#0B2A6B"));
+
+    // Cột 3: Ví (Badge vuông nhỏ bo góc pastel + tên)
     QString wName = wallet ? QString::fromStdString(wallet->getName()) : "Ví khác";
-    QString wDisplay = UiHelper::getWalletIcon(wName, wallet ? (int)wallet->getType() : 0) + " " + wName;
+    auto* walletItem = new QTableWidgetItem(wName);
+    walletItem->setIcon(QIcon(GuiIcons::createWalletBadgeIcon(wName, wallet ? (int)wallet->getType() : 0, 24)));
+    walletItem->setForeground(QColor("#0B2A6B"));
 
+    // Cột 4: Danh mục (Badge tròn màu pastel + tên)
     QString cName = category ? QString::fromStdString(category->getName()) : "Khác";
-    QString cDisplay = UiHelper::getCategoryIcon(cName) + " " + cName;
+    auto* catItem = new QTableWidgetItem(cName);
+    catItem->setIcon(UiHelper::createCategoryCircleIcon(cName, 24));
+    catItem->setForeground(QColor("#0B2A6B"));
 
     ui->tblTransactions->setItem(row, 0, type);
     ui->tblTransactions->setItem(row, 1, amount);
-    ui->tblTransactions->setItem(row, 2, new QTableWidgetItem(UiHelper::formatDate(tx->getDate())));
-    ui->tblTransactions->setItem(row, 3, new QTableWidgetItem(wDisplay));
-    ui->tblTransactions->setItem(row, 4, new QTableWidgetItem(cDisplay));
+    ui->tblTransactions->setItem(row, 2, dateItem);
+    ui->tblTransactions->setItem(row, 3, walletItem);
+    ui->tblTransactions->setItem(row, 4, catItem);
     ui->tblTransactions->setItem(row, 5, noteItem(tx));
 }
 
 bool TransactionPage::loadFilteredTransactions(LinkedList<Transaction*>& list) {
     QDate from = ui->dteFrom->date(), to = ui->dteTo->date();
-    bool useDate = ui->chkDateFilter->isChecked();
+    bool useDate = from.isValid() && to.isValid();
     if (useDate && from > to) {
         return false;
     }
@@ -99,14 +114,14 @@ void TransactionPage::updateSummary(const LinkedList<Transaction*>& list) {
 void TransactionPage::showEmptyTable() {
     ui->tblTransactions->setRowCount(1);
     ui->tblTransactions->setSpan(0, 0, 1, 6);
-    bool dateInvalid = ui->chkDateFilter->isChecked() && (ui->dteFrom->date() > ui->dteTo->date());
+    bool dateInvalid = ui->dteFrom->isValidDate() && ui->dteTo->isValidDate() && (ui->dteFrom->date() > ui->dteTo->date());
     QString msg = dateInvalid
         ? "Khoảng ngày không hợp lệ: 'Từ ngày' phải trước hoặc bằng 'Đến ngày'"
         : "Không có giao dịch phù hợp với bộ lọc";
     auto* item = new QTableWidgetItem(msg);
     item->setTextAlignment(Qt::AlignCenter);
-    if (dateInvalid) item->setForeground(QColor("#C6284D"));
-    else item->setForeground(QColor("#536986"));
+    if (dateInvalid) item->setForeground(QColor("#E0173D"));
+    else item->setForeground(QColor("#5B6B8C"));
     ui->tblTransactions->setItem(0, 0, item);
 }
 

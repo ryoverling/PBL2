@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>540</width>
-    <height>660</height>
+    <height>560</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>480</width>
-    <height>560</height>
+    <width>520</width>
+    <height>0</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -21,13 +21,13 @@
   </property>
   <layout class="QVBoxLayout" name="mainLayout">
    <property name="spacing">
-    <number>12</number>
+    <number>14</number>
    </property>
    <property name="leftMargin">
     <number>24</number>
    </property>
    <property name="topMargin">
-    <number>24</number>
+    <number>22</number>
    </property>
    <property name="rightMargin">
     <number>24</number>
@@ -48,304 +48,301 @@
       <string>Thêm giao dịch mới</string>
      </property>
      <property name="margin">
-      <number>4</number>
+      <number>2</number>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QScrollArea" name="scrollArea">
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="widgetResizable">
-      <bool>true</bool>
-     </property>
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>492</width>
-        <height>500</height>
-       </rect>
+    <widget class="QWidget" name="segmentedTypeContainer">
+     <layout class="QHBoxLayout" name="layoutSegmentedType">
+      <property name="spacing">
+       <number>12</number>
       </property>
-      <layout class="QVBoxLayout" name="scrollLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="btnTypeExpense">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>44</height>
+         </size>
+        </property>
+        <property name="cursor">
+         <cursorShape>PointingHandCursor</cursorShape>
+        </property>
+        <property name="text">
+         <string>Khoản chi</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnTypeIncome">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>44</height>
+         </size>
+        </property>
+        <property name="cursor">
+         <cursorShape>PointingHandCursor</cursorShape>
+        </property>
+        <property name="text">
+         <string>Khoản thu</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayoutForm">
+     <property name="horizontalSpacing">
+      <number>16</number>
+     </property>
+     <property name="verticalSpacing">
+      <number>12</number>
+     </property>
+     <item row="0" column="0" alignment="Qt::AlignTop">
+      <widget class="QLabel" name="lblAmountTag">
+       <property name="minimumSize">
+        <size>
+         <width>116</width>
+         <height>44</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>116</width>
+         <height>44</height>
+        </size>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+       <property name="text">
+        <string>Số tiền (VNĐ):</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <layout class="QVBoxLayout" name="layoutAmountField">
        <property name="spacing">
-        <number>16</number>
-       </property>
-       <property name="leftMargin">
-        <number>2</number>
-       </property>
-       <property name="topMargin">
         <number>4</number>
        </property>
-       <property name="rightMargin">
-        <number>6</number>
-       </property>
-       <property name="bottomMargin">
-        <number>8</number>
-       </property>
        <item>
-        <widget class="QWidget" name="segmentedTypeContainer">
-         <layout class="QHBoxLayout" name="layoutSegmentedType">
-          <property name="spacing">
-           <number>12</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="QPushButton" name="btnTypeExpense">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>44</height>
-             </size>
-            </property>
-            <property name="cursor">
-             <cursorShape>PointingHandCursor</cursorShape>
-            </property>
-            <property name="text">
-             <string>Khoản chi</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="btnTypeIncome">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>44</height>
-             </size>
-            </property>
-            <property name="cursor">
-             <cursorShape>PointingHandCursor</cursorShape>
-            </property>
-            <property name="text">
-             <string>Khoản thu</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
+        <widget class="QLineEdit" name="edtAmount">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>44</height>
+          </size>
+         </property>
+         <property name="placeholderText">
+          <string>Ví dụ: 150000</string>
+         </property>
         </widget>
        </item>
        <item>
-        <layout class="QGridLayout" name="gridLayoutForm">
-         <property name="horizontalSpacing">
-          <number>16</number>
+        <widget class="QLabel" name="lblAmountWarning">
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
-         <property name="verticalSpacing">
-          <number>10</number>
+         <property name="text">
+          <string/>
          </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="lblAmountTag">
-           <property name="minimumSize">
-            <size>
-             <width>110</width>
-             <height>44</height>
-            </size>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-           <property name="text">
-            <string>Số tiền (VNĐ):</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="edtAmount">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>44</height>
-            </size>
-           </property>
-           <property name="placeholderText">
-            <string>Ví dụ: 150000</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLabel" name="lblAmountWarning">
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="lblDateTag">
-           <property name="minimumSize">
-            <size>
-             <width>110</width>
-             <height>44</height>
-            </size>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-           <property name="text">
-            <string>Ngày giao dịch:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="DatePickerField" name="dteDate">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>44</height>
-            </size>
-           </property>
-           
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="lblWalletTag">
-           <property name="minimumSize">
-            <size>
-             <width>110</width>
-             <height>44</height>
-            </size>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-           <property name="text">
-            <string>Ví tiền:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QComboBox" name="cboWallet">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>44</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLabel" name="lblWalletBalance">
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-           <property name="text">
-            <string>Số dư khả dụng: 0 đ</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="lblCategoryTag">
-           <property name="minimumSize">
-            <size>
-             <width>110</width>
-             <height>44</height>
-            </size>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-           <property name="text">
-            <string>Danh mục:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="QComboBox" name="cboCategory">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>44</height>
-            </size>
-           </property>
-           <property name="editable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
-          <widget class="QLabel" name="lblCategoryHint">
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
-          <widget class="QLabel" name="lblNoteTag">
-           <property name="minimumSize">
-            <size>
-             <width>110</width>
-             <height>44</height>
-            </size>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-           <property name="text">
-            <string>Ghi chú:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="1">
-          <widget class="QLineEdit" name="edtNote">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>44</height>
-            </size>
-           </property>
-           <property name="placeholderText">
-            <string>Ghi chú giao dịch (tùy chọn)</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>10</height>
-          </size>
-         </property>
-        </spacer>
+        </widget>
        </item>
       </layout>
-     </widget>
-    </widget>
+     </item>
+     <item row="1" column="0" alignment="Qt::AlignTop">
+      <widget class="QLabel" name="lblDateTag">
+       <property name="minimumSize">
+        <size>
+         <width>116</width>
+         <height>44</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>116</width>
+         <height>44</height>
+        </size>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+       <property name="text">
+        <string>Ngày giao dịch:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="DatePickerField" name="dteDate">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>44</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" alignment="Qt::AlignTop">
+      <widget class="QLabel" name="lblWalletTag">
+       <property name="minimumSize">
+        <size>
+         <width>116</width>
+         <height>44</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>116</width>
+         <height>44</height>
+        </size>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+       <property name="text">
+        <string>Ví tiền:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <layout class="QVBoxLayout" name="layoutWalletField">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QComboBox" name="cboWallet">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>44</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lblWalletBalance">
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string>Số dư khả dụng: 0 đ</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="3" column="0" alignment="Qt::AlignTop">
+      <widget class="QLabel" name="lblCategoryTag">
+       <property name="minimumSize">
+        <size>
+         <width>116</width>
+         <height>44</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>116</width>
+         <height>44</height>
+        </size>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+       <property name="text">
+        <string>Danh mục:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <layout class="QVBoxLayout" name="layoutCategoryField">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QComboBox" name="cboCategory">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>44</height>
+          </size>
+         </property>
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lblCategoryHint">
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="4" column="0" alignment="Qt::AlignTop">
+      <widget class="QLabel" name="lblNoteTag">
+       <property name="minimumSize">
+        <size>
+         <width>116</width>
+         <height>44</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>116</width>
+         <height>44</height>
+        </size>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+       <property name="text">
+        <string>Ghi chú:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="edtNote">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>44</height>
+        </size>
+       </property>
+       <property name="placeholderText">
+        <string>Ghi chú giao dịch (tùy chọn)</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QFrame" name="lineSeparator">
@@ -363,10 +360,10 @@
       <number>12</number>
      </property>
      <property name="topMargin">
-      <number>4</number>
+      <number>2</number>
      </property>
      <property name="bottomMargin">
-      <number>4</number>
+      <number>2</number>
      </property>
      <item>
       <spacer name="spacerBottom">

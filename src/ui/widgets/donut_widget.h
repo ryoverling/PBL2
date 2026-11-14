@@ -17,6 +17,8 @@ public:
     long long sliceAmount(int index) const { return slices[index].amount; }
     int slicePercentage(int index) const { return slices[index].percentage; }
     QColor sliceColor(int index) const { return slices[index].color; }
+    QSize sizeHint() const override { return QSize(260, 260); }
+    QSize minimumSizeHint() const override { return QSize(220, 220); }
 
 protected:
     void paintEvent(QPaintEvent* event) override;

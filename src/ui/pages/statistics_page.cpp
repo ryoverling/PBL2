@@ -165,5 +165,6 @@ void StatisticsPage::updateCategories() {
 
     int listHeight = qMin(6, ui->tblCategories->rowCount()) * 52 + 4;
     ui->tblCategories->setFixedHeight(listHeight);
-    ui->frmDonut->setMinimumHeight(qMax(260, listHeight + 110));
+    int contentHeight = qMax(260, listHeight + 96);
+    ui->frmDonut->setMinimumHeight(contentHeight + 80);
 }

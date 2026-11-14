@@ -15,27 +15,25 @@ TransactionDialog::TransactionDialog(MoneyManager& mm, int txId, QWidget *parent
     : QDialog(parent), ui(new Ui::TransactionDialog), moneyManager(mm), editingTxId(txId) {
     ui->setupUi(this);
     UiHelper::setupWindowTheme(this);
-    resize(620, 540);
+    setMinimumWidth(540);
+    layout()->setSizeConstraint(QLayout::SetFixedSize);
+    ui->lblAmountWarning->hide();
+    ui->lblCategoryHint->hide();
 
     typeGroup = new QButtonGroup(this);
     typeGroup->addButton(ui->btnTypeExpense, 0);
     typeGroup->addButton(ui->btnTypeIncome, 1);
-
     ui->btnTypeExpense->setText("Khoản chi");
     ui->btnTypeExpense->setIcon(GuiIcons::createArrowDownIcon(QColor("#E0173D")));
     ui->btnTypeIncome->setText("Khoản thu");
     ui->btnTypeIncome->setIcon(GuiIcons::createArrowUpIcon(QColor("#0E8F4F")));
     updateSegmentedStyle();
 
-    // Thêm icon đồng xu bên phải ô nhập số tiền
     ui->edtAmount->addAction(QIcon(GuiIcons::createCoinHeaderIcon()), QLineEdit::TrailingPosition);
-
     loadWallets();
     loadCategories();
     ui->lblDialogTitle->setText(txId > 0 ? "Sửa giao dịch" : "Thêm giao dịch mới");
-    ui->btnCancel->setText("Hủy");
     ui->btnCancel->setIcon(GuiIcons::createTrashIcon(QColor("#5B6B8C")));
-    ui->btnSave->setText("Lưu");
     ui->btnSave->setIcon(GuiIcons::createPlusIcon(Qt::white));
 
     if (txId > 0) {
@@ -44,11 +42,9 @@ TransactionDialog::TransactionDialog(MoneyManager& mm, int txId, QWidget *parent
         ui->dteDate->setDate(QDate::currentDate());
     }
 
-    // Kết nối kiểm tra tính toàn vẹn số dư theo thời gian thực
     connect(ui->edtAmount, &QLineEdit::textChanged, this, &TransactionDialog::validateLiveInput);
     connect(ui->cboWallet, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &TransactionDialog::validateLiveInput);
     connect(ui->dteDate, &DatePickerField::dateChanged, this, &TransactionDialog::validateLiveInput);
-
     validateLiveInput();
 }
 
@@ -133,6 +129,7 @@ void TransactionDialog::loadCategories() {
     }
     ui->cboCategory->setEditText("");
     ui->lblCategoryHint->clear();
+    ui->lblCategoryHint->hide();
 
     // Cấu hình Completer Popup chuẩn để TUYỆT ĐỐI KHÔNG làm lỗi bộ gõ tiếng Việt (Telex/VNI)
     QCompleter* comp = new QCompleter(names, ui->cboCategory);
@@ -159,6 +156,7 @@ void TransactionDialog::on_cboCategory_editTextChanged(const QString& text) {
     QString name = UiHelper::cleanName(text);
     bool existing = name.isEmpty() || findCategory(name);
     ui->lblCategoryHint->setText(existing ? "" : "Danh mục mới sẽ được tạo khi lưu giao dịch");
+    ui->lblCategoryHint->setVisible(!existing);
 }
 
 void TransactionDialog::validateLiveNegativeWallet(long long curBal, const QString& walletName, bool isExpense, long long amt) {
@@ -168,10 +166,12 @@ void TransactionDialog::validateLiveNegativeWallet(long long curBal, const QStri
     if (isExpense) {
         ui->lblAmountWarning->setText(QString("⚠ Ví %1 đang âm %2, cần đối soát dữ liệu trước khi chi thêm").arg(walletName, UiHelper::formatMoneyVND(std::abs(curBal))));
         ui->lblAmountWarning->setStyleSheet("color: #EF4765; font-size: 12px; font-weight: 600; line-height: 130%;");
+        ui->lblAmountWarning->show();
         ui->btnSave->setEnabled(false);
     } else {
         ui->lblAmountWarning->setText("ℹ Khoản thu sẽ giúp bù đắp số dư âm của ví này.");
         ui->lblAmountWarning->setStyleSheet("color: #059669; font-size: 12px; font-weight: 500;");
+        ui->lblAmountWarning->show();
         ui->btnSave->setEnabled(amt > 0);
     }
 }
@@ -185,15 +185,18 @@ void TransactionDialog::validateLiveNormalWallet(long long curBal, bool isExpens
             long long lack = amt - curBal;
             ui->lblAmountWarning->setText(QString("⚠ Vượt quá số dư khả dụng (còn thiếu %1)").arg(UiHelper::formatMoneyVND(lack)));
             ui->lblAmountWarning->setStyleSheet("color: #EF4765; font-size: 12px; font-weight: 600; line-height: 130%;");
+            ui->lblAmountWarning->show();
             ui->btnSave->setEnabled(false);
         } else {
             ui->lblAmountWarning->clear();
+            ui->lblAmountWarning->hide();
             ui->btnSave->setEnabled(amt > 0);
         }
     } else {
         ui->lblWalletBalance->setText(QString("Số dư hiện tại: %1").arg(UiHelper::formatMoneyVND(curBal)));
         ui->lblWalletBalance->setStyleSheet("color: #536986; font-size: 12px; padding: 2px 0;");
         ui->lblAmountWarning->clear();
+        ui->lblAmountWarning->hide();
         ui->btnSave->setEnabled(amt > 0);
     }
 }

@@ -13,6 +13,8 @@
 #include "dialogs/plan_dialog.h"
 #include "dialogs/register_dialog.h"
 #include "widgets/date_picker_popup.h"
+#include <QScrollArea>
+#include <QScrollBar>
 #include <QDir>
 #include <iostream>
 
@@ -93,6 +95,28 @@ static void captureScreenshots(QApplication& app, MoneyManager& mm, const std::s
         if (screenshotTarget == "100") mainWin.grab().save(baseDir + pageFiles[i]);
     }
 
+    // 4b. Chụp thêm tab Thống kê cuộn xuống (thấy trọn vẹn card donut và chi tiết danh mục)
+    mainWin.navigateToPage(3);
+    QScrollArea* sa = mainWin.findChild<QScrollArea*>("scrollStatistics");
+    if (sa) {
+        sa->verticalScrollBar()->setValue(sa->verticalScrollBar()->maximum());
+        app.processEvents();
+        mainWin.grab().save(outDir + "/04_statistics_scrolled.png");
+        if (screenshotTarget == "100") mainWin.grab().save(baseDir + "/04_statistics_scrolled.png");
+        mainWin.resize(1100, 700);
+        app.processEvents();
+        mainWin.grab().save(outDir + "/04_statistics_1100x700.png");
+        if (screenshotTarget == "100") mainWin.grab().save(baseDir + "/04_statistics_1100x700.png");
+        mainWin.showMaximized();
+        app.processEvents();
+        mainWin.grab().save(outDir + "/04_statistics_maximized.png");
+        if (screenshotTarget == "100") mainWin.grab().save(baseDir + "/04_statistics_maximized.png");
+        mainWin.showNormal();
+        mainWin.resize(1280, 800);
+        sa->verticalScrollBar()->setValue(0);
+        app.processEvents();
+    }
+
     // 6-7. Popup chọn ngày
     DatePickerPopup myPicker(QDate(2026, 11, 10), &mainWin);
     myPicker.resize(380, 480);
@@ -110,13 +134,25 @@ static void captureScreenshots(QApplication& app, MoneyManager& mm, const std::s
     ddDialog.grab().save(outDir + "/08_day_detail_dialog.png");
     ddDialog.close();
 
-    // 9. Hộp thoại Thêm/Sửa Giao dịch
+    // 9. Hộp thoại Thêm Giao dịch
     TransactionDialog txDialog(mm, -1, &mainWin);
-    txDialog.resize(560, 680);
     txDialog.show();
     app.processEvents();
     txDialog.grab().save(outDir + "/09_transaction_dialog.png");
+    if (screenshotTarget == "100") txDialog.grab().save(baseDir + "/09_transaction_dialog.png");
     txDialog.close();
+
+    // 9b. Hộp thoại Sửa Giao dịch
+    const auto& txs = mm.getTransactionManager().getTransactions();
+    int firstTxId = txs.getHead() ? txs.getHead()->data->getId() : -1;
+    if (firstTxId > 0) {
+        TransactionDialog txEditDialog(mm, firstTxId, &mainWin);
+        txEditDialog.show();
+        app.processEvents();
+        txEditDialog.grab().save(outDir + "/09_transaction_dialog_edit.png");
+        if (screenshotTarget == "100") txEditDialog.grab().save(baseDir + "/09_transaction_dialog_edit.png");
+        txEditDialog.close();
+    }
 
     // 10. Hộp thoại Thêm/Sửa Ví
     WalletDialog wDialog(mm, -1, &mainWin);

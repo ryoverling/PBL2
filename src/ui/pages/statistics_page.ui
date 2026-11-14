@@ -587,7 +587,7 @@
              <widget class="DonutWidget" name="donutWidget" native="true">
               <property name="minimumSize">
                <size>
-                <width>220</width>
+                <width>240</width>
                 <height>240</height>
                </size>
               </property>
@@ -615,7 +615,7 @@
                 <property name="maximumSize">
                  <size>
                   <width>16777215</width>
-                  <height>280</height>
+                  <height>16777215</height>
                  </size>
                 </property>
                 <property name="editTriggers">

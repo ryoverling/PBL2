@@ -5,7 +5,7 @@
 
 static const double kPi = 3.14159265358979323846;
 
-DonutWidget::DonutWidget(QWidget* parent) : QWidget(parent) { setMinimumHeight(200); }
+DonutWidget::DonutWidget(QWidget* parent) : QWidget(parent) { setMinimumSize(220, 220); }
 
 void DonutWidget::setData(const LinkedList<CategoryExpense>& categories, long long totalExpense) {
     static const char* colors[6] = {"#1E6FFF", "#0E8F4F", "#E0173D", "#FF9F1A", "#8E3FD8", "#5B6B8C"};
@@ -60,7 +60,8 @@ void DonutWidget::drawCenterHole(QPainter& painter, const QRectF& circle, int di
 }
 
 void DonutWidget::drawDonut(QPainter& painter) {
-    int diameter = qMin(216, qMin(width(), height()) - 16);
+    int diameter = qMin(216, qMin(width(), height()) - 28);
+    if (diameter < 80) diameter = 80;
     QRectF circle((width() - diameter) / 2.0, (height() - diameter) / 2.0, diameter, diameter);
     int start = 90 * 16;
     int starts[6], sweeps[6];

@@ -344,8 +344,8 @@ void DatePickerPopup::setupYearsView() {
     yearsGrid->setContentsMargins(0, 8, 0, 8);
     yearsGrid->setSpacing(10);
 
-    for (int c = 0; c < 3; ++c) monthsGrid->setColumnStretch(c, 1);
-    for (int r = 0; r < 4; ++r) monthsGrid->setRowStretch(r, 1);
+    for (int c = 0; c < 3; ++c) yearsGrid->setColumnStretch(c, 1);
+    for (int r = 0; r < 4; ++r) yearsGrid->setRowStretch(r, 1);
 
     for (int i = 0; i < 12; ++i) {
         auto* btn = new QPushButton(pageYears);

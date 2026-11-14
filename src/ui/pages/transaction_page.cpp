@@ -148,9 +148,9 @@ bool TransactionPage::eventFilter(QObject *watched, QEvent *event) {
 TransactionPage::~TransactionPage() { delete ui; }
 
 int TransactionPage::getSelectedTxId() {
-    auto rows = ui->tblTransactions->selectionModel()->selectedRows();
+    QModelIndexList rows = ui->tblTransactions->selectionModel()->selectedRows();
     if (rows.size() != 1) return -1;
-    auto* item = ui->tblTransactions->item(rows.first().row(), 0);
+    QTableWidgetItem* item = ui->tblTransactions->item(rows.first().row(), 0);
     return item ? item->data(Qt::UserRole).toInt() : -1;
 }
 

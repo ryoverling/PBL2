@@ -110,7 +110,7 @@ void setupWindowTheme(QWidget* widget) {
     }
     if (dwmapi) {
         typedef HRESULT (WINAPI *DwmSetWindowAttrFunc)(HWND, DWORD, LPCVOID, DWORD);
-        auto pDwmSetWindowAttribute = reinterpret_cast<DwmSetWindowAttrFunc>(
+        DwmSetWindowAttrFunc pDwmSetWindowAttribute = reinterpret_cast<DwmSetWindowAttrFunc>(
             GetProcAddress(dwmapi, "DwmSetWindowAttribute")
         );
         if (pDwmSetWindowAttribute) {

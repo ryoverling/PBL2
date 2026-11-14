@@ -64,7 +64,12 @@ void StatisticsPage::updateCards() {
     long long net = moneyManager.getMonthlyDifference(month, year);
     ui->lblNetTotal->setText(UiHelper::formatMoneyVND(net));
 
-    QString state = (net > 0) ? "positive" : (net < 0 ? "negative" : "zero");
+    QString state = "zero";
+    if (net > 0) {
+        state = "positive";
+    } else if (net < 0) {
+        state = "negative";
+    }
     ui->cardNet->setProperty("netState", state);
     ui->lblNetTotal->setProperty("netState", state);
 

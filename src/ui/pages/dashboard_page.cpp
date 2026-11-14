@@ -120,7 +120,13 @@ void DashboardPage::updateCards() {
     ui->lblTotalExpense->setText(UiHelper::formatMoneyVND(expense));
     long long net = moneyManager.getMonthlyDifference(month, year);
     ui->lblNetTotal->setText(UiHelper::formatMoneyVND(net));
-    ui->lblNetTotal->setProperty("netState", net > 0 ? "positive" : net < 0 ? "negative" : "zero");
+    const char* netProp = "zero";
+    if (net > 0) {
+        netProp = "positive";
+    } else if (net < 0) {
+        netProp = "negative";
+    }
+    ui->lblNetTotal->setProperty("netState", netProp);
     ui->lblNetTotal->style()->unpolish(ui->lblNetTotal);
     ui->lblNetTotal->style()->polish(ui->lblNetTotal);
     ui->lblTotalBalance->setText(UiHelper::formatBalance(moneyManager.getWalletManager().getTotalBalance()));

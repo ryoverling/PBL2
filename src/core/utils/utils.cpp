@@ -214,7 +214,13 @@ ExpenseComparison compareExpenseWithPreviousMonth(int month, int year,
     if (previousExpense == 0) return result;
     result.canCompare = true;
     result.diffPercent = result.diffAmount * 100.0 / previousExpense;
-    result.message = result.diffAmount > 0 ? "Tăng" : (result.diffAmount < 0 ? "Giảm" : "Không đổi");
+    if (result.diffAmount > 0) {
+        result.message = "Tăng";
+    } else if (result.diffAmount < 0) {
+        result.message = "Giảm";
+    } else {
+        result.message = "Không đổi";
+    }
     return result;
 }
 

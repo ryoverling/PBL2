@@ -124,7 +124,13 @@ void DayDetailDialog::updateSummaryTotals(long long income, long long expense) {
     ui->lblDayIncome->setText(UiHelper::formatMoneyVND(income));
     ui->lblDayExpense->setText(UiHelper::formatMoneyVND(expense));
     ui->lblDayNet->setText(UiHelper::formatMoneyVND(net));
-    ui->lblDayNet->setStyleSheet(QString("color: %1;").arg(net > 0 ? "#0E8F4F" : net < 0 ? "#E0173D" : "#1E6FFF"));
+    QString netColor = "#1E6FFF";
+    if (net > 0) {
+        netColor = "#0E8F4F";
+    } else if (net < 0) {
+        netColor = "#E0173D";
+    }
+    ui->lblDayNet->setStyleSheet(QString("color: %1;").arg(netColor));
 }
 
 void DayDetailDialog::populateData() {

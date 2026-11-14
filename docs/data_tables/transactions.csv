@@ -1,35 +1,35 @@
 ﻿Mã GD,Mã loại,Loại,Số tiền (VNĐ),Ngày GD (dd/MM/yyyy),Ngày gốc (yyyy-MM-dd),Ghi chú,Mã ví,Tên ví,Mã DM,Tên danh mục
-1,1,Khoản thu,3.200.000,05/05/2026,2026-05-05,LÆ°Æ¡ng thÃ¡ng,2,Techcombank,1,LÆ°Æ¡ng part-time
-2,2,Khoản chi,1.500.000,08/05/2026,2026-05-08,Tiá»n phÃ²ng trá»,2,Techcombank,5,Tiá»n trá» & Äiá»‡n nÆ°á»›c
-3,2,Khoản chi,650.000,12/05/2026,2026-05-12,Tiá»n Äƒn uá»‘ng,1,Tiá»n máº·t,4,Ä‚n uá»‘ng
-4,2,Khoản chi,120.000,22/05/2026,2026-05-22,Chi tiÃªu sinh hoáº¡t,3,VÃ­ MoMo,6,Äi láº¡i & XÄƒng xe
-5,1,Khoản thu,4.000.000,05/06/2026,2026-06-05,LÆ°Æ¡ng thÃ¡ng,2,Techcombank,1,LÆ°Æ¡ng part-time
-6,1,Khoản thu,2.500.000,15/06/2026,2026-06-15,Há»— trá»£/Há»c bá»•ng,2,Techcombank,2,Tiá»n gia Ä‘Ã¬nh gá»­i
-7,2,Khoản chi,1.500.000,08/06/2026,2026-06-08,Tiá»n phÃ²ng trá»,2,Techcombank,5,Tiá»n trá» & Äiá»‡n nÆ°á»›c
-8,2,Khoản chi,900.000,12/06/2026,2026-06-12,Tiá»n Äƒn uá»‘ng,1,Tiá»n máº·t,4,Ä‚n uá»‘ng
-9,2,Khoản chi,1.200.000,22/06/2026,2026-06-22,Chi tiÃªu sinh hoáº¡t,3,VÃ­ MoMo,7,Há»c táº­p & GiÃ¡o trÃ¬nh
-10,1,Khoản thu,3.500.000,05/07/2026,2026-07-05,LÆ°Æ¡ng thÃ¡ng,2,Techcombank,1,LÆ°Æ¡ng part-time
-11,1,Khoản thu,1.800.000,15/07/2026,2026-07-15,Há»— trá»£/Há»c bá»•ng,2,Techcombank,2,Tiá»n gia Ä‘Ã¬nh gá»­i
-12,2,Khoản chi,1.500.000,08/07/2026,2026-07-08,Tiá»n phÃ²ng trá»,2,Techcombank,5,Tiá»n trá» & Äiá»‡n nÆ°á»›c
-13,2,Khoản chi,750.000,12/07/2026,2026-07-12,Tiá»n Äƒn uá»‘ng,1,Tiá»n máº·t,4,Ä‚n uá»‘ng
-14,2,Khoản chi,600.000,22/07/2026,2026-07-22,Chi tiÃªu sinh hoáº¡t,3,VÃ­ MoMo,8,Mua sáº¯m & Äá»“ dÃ¹ng
-15,1,Khoản thu,5.200.000,05/08/2026,2026-08-05,LÆ°Æ¡ng thÃ¡ng,2,Techcombank,1,LÆ°Æ¡ng part-time
-16,2,Khoản chi,1.500.000,08/08/2026,2026-08-08,Tiá»n phÃ²ng trá»,2,Techcombank,5,Tiá»n trá» & Äiá»‡n nÆ°á»›c
-17,2,Khoản chi,1.100.000,12/08/2026,2026-08-12,Tiá»n Äƒn uá»‘ng,1,Tiá»n máº·t,4,Ä‚n uá»‘ng
-18,2,Khoản chi,700.000,22/08/2026,2026-08-22,Chi tiÃªu sinh hoáº¡t,3,VÃ­ MoMo,9,Giáº£i trÃ­ & Báº¡n bÃ¨
-19,1,Khoản thu,3.800.000,05/09/2026,2026-09-05,LÆ°Æ¡ng thÃ¡ng,2,Techcombank,1,LÆ°Æ¡ng part-time
-20,1,Khoản thu,2.000.000,15/09/2026,2026-09-15,Há»— trá»£/Há»c bá»•ng,2,Techcombank,3,Há»c bá»•ng
-21,2,Khoản chi,1.500.000,08/09/2026,2026-09-08,Tiá»n phÃ²ng trá»,2,Techcombank,5,Tiá»n trá» & Äiá»‡n nÆ°á»›c
-22,2,Khoản chi,800.000,12/09/2026,2026-09-12,Tiá»n Äƒn uá»‘ng,1,Tiá»n máº·t,4,Ä‚n uá»‘ng
-23,2,Khoản chi,350.000,22/09/2026,2026-09-22,Chi tiÃªu sinh hoáº¡t,3,VÃ­ MoMo,7,Há»c táº­p & GiÃ¡o trÃ¬nh
-24,1,Khoản thu,3.500.000,05/10/2026,2026-10-05,LÆ°Æ¡ng thÃ¡ng,2,Techcombank,1,LÆ°Æ¡ng part-time
-25,2,Khoản chi,1.500.000,08/10/2026,2026-10-08,Tiá»n phÃ²ng trá»,2,Techcombank,5,Tiá»n trá» & Äiá»‡n nÆ°á»›c
-26,2,Khoản chi,450.000,12/10/2026,2026-10-12,Tiá»n Äƒn uá»‘ng,1,Tiá»n máº·t,4,Ä‚n uá»‘ng
-27,2,Khoản chi,80.000,22/10/2026,2026-10-22,Chi tiÃªu sinh hoáº¡t,3,VÃ­ MoMo,6,Äi láº¡i & XÄƒng xe
-28,2,Khoản chi,100.000,30/10/2026,2026-10-30,,1,Tiá»n máº·t,4,Ä‚n uá»‘ng
-29,2,Khoản chi,100.000,30/10/2026,2026-10-30,,3,VÃ­ MoMo,10,Ä‚n
+1,1,Khoản thu,3.200.000,05/05/2026,2026-05-05,Lương tháng,2,Techcombank,1,Lương part-time
+2,2,Khoản chi,1.500.000,08/05/2026,2026-05-08,Tiền phòng trọ,2,Techcombank,5,Tiền trọ & Điện nước
+3,2,Khoản chi,650.000,12/05/2026,2026-05-12,Tiền ăn uống,1,Tiền mặt,4,Ăn uống
+4,2,Khoản chi,120.000,22/05/2026,2026-05-22,Chi tiêu sinh hoạt,3,Ví MoMo,6,Đi lại & Xăng xe
+5,1,Khoản thu,4.000.000,05/06/2026,2026-06-05,Lương tháng,2,Techcombank,1,Lương part-time
+6,1,Khoản thu,2.500.000,15/06/2026,2026-06-15,Hỗ trợ/Học bổng,2,Techcombank,2,Tiền gia đình gửi
+7,2,Khoản chi,1.500.000,08/06/2026,2026-06-08,Tiền phòng trọ,2,Techcombank,5,Tiền trọ & Điện nước
+8,2,Khoản chi,900.000,12/06/2026,2026-06-12,Tiền ăn uống,1,Tiền mặt,4,Ăn uống
+9,2,Khoản chi,1.200.000,22/06/2026,2026-06-22,Chi tiêu sinh hoạt,3,Ví MoMo,7,Học tập & Giáo trình
+10,1,Khoản thu,3.500.000,05/07/2026,2026-07-05,Lương tháng,2,Techcombank,1,Lương part-time
+11,1,Khoản thu,1.800.000,15/07/2026,2026-07-15,Hỗ trợ/Học bổng,2,Techcombank,2,Tiền gia đình gửi
+12,2,Khoản chi,1.500.000,08/07/2026,2026-07-08,Tiền phòng trọ,2,Techcombank,5,Tiền trọ & Điện nước
+13,2,Khoản chi,750.000,12/07/2026,2026-07-12,Tiền ăn uống,1,Tiền mặt,4,Ăn uống
+14,2,Khoản chi,600.000,22/07/2026,2026-07-22,Chi tiêu sinh hoạt,3,Ví MoMo,8,Mua sắm & Đồ dùng
+15,1,Khoản thu,5.200.000,05/08/2026,2026-08-05,Lương tháng,2,Techcombank,1,Lương part-time
+16,2,Khoản chi,1.500.000,08/08/2026,2026-08-08,Tiền phòng trọ,2,Techcombank,5,Tiền trọ & Điện nước
+17,2,Khoản chi,1.100.000,12/08/2026,2026-08-12,Tiền ăn uống,1,Tiền mặt,4,Ăn uống
+18,2,Khoản chi,700.000,22/08/2026,2026-08-22,Chi tiêu sinh hoạt,3,Ví MoMo,9,Giải trí & Bạn bè
+19,1,Khoản thu,3.800.000,05/09/2026,2026-09-05,Lương tháng,2,Techcombank,1,Lương part-time
+20,1,Khoản thu,2.000.000,15/09/2026,2026-09-15,Hỗ trợ/Học bổng,2,Techcombank,3,Học bổng
+21,2,Khoản chi,1.500.000,08/09/2026,2026-09-08,Tiền phòng trọ,2,Techcombank,5,Tiền trọ & Điện nước
+22,2,Khoản chi,800.000,12/09/2026,2026-09-12,Tiền ăn uống,1,Tiền mặt,4,Ăn uống
+23,2,Khoản chi,350.000,22/09/2026,2026-09-22,Chi tiêu sinh hoạt,3,Ví MoMo,7,Học tập & Giáo trình
+24,1,Khoản thu,3.500.000,05/10/2026,2026-10-05,Lương tháng,2,Techcombank,1,Lương part-time
+25,2,Khoản chi,1.500.000,08/10/2026,2026-10-08,Tiền phòng trọ,2,Techcombank,5,Tiền trọ & Điện nước
+26,2,Khoản chi,450.000,12/10/2026,2026-10-12,Tiền ăn uống,1,Tiền mặt,4,Ăn uống
+27,2,Khoản chi,80.000,22/10/2026,2026-10-22,Chi tiêu sinh hoạt,3,Ví MoMo,6,Đi lại & Xăng xe
+28,2,Khoản chi,100.000,30/10/2026,2026-10-30,,1,Tiền mặt,4,Ăn uống
+29,2,Khoản chi,100.000,30/10/2026,2026-10-30,,3,Ví MoMo,10,Ăn
 30,2,Khoản chi,28.000.000,31/10/2026,2026-10-31,,2,Techcombank,11,iphone
-31,2,Khoản chi,20.000,10/11/2026,2026-11-10,bÃ¡nh mÃ¬,3,VÃ­ MoMo,4,Ä‚n uá»‘ng
-32,1,Khoản thu,100.000.000,11/11/2026,2026-11-11,,2,Techcombank,12,LÆ°Æ¡ng
-33,1,Khoản thu,100.000.000,11/11/2026,2026-11-11,,1,Tiá»n máº·t,12,LÆ°Æ¡ng
-34,1,Khoản thu,100.000.000,11/11/2026,2026-11-11,,3,VÃ­ MoMo,12,LÆ°Æ¡ng
+31,2,Khoản chi,20.000,10/11/2026,2026-11-10,bánh mì,3,Ví MoMo,4,Ăn uống
+32,1,Khoản thu,100.000.000,11/11/2026,2026-11-11,,2,Techcombank,12,Lương
+33,1,Khoản thu,100.000.000,11/11/2026,2026-11-11,,1,Tiền mặt,12,Lương
+34,1,Khoản thu,100.000.000,11/11/2026,2026-11-11,,3,Ví MoMo,12,Lương

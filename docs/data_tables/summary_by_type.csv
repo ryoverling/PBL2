@@ -1,0 +1,4 @@
+﻿Mã loại,Tên loại giao dịch,Số giao dịch,Danh sách ID giao dịch,Tổng tiền (VNĐ),Tỷ trọng dòng tiền
+1,Khoản thu (Income),12,"1; 5; 6; 10; 11; 15; 19; 20; 24; 32; 33; 34",329.500.000,88.0%
+2,Khoản chi (Expense),22,"2; 3; 4; 7; 8; 9; 12; 13; 14; 16; 17; 18; 21; 22; 23; 25; 26; 27; 28; 29; 30; 31",44.920.000,12.0%
+-,Tổng cộng,34,Toàn bộ 34 giao dịch,374.420.000,100%

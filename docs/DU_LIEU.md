@@ -253,26 +253,33 @@ erDiagram
 | **TỔNG CỘNG** | **34** | **329.500.000** | **44.920.000** | **+284.580.000** |
 
 ### 2. Tổng hợp theo Loại giao dịch
-| Loại giao dịch | Mã loại | Số giao dịch | Tổng số tiền (VNĐ) | Tỷ trọng trên tổng dòng tiền |
-|---|:---:|:---:|---:|:---:|
-| **Khoản thu (Income)** | `1` | 11 | 329.500.000 | 88,0% |
-| **Khoản chi (Expense)** | `2` | 23 | 44.920.000 | 12,0% |
-| **TỔNG** | - | **34** | **374.420.000** | **100%** |
+Đếm tự động từ `transactions.dat` theo mã trường loại (`1` = Khoản thu, `2` = Khoản chi):
 
-### 3. Tổng hợp theo Ví tiền và đối chiếu số dư
-**Cách tính số dư:**
-$$\text{Số dư hiện tại} = \text{Số dư ban đầu} + \sum \text{Khoản thu} - \sum \text{Khoản chi}$$
-$$\text{Số dư ban đầu} = \text{Số dư trong file wallets.dat} - (\sum \text{Khoản thu} - \sum \text{Khoản chi})$$
+| Loại giao dịch | Mã loại | Số giao dịch | Danh sách mã giao dịch (ID) | Tổng số tiền (VNĐ) | Tỷ trọng dòng tiền |
+|---|:---:|:---:|---|---:|:---:|
+| **Khoản thu (Income)** | `1` | **12** | 1, 5, 6, 10, 11, 15, 19, 20, 24, 32, 33, 34 | 329.500.000 | 88,0% |
+| **Khoản chi (Expense)** | `2` | **22** | 2, 3, 4, 7, 8, 9, 12, 13, 14, 16, 17, 18, 21, 22, 23, 25, 26, 27, 28, 29, 30, 31 | 44.920.000 | 12,0% |
+| **TỔNG CỘNG** | - | **34** | Toàn bộ 34 giao dịch | **374.420.000** | **100%** |
 
-| Mã ví | Tên ví | Số GD | Tổng thu (VNĐ) | Tổng chi (VNĐ) | Số dư ban đầu (VNĐ) | Số dư hiện tại (`wallets.dat`) |
-|:---:|---|:---:|---:|---:|---:|---:|
-| 1 | Tiền mặt | 8 | 100.000.000 | 4.750.000 | 500.000 | **95.750.000** |
-| 2 | Techcombank | 17 | 129.500.000 | 37.000.000 | 5.000.000 | **97.500.000** |
-| 3 | Ví MoMo | 9 | 100.000.000 | 3.170.000 | 1.000.000 | **97.830.000** |
-| 4 | TP BANK | 0 | 0 | 0 | 100.000.000 | **100.000.000** |
-| **TỔNG** | - | **34** | **329.500.000** | **44.920.000** | **106.500.000** | **391.080.000** |
+### 3. Tổng hợp theo Ví tiền và nguồn gốc Số dư ban đầu
 
-> **Kiểm chứng:** $\sum \text{Số dư ban đầu} (106.500.000) + \text{Chênh lệch thu chi} (284.580.000) = \mathbf{391.080.000\text{ đ}}$. Khớp chính xác $100\%$ với tổng số dư hiển thị của cả 4 ví.
+#### Nguồn gốc và phương pháp xác định Số dư ban đầu:
+- Trong tệp `wallets.dat`, cấu trúc mỗi dòng gồm 4 trường: `id|name|type|balance`. **Trường thứ 4 (`balance`) lưu SỐ DƯ HIỆN TẠI**, tệp `wallets.dat` **hoàn toàn không có trường riêng lưu số dư ban đầu**.
+- Số dư ban đầu của từng ví được **tính ngược** từ số dư hiện tại trong `wallets.dat` và toàn bộ lịch sử giao dịch tương ứng trong `transactions.dat` (theo đúng nguyên lý của hàm `getWalletInitialBalance` trong code nghiệp vụ):
+  $$\text{Số dư ban đầu của ví} = \text{Số dư hiện tại (trường 4 wallets.dat)} - \left(\sum \text{Khoản thu của ví} - \sum \text{Khoản chi của ví}\right)$$
+
+#### Bảng tổng hợp chi tiết toàn bộ các ví (kể cả ví chưa phát sinh giao dịch):
+| Mã ví | Tên ví | Số GD | Tổng thu (VNĐ) | Tổng chi (VNĐ) | Chênh lệch dòng tiền | Số dư ban đầu (tính ngược) | Số dư hiện tại (`wallets.dat`) |
+|:---:|---|:---:|---:|---:|---:|---:|---:|
+| 1 | Tiền mặt | 8 | 100.000.000 | 4.750.000 | +95.250.000 | **500.000** | **95.750.000** |
+| 2 | Techcombank | 17 | 129.500.000 | 37.000.000 | +92.500.000 | **5.000.000** | **97.500.000** |
+| 3 | Ví MoMo | 9 | 100.000.000 | 3.170.000 | +96.830.000 | **1.000.000** | **97.830.000** |
+| 4 | TP BANK *(chưa có GD)* | 0 | 0 | 0 | 0 | **100.000.000** | **100.000.000** |
+| **TỔNG** | *(Cả 4 ví)* | **34** | **329.500.000** | **44.920.000** | **+284.580.000** | **106.500.000** | **391.080.000** |
+
+> **Kiểm chứng cân đối tài chính:**  
+> $$\sum \text{Số dư ban đầu } (106.500.000) + \text{Dòng tiền ròng toàn hệ thống } (284.580.000) = \mathbf{391.080.000\text{ đ}}$$  
+> Số liệu khớp chính xác $100\%$ với tổng số dư hiển thị trên toàn bộ các trang giao diện.
 
 ### 4. Tổng hợp theo Danh mục thu chi
 | Mã DM | Tên danh mục | Loại | Số GD | Tổng tiền phát sinh (VNĐ) | Tỷ trọng trong nhóm |
@@ -296,18 +303,23 @@ $$\text{Số dư ban đầu} = \text{Số dư trong file wallets.dat} - (\sum \t
 
 ## E. ĐỐI CHIẾU SỐ LIỆU VỚI GIAO DIỆN VÀ KIỂM THỬ
 
-| Hạng mục đối chiếu | Số liệu tính từ file .dat | Số liệu trên Giao diện / Test | Kết quả đối chiếu |
+| Hạng mục đối chiếu | Số liệu tính từ file .dat | Số liệu trên Giao diện / Code kiểm thử | Kết quả đối chiếu |
 |---|---|---|:---:|
-| **Tổng thu toàn bộ** | 329.500.000 đ | Trang Giao dịch (ảnh người dùng gửi): 329.500.000 đ | **Khớp 100%** |
-| **Tổng chi toàn bộ** | 44.920.000 đ | Trang Giao dịch (ảnh người dùng gửi): 44.920.000 đ | **Khớp 100%** |
-| **Tổng số giao dịch** | 34 giao dịch | Trang Giao dịch (ảnh người dùng gửi): 34 giao dịch | **Khớp 100%** |
-| **Thu Tháng 10/2026** | 3.500.000 đ | Trang Tổng quan (ảnh người dùng gửi): 3.500.000 đ | **Khớp 100%** |
-| **Chi Tháng 10/2026** | 30.230.000 đ | Trang Tổng quan (ảnh người dùng gửi): 30.230.000 đ | **Khớp 100%** |
-| **Chênh lệch Tháng 10/2026** | -26.730.000 đ | Trang Tổng quan (ảnh người dùng gửi): -26.730.000 đ | **Khớp 100%** |
+| **Tổng số giao dịch** | 34 giao dịch | Trang Giao dịch (ảnh chụp): 34 giao dịch | **Khớp 100%** |
+| **Số khoản thu (Type = 1)** | 12 giao dịch (ID: 1, 5, 6, 10, 11, 15, 19, 20, 24, 32, 33, 34) | Bộ lọc Thu nhập: 12 giao dịch | **Khớp 100%** |
+| **Số khoản chi (Type = 2)** | 22 giao dịch (ID: 2, 3, 4, 7, 8, 9, 12, 13, 14, 16, 17, 18, 21, 22, 23, 25, 26, 27, 28, 29, 30, 31) | Bộ lọc Chi tiêu: 22 giao dịch | **Khớp 100%** |
+| **Tổng thu toàn bộ** | 329.500.000 đ | Trang Giao dịch (ảnh chụp): 329.500.000 đ | **Khớp 100%** |
+| **Tổng chi toàn bộ** | 44.920.000 đ | Trang Giao dịch (ảnh chụp): 44.920.000 đ | **Khớp 100%** |
+| **Thu Tháng 10/2026** | 3.500.000 đ | Trang Tổng quan (ảnh chụp): 3.500.000 đ | **Khớp 100%** |
+| **Chi Tháng 10/2026** | 30.230.000 đ | Trang Tổng quan (ảnh chụp): 30.230.000 đ | **Khớp 100%** |
+| **Chênh lệch Tháng 10/2026** | -26.730.000 đ | Trang Tổng quan (ảnh chụp): -26.730.000 đ | **Khớp 100%** |
 | **Thu Tháng 11/2026** | 300.000.000 đ | Trang Thống kê (`04_statistics.png`): 300.000.000 đ | **Khớp 100%** |
 | **Chi Tháng 11/2026** | 20.000 đ | Trang Thống kê (`04_statistics.png`): 20.000 đ | **Khớp 100%** |
-| **Số dư Ví Tiền mặt** | 95.750.000 đ | Dialog Thêm GD (`09_transaction_dialog.png`): 95.750.000 đ | **Khớp 100%** |
-| **Số dư Ví Techcombank** | 97.500.000 đ | Dialog Sửa GD (`09_transaction_dialog_edit.png`): 97.500.000 đ | **Khớp 100%** |
+| **Số dư Ví 1: Tiền mặt** | 95.750.000 đ | Code (`findById(1)->getBalance()`) & Dialog Thêm GD: 95.750.000 đ | **Khớp 100%** |
+| **Số dư Ví 2: Techcombank** | 97.500.000 đ | Code (`findById(2)->getBalance()`) & Dialog Sửa GD: 97.500.000 đ | **Khớp 100%** |
+| **Số dư Ví 3: Ví MoMo** | 97.830.000 đ | Code (`findById(3)->getBalance()`) & Trang Ví tiền: 97.830.000 đ | **Khớp 100%** |
+| **Số dư Ví 4: TP BANK** | 100.000.000 đ | Code (`findById(4)->getBalance()`) & Trang Ví tiền: 100.000.000 đ | **Khớp 100%** |
+| **Tổng số dư toàn bộ 4 ví** | 391.080.000 đ | Code (`walletManager.getTotalBalance()`) & KPI Card: 391.080.000 đ | **Khớp 100%** |
 
 ---
 

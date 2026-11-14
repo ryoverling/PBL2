@@ -16,6 +16,30 @@ Máy phát triển dùng Qt `C:/Qt/6.12.0/mingw_64` và MinGW `C:/Qt/Tools/mingw
 
 Khi chưa có `data/users.dat`, hãy đăng ký tài khoản trong ứng dụng trước khi đăng nhập. Dữ liệu tài khoản, ví và giao dịch được lưu local trong thư mục `data/` và không được đưa lên Git.
 
+## Dữ liệu demo (dành cho đánh giá và bảo vệ đồ án)
+
+Dự án cung cấp sẵn một bộ dữ liệu mẫu chuẩn hóa trong thư mục `data_demo/` để thầy cô và người chấm có thể trải nghiệm ngay đầy đủ tính năng mà không cần tự nhập liệu từ đầu:
+
+### Cách kích hoạt bộ dữ liệu demo
+1. Sao chép nội dung thư mục `data_demo/` vào thư mục `data/` của ứng dụng:
+   - File `data_demo/users.dat` sao chép thành `data/users.dat`.
+   - Thư mục `data_demo/demo/` sao chép thành `data/demo/`.
+2. Khởi chạy ứng dụng (`.\run.bat`).
+3. Đăng nhập với tài khoản:
+   - **Tên đăng nhập:** `demo`
+   - **Mật khẩu:** `123456` *(Lưu ý: Mật khẩu lưu nguyên văn trong users.dat, đây là giới hạn đã biết trong phạm vi đồ án năm 2)*.
+
+### Bộ dữ liệu mẫu bao gồm:
+- **3 ví tiền:** Tiền mặt (CASH, số dư hiện tại 430.000 đ), Techcombank (BANK, số dư hiện tại 27.050.000 đ), Ví MoMo (EWALLET, số dư hiện tại 120.000 đ).
+- **8 danh mục:** 3 danh mục Thu (Lương tháng, Thưởng dự án, Thu nhập phụ) và 5 danh mục Chi (Tiền phòng trọ, Ăn uống, Đi lại & Xăng xe, Học tập & Sách vở, Mua sắm & Đồ dùng).
+- **18 giao dịch:** Phân bổ hợp lý trong tháng 10 và tháng 11/2026, đảm bảo số dư mọi ví không bao giờ âm ở bất kỳ thời điểm nào.
+- **Kế hoạch tài chính:** Ngân sách tháng 10.000.000 đ và mục tiêu tiết kiệm "Mua laptop mới".
+
+### 3 tình huống thử nghiệm tính năng ngăn số dư âm:
+1. **Thêm giao dịch chi vượt số dư hiện tại:** Chọn ví `Tiền mặt` (hiện có 430.000 đ), nhập một khoản chi `500.000 đ` vào ngày hiện tại -> Hệ thống lập tức từ chối và thông báo số dư không đủ.
+2. **Xóa khoản thu trong quá khứ làm âm tương lai:** Vào trang Giao dịch, tìm giao dịch thu `#13` ngày `2026-11-09` (Bán giáo trình cũ +500.000 đ vào ví Tiền mặt). Nhấn nút Xóa -> Hệ thống từ chối xóa vì nếu xóa, số dư của ví Tiền mặt tại các ngày sau đó sẽ bị âm.
+3. **Sửa giao dịch chuyển sang ví không đủ tiền:** Chọn giao dịch chi `#14` ngày `2026-11-10` (Đăng ký thi chứng chỉ 800.000 đ đang trừ ở ví Techcombank). Bấm Sửa và đổi ví nhận chi sang `Ví MoMo` (chỉ có 120.000 đ) -> Hệ thống từ chối cập nhật vì ví MoMo không đủ khả năng chi trả.
+
 ## Chức năng hiện có
 
 - Đăng nhập, đăng ký, đổi mật khẩu và đăng xuất qua `UserManager`.

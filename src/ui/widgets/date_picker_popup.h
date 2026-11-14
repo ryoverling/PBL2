@@ -64,6 +64,7 @@ private:
     void updateDaysGrid();
     void updateMonthsGrid();
     void updateYearsGrid();
+    static QString getDayButtonStyle(bool isSelected, bool isCurrentMonth, bool isSunday, bool isToday);
 
     void setViewMode(ViewMode mode);
     static QIcon makeChevronIcon(bool left);

@@ -175,6 +175,27 @@ QPixmap createCalendarBadge(int size) {
     return pix;
 }
 
+QPixmap createExchangeBadge(int size) {
+    QPixmap pix(size, size);
+    pix.fill(Qt::transparent);
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+    p.setPen(Qt::NoPen);
+    p.setBrush(QColor("#EBF3FE"));
+    p.drawRoundedRect(0, 0, size, size, 12, 12);
+    p.setPen(QPen(QColor("#1E6FFF"), 2.2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    int cy = size / 2;
+    int l = size * 11 / 44;
+    int r = size * 33 / 44;
+    p.drawLine(l, cy - 4, r, cy - 4);
+    p.drawLine(r - 5, cy - 8, r, cy - 4);
+    p.drawLine(r - 5, cy, r, cy - 4);
+    p.drawLine(r, cy + 4, l, cy + 4);
+    p.drawLine(l + 5, cy, l, cy + 4);
+    p.drawLine(l + 5, cy + 8, l, cy + 4);
+    return pix;
+}
+
 QPixmap createPlanBadge(const QString& type, int size) {
     QPixmap pix(size, size);
     pix.fill(Qt::transparent);

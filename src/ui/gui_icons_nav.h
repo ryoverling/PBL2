@@ -33,12 +33,11 @@ QIcon createTagIcon(const QColor& color = QColor("#5B6B8C"));
 QIcon createArrowUpIcon(const QColor& color = QColor("#0E8F4F"));
 QIcon createArrowDownIcon(const QColor& color = QColor("#E0173D"));
 
-// Nút reset, logout, mắt, khóa, badge tiêu đề giao dịch
+// Nút reset, logout, mắt, khóa
 QPixmap createResetIcon(int size = 16, const QColor& color = QColor("#1E6FFF"));
 QPixmap createLogoutIcon(int size = 16, const QColor& color = QColor("#E0173D"));
 QPixmap createLockActionIcon(int size = 16, const QColor& color = Qt::white);
 QPixmap createEyeActionIcon(bool slash = false, int size = 18, const QColor& color = QColor("#5B6B8C"));
-QPixmap createExchangeBadge(int size = 44);
 
 } // namespace GuiIcons
 

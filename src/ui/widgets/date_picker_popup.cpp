@@ -384,6 +384,22 @@ void DatePickerPopup::updateHeader() {
     }
 }
 
+QString DatePickerPopup::getDayButtonStyle(bool isSelected, bool isCurrentMonth, bool isSunday, bool isToday) {
+    if (isSelected) {
+        return "QPushButton { background-color: #1E6FFF; color: #FFFFFF; font-weight: 700; border-radius: 10px; border: none; font-size: 14px; padding: 0; }";
+    }
+    if (!isCurrentMonth) {
+        return "QPushButton { background-color: transparent; color: #A0AEC0; border: none; border-radius: 10px; font-size: 14px; padding: 0; } QPushButton:hover { background-color: #EBF3FE; color: #1E6FFF; }";
+    }
+    if (isSunday) {
+        return "QPushButton { background-color: transparent; color: #E0173D; font-weight: 600; border: none; border-radius: 10px; font-size: 14px; padding: 0; } QPushButton:hover { background-color: #EBF3FE; color: #1E6FFF; }";
+    }
+    if (isToday) {
+        return "QPushButton { background-color: #EBF3FE; color: #1E6FFF; font-weight: 700; border-radius: 10px; border: 1.5px solid #1E6FFF; font-size: 14px; padding: 0; } QPushButton:hover { background-color: #DCE8FA; }";
+    }
+    return "QPushButton { background-color: transparent; color: #0B2A6B; font-weight: 500; border: none; border-radius: 10px; font-size: 14px; padding: 0; } QPushButton:hover { background-color: #EBF3FE; color: #1E6FFF; }";
+}
+
 void DatePickerPopup::updateDaysGrid() {
     QDate firstOfMonth(displayYear, displayMonth, 1);
     int firstCol = firstOfMonth.dayOfWeek() - 1;
@@ -401,21 +417,7 @@ void DatePickerPopup::updateDaysGrid() {
         bool isToday = (d == today);
         bool isSunday = (d.dayOfWeek() == 7);
 
-        QString style;
-        if (isSelected) {
-            style = "QPushButton { background-color: #1E6FFF; color: #FFFFFF; font-weight: 700; border-radius: 10px; border: none; font-size: 14px; padding: 0; }";
-        } else if (!isCurrentMonth) {
-            // Ngày tháng khác màu xám nhạt (#A0AEC0)
-            style = "QPushButton { background-color: transparent; color: #A0AEC0; border: none; border-radius: 10px; font-size: 14px; padding: 0; } QPushButton:hover { background-color: #EBF3FE; color: #1E6FFF; }";
-        } else if (isSunday) {
-            // Chủ nhật màu đỏ (#E0173D)
-            style = "QPushButton { background-color: transparent; color: #E0173D; font-weight: 600; border: none; border-radius: 10px; font-size: 14px; padding: 0; } QPushButton:hover { background-color: #EBF3FE; color: #1E6FFF; }";
-        } else if (isToday) {
-            style = "QPushButton { background-color: #EBF3FE; color: #1E6FFF; font-weight: 700; border-radius: 10px; border: 1.5px solid #1E6FFF; font-size: 14px; padding: 0; } QPushButton:hover { background-color: #DCE8FA; }";
-        } else {
-            style = "QPushButton { background-color: transparent; color: #0B2A6B; font-weight: 500; border: none; border-radius: 10px; font-size: 14px; padding: 0; } QPushButton:hover { background-color: #EBF3FE; color: #1E6FFF; }";
-        }
-        btn->setStyleSheet(style);
+        btn->setStyleSheet(getDayButtonStyle(isSelected, isCurrentMonth, isSunday, isToday));
     }
 }
 

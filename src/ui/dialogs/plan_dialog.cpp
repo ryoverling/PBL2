@@ -49,7 +49,8 @@ bool PlanDialog::savePlanToFile(const std::string& userDir, const BudgetPlan& pl
 
     file << "budget|" << plan.monthlyBudget << "\n";
     file << "goal|" << plan.goalName << "|" << plan.currentSaved << "|" << plan.targetAmount << "|" << plan.targetDate << "\n";
-    return true;
+    file.flush();
+    return file.good();
 }
 
 PlanDialog::PlanDialog(const BudgetPlan& initialPlan, QWidget* parent)

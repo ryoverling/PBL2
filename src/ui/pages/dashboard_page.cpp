@@ -248,8 +248,12 @@ void DashboardPage::on_calDaily_dayClicked(int day) {
 void DashboardPage::on_btnEditPlan_clicked() {
     PlanDialog dlg(currentPlan, this);
     if (dlg.exec() == QDialog::Accepted) {
-        currentPlan = dlg.getPlan();
-        PlanDialog::savePlanToFile(dataDirectory, currentPlan);
+        BudgetPlan newPlan = dlg.getPlan();
+        if (!PlanDialog::savePlanToFile(dataDirectory, newPlan)) {
+            UiHelper::showError(this, "Không thể lưu kế hoạch tài chính vào tệp.");
+            return;
+        }
+        currentPlan = newPlan;
         updatePlanCard();
         if (mainWindow) mainWindow->refreshAllPages();
     }

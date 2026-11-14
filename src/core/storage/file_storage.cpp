@@ -19,7 +19,8 @@ void ensureParentDir(const std::string& filePath) {
     } catch (...) {}
 }
 
-// Ghi file nguyên tử (atomic): ghi vào file .tmp rồi đổi tên (rename/replace)
+// Ghi tệp an toàn qua file tạm (.tmp) rồi đổi tên (rename) để giảm thiểu rủi ro tệp bị hỏng dở dang.
+// Lưu ý: Trên Windows, rename sau remove chưa đảm bảo tính nguyên tử (atomic) tuyệt đối ở mức filesystem.
 bool commitAtomicFile(const std::string& targetPath, const std::string& content) {
     ensureParentDir(targetPath);
     std::string tmpPath = targetPath + ".tmp";

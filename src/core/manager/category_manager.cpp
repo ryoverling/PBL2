@@ -1,5 +1,6 @@
 #include "category_manager.h"
 #include <cctype>
+#include <vector>
 
 // So sánh 2 chuỗi không phân biệt hoa thường
 static bool equalsIgnoreCase(const std::string& a, const std::string& b) {
@@ -102,21 +103,40 @@ bool CategoryManager::deleteCategory(int id, bool isUsed) {
     // Nếu danh mục đang được sử dụng ở giao dịch thì từ chối xóa
     if (isUsed) return false;
 
-    return categories.removeIf([id](const Category& c) {
-        return c.getId() == id;
-    });
+    std::vector<Category> kept;
+    bool found = false;
+    for (Node<Category>* cur = categories.getHead(); cur != nullptr; cur = cur->next) {
+        if (!found && cur->data.getId() == id) {
+            found = true;
+        } else {
+            kept.push_back(cur->data);
+        }
+    }
+    if (!found) return false;
+
+    categories.clear();
+    for (size_t i = 0; i < kept.size(); ++i) {
+        categories.pushBack(kept[i]);
+    }
+    return true;
 }
 
 Category* CategoryManager::findById(int id) {
-    return categories.findIf([id](const Category& c) {
-        return c.getId() == id;
-    });
+    for (Node<Category>* cur = categories.getHead(); cur != nullptr; cur = cur->next) {
+        if (cur->data.getId() == id) {
+            return &cur->data;
+        }
+    }
+    return nullptr;
 }
 
 const Category* CategoryManager::findById(int id) const {
-    return categories.findIf([id](const Category& c) {
-        return c.getId() == id;
-    });
+    for (Node<Category>* cur = categories.getHead(); cur != nullptr; cur = cur->next) {
+        if (cur->data.getId() == id) {
+            return &cur->data;
+        }
+    }
+    return nullptr;
 }
 
 size_t CategoryManager::getCount() const {

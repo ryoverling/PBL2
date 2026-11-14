@@ -1,5 +1,6 @@
 #include "wallet_manager.h"
 #include <cctype>
+#include <vector>
 
 // So sánh 2 chuỗi không phân biệt hoa thường
 static bool equalsIgnoreCase(const std::string& a, const std::string& b) {
@@ -60,21 +61,40 @@ bool WalletManager::deleteWallet(int id, bool isUsed) {
     // Nếu ví đang có giao dịch sử dụng thì từ chối xóa
     if (isUsed) return false;
 
-    return wallets.removeIf([id](const Wallet& w) {
-        return w.getId() == id;
-    });
+    std::vector<Wallet> kept;
+    bool found = false;
+    for (Node<Wallet>* cur = wallets.getHead(); cur != nullptr; cur = cur->next) {
+        if (!found && cur->data.getId() == id) {
+            found = true;
+        } else {
+            kept.push_back(cur->data);
+        }
+    }
+    if (!found) return false;
+
+    wallets.clear();
+    for (size_t i = 0; i < kept.size(); ++i) {
+        wallets.pushBack(kept[i]);
+    }
+    return true;
 }
 
 Wallet* WalletManager::findById(int id) {
-    return wallets.findIf([id](const Wallet& w) {
-        return w.getId() == id;
-    });
+    for (Node<Wallet>* cur = wallets.getHead(); cur != nullptr; cur = cur->next) {
+        if (cur->data.getId() == id) {
+            return &cur->data;
+        }
+    }
+    return nullptr;
 }
 
 const Wallet* WalletManager::findById(int id) const {
-    return wallets.findIf([id](const Wallet& w) {
-        return w.getId() == id;
-    });
+    for (Node<Wallet>* cur = wallets.getHead(); cur != nullptr; cur = cur->next) {
+        if (cur->data.getId() == id) {
+            return &cur->data;
+        }
+    }
+    return nullptr;
 }
 
 long long WalletManager::getTotalBalance() const {

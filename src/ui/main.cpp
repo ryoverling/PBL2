@@ -16,6 +16,7 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QDir>
+#include <QMessageBox>
 
 namespace fs = std::filesystem;
 
@@ -56,7 +57,9 @@ static std::string prepareUserDir(MoneyManager& mm, const std::string& dataDir) 
 
 static void captureScreenshots(QApplication& app, MoneyManager& mm, const std::string& dataDir, const QString& screenshotTarget) {
     if (!mm.login("admin", "123456")) {
-        mm.login("thang", "552007");
+        if (!mm.login("thang", "552007")) {
+            mm.login("demo", "123456");
+        }
     }
     std::string userDir = prepareUserDir(mm, dataDir);
 
@@ -186,6 +189,17 @@ static void captureScreenshots(QApplication& app, MoneyManager& mm, const std::s
     rDialog.grab().save(outDir + "/13_register_dialog.png");
     rDialog.close();
 
+    // 14. Hop thoai loi chan so du
+    QMessageBox errBox(&mainWin);
+    errBox.setWindowTitle(QString::fromUtf8("Lỗi"));
+    errBox.setText(QString::fromUtf8("Không thể thêm giao dịch (số dư ví Tiền mặt không đủ hoặc làm âm số dư trong tương lai)."));
+    errBox.setIcon(QMessageBox::Warning);
+    errBox.show();
+    app.processEvents();
+    errBox.grab().save(outDir + "/14_error_balance_dialog.png");
+    if (screenshotTarget == "100") errBox.grab().save(baseDir + "/14_error_balance_dialog.png");
+    errBox.close();
+
     if (logFile.open(QIODevice::Append | QIODevice::Text)) {
         logFile.write("All screenshots saved successfully!\n");
         logFile.close();
@@ -215,6 +229,11 @@ int main(int argc, char *argv[]) {
     app.setQuitOnLastWindowClosed(false);
     initStyle(app);
     std::string dataDir = DATA_DIR;
+    for (const QString& arg : app.arguments()) {
+        if (arg.startsWith("--data-dir=")) {
+            dataDir = arg.mid(11).toStdString();
+        }
+    }
     MoneyManager mm;
     mm.loadUsers(dataDir);
 

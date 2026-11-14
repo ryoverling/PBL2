@@ -1141,6 +1141,7 @@ static long long checkStep53Categories(const LinkedList<CategoryExpense>& list) 
     assert(list.getSize() == 3);
     long long sum = 0;
     int index = 0;
+    std::cout << "\n--- Thong ke theo danh muc (Thang 10/2026) ---\n";
     std::cout << "Danh muc | Tong chi | Ty trong\n";
     for (const Node<CategoryExpense>* cur = list.getHead(); cur; cur = cur->next) {
         const CategoryExpense& row = cur->data;
@@ -1272,6 +1273,7 @@ static void checkStep54Filters(MoneyManager& mm) {
     assert(mm.getFilteredTransactions(list, Date(2, 10, 2026), Date(4, 10, 2026), tx->getWalletId(), tx->getCategoryId(), 2));
     assert(list.getSize() == 1 && list.getHead()->data->getAmount() == 15000);
     std::cout << "Kem vi va danh muc Di lai: " << formatMoney(list.getHead()->data->getAmount()) << "\n";
+    std::cout << "Loc theo danh muc (ID " << tx->getCategoryId() << " - Di lai): tim thay " << list.getSize() << " giao dich hop le [15.000 d]\n";
     assert(!mm.getFilteredTransactions(list, Date(4, 10, 2026), Date(2, 10, 2026)));
     assert(list.isEmpty());
     std::cout << "Khoang ngay dao nguoc: tu choi, " << list.getSize() << " dong\n";

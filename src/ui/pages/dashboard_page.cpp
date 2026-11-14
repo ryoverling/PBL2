@@ -1,6 +1,8 @@
 #include "dashboard_page.h"
 #include "ui_dashboard_page.h"
 #include "../gui_helpers.h"
+#include "../gui_icons_kpi.h"
+#include "../gui_icons_nav.h"
 #include "../main_window.h"
 #include "../dialogs/transaction_dialog.h"
 #include "../dialogs/day_detail_dialog.h"
@@ -31,17 +33,17 @@ DashboardPage::DashboardPage(MoneyManager& mm, const std::string& dataDir, MainW
     ui->setupUi(this);
 
     ui->btnAddTransaction->setText(QString::fromUtf8("Thêm giao dịch"));
-    ui->btnAddTransaction->setIcon(UiHelper::createPlusIcon());
+    ui->btnAddTransaction->setIcon(GuiIcons::createPlusIcon());
 
     ui->btnViewAll->setText(QString::fromUtf8("Xem tất cả →"));
     ui->btnViewAll->setProperty("role", "ghost");
 
-    ui->btnEditPlan->setIcon(UiHelper::createEditIcon(QColor("#1E6FFF")));
+    ui->btnEditPlan->setIcon(GuiIcons::createEditIcon(QColor("#1E6FFF")));
 
-    ui->lblIncomeSparkline->setPixmap(UiHelper::createSparkline(true, 56, 26));
-    ui->lblExpenseSparkline->setPixmap(UiHelper::createSparkline(false, 56, 26));
-    ui->lblBudgetIcon->setPixmap(UiHelper::createPlanBadge("budget", 24));
-    ui->lblGoalIcon->setPixmap(UiHelper::createPlanBadge("goal", 24));
+    ui->lblIncomeSparkline->setPixmap(GuiIcons::createSparkline(true, 56, 26));
+    ui->lblExpenseSparkline->setPixmap(GuiIcons::createSparkline(false, 56, 26));
+    ui->lblBudgetIcon->setPixmap(GuiIcons::createPlanBadge("budget", 24));
+    ui->lblGoalIcon->setPixmap(GuiIcons::createPlanBadge("goal", 24));
 
     ui->prgBudget->setFixedHeight(12);
     ui->prgGoal->setFixedHeight(12);
@@ -84,7 +86,7 @@ void DashboardPage::addRecentRow(const Transaction* tx) {
     QTableWidgetItem* dateItem = new QTableWidgetItem(UiHelper::formatDate(tx->getDate()));
     dateItem->setForeground(QColor("#5B6B8C"));
 
-    QTableWidgetItem* detailItem = new QTableWidgetItem(UiHelper::createCategoryCircleIcon(catName, 28), detail);
+    QTableWidgetItem* detailItem = new QTableWidgetItem(GuiIcons::createCategoryCircleIcon(catName, 28), detail);
     detailItem->setForeground(QColor("#0B2A6B"));
     QFont fDetail = detailItem->font();
     fDetail.setBold(true);

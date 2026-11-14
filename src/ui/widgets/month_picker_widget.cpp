@@ -1,6 +1,7 @@
 #include "month_picker_widget.h"
 #include "date_picker_popup.h"
 #include "../gui_helpers.h"
+#include "../gui_icons_nav.h"
 #include <QAction>
 #include <QEvent>
 #include <QMouseEvent>
@@ -56,7 +57,7 @@ void MonthPickerWidget::setupUi() {
     edtDisplay->setCursor(Qt::PointingHandCursor);
     edtDisplay->setAlignment(Qt::AlignCenter);
 
-    QAction* calAction = edtDisplay->addAction(UiHelper::createCalendarIcon(QColor("#1E6FFF")), QLineEdit::TrailingPosition);
+    QAction* calAction = edtDisplay->addAction(GuiIcons::createCalendarIcon(QColor("#1E6FFF")), QLineEdit::TrailingPosition);
     calAction->setToolTip("Mở bộ chọn lịch tháng");
     connect(calAction, &QAction::triggered, this, &MonthPickerWidget::onFieldClicked);
 

@@ -1,13 +1,14 @@
 #include "date_picker_field.h"
 #include "date_picker_popup.h"
 #include "../gui_helpers.h"
+#include "../gui_icons_nav.h"
 #include <QMouseEvent>
 #include <QFocusEvent>
 #include <QKeyEvent>
 #include <QApplication>
 
 QIcon DatePickerField::createCalendarSvgIcon(const QColor& color) {
-    return UiHelper::createCalendarIcon(color);
+    return GuiIcons::createCalendarIcon(color);
 }
 
 DatePickerField::DatePickerField(QWidget* parent)

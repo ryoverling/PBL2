@@ -2,6 +2,7 @@
 #include "ui_transaction_page.h"
 #include "../gui_helpers.h"
 #include "../gui_icons_kpi.h"
+#include "../gui_icons_nav.h"
 #include "../gui_icons_wallet.h"
 #include "../../core/app/money_manager.h"
 #include <QSignalBlocker>
@@ -18,7 +19,7 @@ void TransactionPage::loadWalletFilter() {
     QSignalBlocker blocker(ui->cboWallet);
     int id = ui->cboWallet->currentData().toInt();
     ui->cboWallet->clear();
-    ui->cboWallet->addItem(UiHelper::createWalletIcon(), "Ví: Tất cả", 0);
+    ui->cboWallet->addItem(GuiIcons::createWalletIcon(), "Ví: Tất cả", 0);
     const LinkedList<Wallet>& wallets = moneyManager.getWalletManager().getWallets();
     for (const Node<Wallet>* cur = wallets.getHead(); cur; cur = cur->next) {
         QString wName = QString::fromStdString(cur->data.getName());
@@ -33,7 +34,7 @@ void TransactionPage::loadCategoryFilter() {
     QSignalBlocker blocker(ui->cboCategory);
     int id = ui->cboCategory->currentData().toInt();
     ui->cboCategory->clear();
-    ui->cboCategory->addItem(UiHelper::createTagIcon(), "Danh mục: Tất cả", 0);
+    ui->cboCategory->addItem(GuiIcons::createTagIcon(), "Danh mục: Tất cả", 0);
     const LinkedList<Category>& categories = moneyManager.getCategoryManager().getCategories();
     for (const Node<Category>* cur = categories.getHead(); cur; cur = cur->next) {
         QString cName = QString::fromStdString(cur->data.getName());
@@ -82,7 +83,7 @@ void TransactionPage::addTxRow(const Transaction* tx) {
     // Cột 4: Danh mục (Badge tròn màu pastel + tên)
     QString cName = category ? QString::fromStdString(category->getName()) : "Khác";
     QTableWidgetItem* catItem = new QTableWidgetItem(cName);
-    catItem->setIcon(UiHelper::createCategoryCircleIcon(cName, 24));
+    catItem->setIcon(GuiIcons::createCategoryCircleIcon(cName, 24));
     catItem->setForeground(QColor("#0B2A6B"));
 
     ui->tblTransactions->setItem(row, 0, type);

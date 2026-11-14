@@ -1,6 +1,7 @@
 #include "main_window.h"
 #include "ui_main_window.h"
 #include "gui_helpers.h"
+#include "gui_icons_nav.h"
 #include "../core/app/money_manager.h"
 #include "pages/dashboard_page.h"
 #include "pages/transaction_page.h"
@@ -18,7 +19,7 @@ MainWindow::MainWindow(MoneyManager& mm, const std::string& userDir, const std::
     UiHelper::setupWindowTheme(this);
 
     // Thiet lap Logo App va kich thuoc icon nav
-    ui->lblAppLogo->setPixmap(UiHelper::createAppLogoIcon(32).pixmap(32, 32));
+    ui->lblAppLogo->setPixmap(GuiIcons::createAppLogoIcon(32).pixmap(32, 32));
     QSize navIconSize(22, 22);
     ui->btnNavDashboard->setIconSize(navIconSize);
     ui->btnNavTransactions->setIconSize(navIconSize);
@@ -53,19 +54,19 @@ void MainWindow::updateNavButtons(int activeIndex) {
     QColor inactiveColor("#5B6B8C");
 
     ui->btnNavDashboard->setChecked(activeIndex == 0);
-    ui->btnNavDashboard->setIcon(UiHelper::createHomeNavIcon(activeIndex == 0 ? activeColor : inactiveColor));
+    ui->btnNavDashboard->setIcon(GuiIcons::createHomeNavIcon(activeIndex == 0 ? activeColor : inactiveColor));
 
     ui->btnNavTransactions->setChecked(activeIndex == 1);
-    ui->btnNavTransactions->setIcon(UiHelper::createExchangeNavIcon(activeIndex == 1 ? activeColor : inactiveColor));
+    ui->btnNavTransactions->setIcon(GuiIcons::createExchangeNavIcon(activeIndex == 1 ? activeColor : inactiveColor));
 
     ui->btnNavWallets->setChecked(activeIndex == 2);
-    ui->btnNavWallets->setIcon(UiHelper::createWalletNavIcon(activeIndex == 2 ? activeColor : inactiveColor));
+    ui->btnNavWallets->setIcon(GuiIcons::createWalletNavIcon(activeIndex == 2 ? activeColor : inactiveColor));
 
     ui->btnNavStats->setChecked(activeIndex == 3);
-    ui->btnNavStats->setIcon(UiHelper::createStatsNavIcon(activeIndex == 3 ? activeColor : inactiveColor));
+    ui->btnNavStats->setIcon(GuiIcons::createStatsNavIcon(activeIndex == 3 ? activeColor : inactiveColor));
 
     ui->btnNavSettings->setChecked(activeIndex == 4);
-    ui->btnNavSettings->setIcon(UiHelper::createSettingsNavIcon(activeIndex == 4 ? activeColor : inactiveColor));
+    ui->btnNavSettings->setIcon(GuiIcons::createSettingsNavIcon(activeIndex == 4 ? activeColor : inactiveColor));
 }
 
 void MainWindow::on_btnNavDashboard_clicked() {

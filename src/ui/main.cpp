@@ -16,7 +16,6 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QDir>
-#include <iostream>
 
 namespace fs = std::filesystem;
 

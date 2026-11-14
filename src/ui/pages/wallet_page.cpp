@@ -1,6 +1,7 @@
 #include "wallet_page.h"
 #include "ui_wallet_page.h"
 #include "../gui_helpers.h"
+#include "../gui_icons_nav.h"
 #include "../gui_icons_wallet.h"
 #include "../main_window.h"
 #include "../widgets/wallet_card.h"
@@ -20,16 +21,16 @@ WalletPage::WalletPage(MoneyManager& mm, const std::string& dataDir, MainWindow*
 
     // Thiết lập các nút hành động
     ui->btnAdd->setText(QString::fromUtf8("Thêm ví"));
-    ui->btnAdd->setIcon(UiHelper::createPlusIcon(Qt::white));
+    ui->btnAdd->setIcon(GuiIcons::createPlusIcon(Qt::white));
     ui->btnAdd->setIconSize(QSize(14, 14));
     ui->btnAdd->setCursor(Qt::PointingHandCursor);
 
-    ui->btnEdit->setIcon(UiHelper::createEditIcon(QColor("#0B2A6B")));
+    ui->btnEdit->setIcon(GuiIcons::createEditIcon(QColor("#0B2A6B")));
     ui->btnEdit->setIconSize(QSize(16, 16));
     ui->btnEdit->setToolTip("Chỉnh sửa ví đang chọn");
     ui->btnEdit->setCursor(Qt::PointingHandCursor);
 
-    ui->btnDelete->setIcon(UiHelper::createTrashIcon(QColor("#E0173D")));
+    ui->btnDelete->setIcon(GuiIcons::createTrashIcon(QColor("#E0173D")));
     ui->btnDelete->setIconSize(QSize(16, 16));
     ui->btnDelete->setToolTip("Xóa ví đang chọn");
     ui->btnDelete->setCursor(Qt::PointingHandCursor);

@@ -46,18 +46,18 @@ public:
 void TransactionPage::initHeaderAndActions() {
     ui->lblHeaderIcon->setPixmap(GuiIcons::createExchangeBadge(44));
     ui->btnAdd->setText(QString::fromUtf8("Thêm giao dịch"));
-    ui->btnAdd->setIcon(UiHelper::createPlusIcon(Qt::white));
+    ui->btnAdd->setIcon(GuiIcons::createPlusIcon(Qt::white));
     ui->btnAdd->setIconSize(QSize(14, 14));
     ui->btnAdd->setCursor(Qt::PointingHandCursor);
 
     ui->btnEdit->setText(QString::fromUtf8("Sửa"));
-    ui->btnEdit->setIcon(UiHelper::createEditIcon(QColor("#0B2A6B")));
+    ui->btnEdit->setIcon(GuiIcons::createEditIcon(QColor("#0B2A6B")));
     ui->btnEdit->setIconSize(QSize(16, 16));
     ui->btnEdit->setToolTip("Chỉnh sửa giao dịch đang chọn");
     ui->btnEdit->setCursor(Qt::PointingHandCursor);
 
     ui->btnDelete->setText(QString::fromUtf8("Xóa"));
-    ui->btnDelete->setIcon(UiHelper::createTrashIcon(QColor("#E0173D")));
+    ui->btnDelete->setIcon(GuiIcons::createTrashIcon(QColor("#E0173D")));
     ui->btnDelete->setIconSize(QSize(16, 16));
     ui->btnDelete->setToolTip("Xóa giao dịch đang chọn");
     ui->btnDelete->setCursor(Qt::PointingHandCursor);
@@ -92,9 +92,9 @@ void TransactionPage::initTableAndFilters() {
     ui->tblTransactions->horizontalHeaderItem(4)->setIcon(GuiIcons::createTagHeaderIcon());
     ui->tblTransactions->horizontalHeaderItem(5)->setIcon(GuiIcons::createNoteHeaderIcon());
 
-    ui->cboType->setItemIcon(0, UiHelper::createFilterIcon());
-    ui->cboType->setItemIcon(1, UiHelper::createArrowUpIcon());
-    ui->cboType->setItemIcon(2, UiHelper::createArrowDownIcon());
+    ui->cboType->setItemIcon(0, GuiIcons::createFilterIcon());
+    ui->cboType->setItemIcon(1, GuiIcons::createArrowUpIcon());
+    ui->cboType->setItemIcon(2, GuiIcons::createArrowDownIcon());
 
     ui->btnResetFilter->setIcon(GuiIcons::createResetIcon(14, QColor("#1E6FFF")));
     ui->btnResetFilter->setIconSize(QSize(14, 14));

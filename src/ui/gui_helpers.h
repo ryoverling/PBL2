@@ -6,9 +6,6 @@
 #include <QIcon>
 #include <QPixmap>
 #include "../core/utils/utils.h"
-#include "gui_icons_nav.h"
-#include "gui_icons_kpi.h"
-#include "gui_icons_wallet.h"
 #include <initializer_list>
 
 struct BalanceValidationResult;
@@ -63,29 +60,4 @@ namespace UiHelper {
     // Biểu tượng chuỗi danh mục và ví tiền
     QString getCategoryIcon(const QString& categoryName);
     QString getWalletIcon(const QString& walletName, int walletType = 0);
-
-    // Chuyển tiếp icon sang GuiIcons để tương thích mã gọi cũ
-    using GuiIcons::createAppLogoIcon;
-    using GuiIcons::createHomeNavIcon;
-    using GuiIcons::createExchangeNavIcon;
-    using GuiIcons::createWalletNavIcon;
-    using GuiIcons::createStatsNavIcon;
-    using GuiIcons::createSettingsNavIcon;
-    using GuiIcons::createUserIcon;
-    using GuiIcons::createLockIcon;
-    using GuiIcons::createRightArrowIcon;
-    using GuiIcons::createKeyIcon;
-    using GuiIcons::createLoginIllustration;
-    using GuiIcons::createPlusIcon;
-    using GuiIcons::createEditIcon;
-    using GuiIcons::createTrashIcon;
-    using GuiIcons::createCalendarIcon;
-    using GuiIcons::createFilterIcon;
-    using GuiIcons::createWalletIcon;
-    using GuiIcons::createTagIcon;
-    using GuiIcons::createArrowUpIcon;
-    using GuiIcons::createArrowDownIcon;
-    using GuiIcons::createSparkline;
-    using GuiIcons::createCategoryCircleIcon;
-    using GuiIcons::createPlanBadge;
 }

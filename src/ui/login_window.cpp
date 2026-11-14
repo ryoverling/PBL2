@@ -1,6 +1,8 @@
 #include "login_window.h"
 #include "ui_login_window.h"
 #include "gui_helpers.h"
+#include "gui_icons_nav.h"
+#include "gui_icons_wallet.h"
 #include "../core/app/money_manager.h"
 #include "dialogs/register_dialog.h"
 
@@ -11,11 +13,11 @@ LoginWindow::LoginWindow(MoneyManager& mm, const std::string& dataDir, QWidget *
     ui->lblError->clear();
 
     // Hinh minh hoa vi tien & icons giao dien dang nhap
-    ui->lblWelcomeArt->setPixmap(UiHelper::createLoginIllustration(200, 120));
-    ui->edtUsername->addAction(UiHelper::createUserIcon(QColor("#5B6B8C")), QLineEdit::LeadingPosition);
-    ui->edtPassword->addAction(UiHelper::createLockIcon(QColor("#5B6B8C")), QLineEdit::LeadingPosition);
-    ui->btnLogin->setIcon(UiHelper::createRightArrowIcon(Qt::white));
-    ui->btnRegister->setIcon(UiHelper::createKeyIcon(QColor("#1E6FFF")));
+    ui->lblWelcomeArt->setPixmap(GuiIcons::createLoginIllustration(200, 120));
+    ui->edtUsername->addAction(GuiIcons::createUserIcon(QColor("#5B6B8C")), QLineEdit::LeadingPosition);
+    ui->edtPassword->addAction(GuiIcons::createLockIcon(QColor("#5B6B8C")), QLineEdit::LeadingPosition);
+    ui->btnLogin->setIcon(GuiIcons::createRightArrowIcon(Qt::white));
+    ui->btnRegister->setIcon(GuiIcons::createKeyIcon(QColor("#1E6FFF")));
 }
 
 LoginWindow::~LoginWindow() {

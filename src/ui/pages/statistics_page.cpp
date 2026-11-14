@@ -114,7 +114,7 @@ void StatisticsPage::addCategoryRow(int index) {
     ui->tblCategories->insertRow(row);
 
     QString rawName = ui->donutWidget->sliceName(index);
-    QIcon icon = UiHelper::createCategoryCircleIcon(rawName, 26);
+    QIcon icon = GuiIcons::createCategoryCircleIcon(rawName, 26);
 
     QString displayName = rawName;
     if (index == 0) displayName += "  👑";

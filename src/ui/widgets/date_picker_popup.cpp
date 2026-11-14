@@ -1,5 +1,6 @@
 #include "date_picker_popup.h"
 #include "../gui_helpers.h"
+#include "../gui_icons_nav.h"
 #include <QDateEdit>
 #include <QLineEdit>
 #include <QAction>
@@ -28,7 +29,7 @@ QIcon DatePickerPopup::makeChevronIcon(bool left) {
 
 // Biểu tượng lịch chuyên dụng nằm bên phải trong ô
 QIcon DatePickerPopup::makeCalendarIcon() {
-    return UiHelper::createCalendarIcon(QColor("#1A6BEB"));
+    return GuiIcons::createCalendarIcon(QColor("#1A6BEB"));
 }
 
 namespace {

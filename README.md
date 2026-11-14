@@ -22,21 +22,21 @@ Khi chưa có `data/users.dat`, hãy đăng ký tài khoản trong ứng dụng 
 - Thêm, sửa, xóa ví; xem tổng số dư và các giao dịch. Giao dịch chi tiêu bị từ chối nếu làm số dư ví âm.
 - Thêm, sửa, xóa và lọc giao dịch theo ngày, ví, danh mục, loại; có thể nhập tên danh mục mới khi thêm giao dịch.
 - Dashboard và trang Statistics dùng chung `MoneyManager::getMonthlyTotals` → `StatUtils::getMonthlyTotals`. Biểu đồ 6 tháng và thống kê danh mục tái dùng tổng tháng; lịch hiển thị chi theo ngày.
-- Dữ liệu người dùng được đọc/ghi qua `FileStorage` trong thư mục `data/<username>/` bằng các tệp tin văn bản `.dat` (mỗi dòng một bản ghi, ngăn cách bằng dấu `|`). Dự án hoàn toàn lưu trữ file văn bản tuần tự, không dùng hệ quản trị cơ sở dữ liệu.
+- Dữ liệu người dùng được đọc/ghi qua `FileStorage` trong thư mục `data/<username>/` bằng các tệp tin văn bản `.dat` (mỗi dòng một bản ghi, ngăn cách bằng dấu `|`). Dự án hoàn toàn lưu trữ file văn bản tuần tự, không dùng hệ quản trị cơ sở dữ liệu. Khi đọc các tệp `.dat`, các dòng hỏng định dạng (thiếu trường, sai cú pháp) sẽ tự động bị bỏ qua để ứng dụng hoạt động an toàn và không bị crash.
 
 ### Cấu trúc phân tầng thực tế
 Chương trình được thiết kế theo 5 tầng phân định trách nhiệm rõ ràng:
 1. **Tầng Giao diện (UI)**: Xây dựng bằng Qt 6 Widgets, tiếp nhận tương tác người dùng, hiển thị dữ liệu và kích hoạt lệnh qua các cửa sổ (`LoginWindow`, `MainWindow`), trang con (`pages`), hộp thoại (`dialogs`) và widget tái sử dụng (`widgets`).
 2. **Tầng Điều phối trung tâm (`MoneyManager`)**: Làm đầu mối kết nối duy nhất giữa giao diện và nghiệp vụ, cung cấp các hàm dịch vụ (`addTransaction`, `updateTransaction`, `getMonthlyTotals`...) cho toàn bộ UI.
 3. **Tầng Quản lý nghiệp vụ chuyên trách (`Managers`)**:
-   - `UserManager`: Quản lý danh sách người dùng, đăng nhập, đăng ký, mã hóa mật khẩu đơn giản.
+   - `UserManager`: Quản lý danh sách người dùng, đăng nhập, đăng ký, đổi mật khẩu. Mật khẩu được lưu nguyên văn (plain text) trong `users.dat` (đây là giới hạn đã biết trong phạm vi đồ án năm 2, chưa áp dụng cơ chế băm bảo mật).
    - `WalletManager`: Quản lý danh sách ví, cập nhật số dư, nạp/rút tiền.
    - `CategoryManager`: Quản lý danh mục thu/chi, tự động tái dùng hoặc tạo mới.
    - `TransactionManager`: Quản lý giao dịch, thực thi quy tắc bất biến ngăn số dư âm qua `validateWalletTimeline`.
 4. **Tầng Mô hình & Cấu trúc dữ liệu (`Models & Structures`)**:
    - Các thực thể: `User`, `Wallet`, `Category`, và đa hình `Transaction` (`Income` / `Expense`).
    - Cấu trúc dữ liệu tự cài đặt: `LinkedList<T>` và thuật toán Selection Sort.
-5. **Tầng Lưu trữ tập tin (`FileStorage`)**: Đọc và ghi dữ liệu ra các file văn bản `.dat` tuần tự theo định dạng `trường1|trường2|...`.
+5. **Tầng Lưu trữ tập tin (`FileStorage`)**: Đọc và ghi dữ liệu ra các file văn bản `.dat` tuần tự theo định dạng `trường1|trường2|...`. Khi nạp dữ liệu, các dòng lỗi/hỏng được bỏ qua mà không làm gián đoạn việc đọc các bản ghi hợp lệ khác.
 
 ### Thống kê tệp tin mã nguồn
 - **Mã nguồn UI (66 tệp)**:

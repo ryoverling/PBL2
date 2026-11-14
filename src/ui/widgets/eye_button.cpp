@@ -29,7 +29,10 @@ void EyeButton::paintEvent(QPaintEvent *) {
     qreal rx = width() * 0.38;
     qreal ry = height() * 0.24;
 
-    QColor color = isDown() ? QColor("#1677FF") : (underMouse() ? QColor("#1677FF") : QColor("#64748B"));
+    QColor color = QColor("#64748B");
+    if (isDown() || underMouse()) {
+        color = QColor("#1677FF");
+    }
     drawEye(painter, cx, cy, rx, ry, color, isChecked());
 }
 

@@ -42,8 +42,18 @@ void CalendarWidget::drawHeaders(QPainter& p) {
 }
 
 void CalendarWidget::drawExpenseBadge(QPainter& p, const QRect& r, long long amount) {
-    QColor badgeBg = (amount < 100000) ? QColor("#E6FAF3") : (amount <= 500000) ? QColor("#FFF4E5") : QColor("#FEECEB");
-    QColor badgeText = (amount < 100000) ? QColor("#0E8F4F") : (amount <= 500000) ? QColor("#FF9F1A") : QColor("#E0173D");
+    QColor badgeBg;
+    QColor badgeText;
+    if (amount < 100000) {
+        badgeBg = QColor("#E6FAF3");
+        badgeText = QColor("#0E8F4F");
+    } else if (amount <= 500000) {
+        badgeBg = QColor("#FFF4E5");
+        badgeText = QColor("#FF9F1A");
+    } else {
+        badgeBg = QColor("#FEECEB");
+        badgeText = QColor("#E0173D");
+    }
 
     QString shortText = QString::fromStdString(formatShortMoney(amount));
     QFont font = p.font();
@@ -73,10 +83,23 @@ void CalendarWidget::drawCell(QPainter& p, const QRect& r, int day, const Date& 
     bool isSelected = (selectedDay == day);
 
     // Nền ô màu trắng, viền #DCE8FA. Nếu được chọn thì viền xanh đậm 2px
-    QColor bg = isSelected ? QColor("#F4F8FF") : isToday ? QColor("#EAF2FF") : QColor("#FFFFFF");
+    QColor bg = QColor("#FFFFFF");
+    if (isSelected) {
+        bg = QColor("#F4F8FF");
+    } else if (isToday) {
+        bg = QColor("#EAF2FF");
+    }
     p.setBrush(bg);
-    QColor edge = (isSelected || isToday) ? QColor("#1E6FFF") : (hoveredDay == day) ? QColor("#93C5FD") : QColor("#DCE8FA");
-    p.setPen(QPen(edge, (isSelected || isToday) ? 2 : 1));
+
+    QColor edge = QColor("#DCE8FA");
+    int penWidth = 1;
+    if (isSelected || isToday) {
+        edge = QColor("#1E6FFF");
+        penWidth = 2;
+    } else if (hoveredDay == day) {
+        edge = QColor("#93C5FD");
+    }
+    p.setPen(QPen(edge, penWidth));
     p.drawRoundedRect(r.adjusted(1, 1, -1, -1), 10, 10);
 
     // Số ngày ở góc trên bên trái

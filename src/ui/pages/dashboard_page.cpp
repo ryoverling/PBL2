@@ -150,7 +150,12 @@ void DashboardPage::updateBudgetProgress() {
     int clampedVal = qBound(0, static_cast<int>(pct), 100);
     ui->prgBudget->setValue(clampedVal);
 
-    const char* variant = (pct >= 100.0) ? "danger" : (pct >= 75.0) ? "warning" : "success";
+    const char* variant = "success";
+    if (pct >= 100.0) {
+        variant = "danger";
+    } else if (pct >= 75.0) {
+        variant = "warning";
+    }
     ui->prgBudget->setProperty("variant", variant);
     ui->prgBudget->style()->unpolish(ui->prgBudget);
     ui->prgBudget->style()->polish(ui->prgBudget);

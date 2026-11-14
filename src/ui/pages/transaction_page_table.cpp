@@ -63,7 +63,7 @@ void TransactionPage::addTxRow(const Transaction* tx) {
     // Cột 1: Số tiền (Bold, màu chuẩn prompt)
     QString prefix = income ? "↑ + " : "↓ - ";
     auto* amount = new QTableWidgetItem(prefix + UiHelper::formatMoneyVND(tx->getAmount()));
-    amount->setForeground(QColor(income ? "#0E8F4F" : "#E0173D"));
+    amount->setForeground(income ? UiHelper::colorIncome() : UiHelper::colorExpense());
     QFont amountFont = amount->font();
     amountFont.setBold(true);
     amount->setFont(amountFont);

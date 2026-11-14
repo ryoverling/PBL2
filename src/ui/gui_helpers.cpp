@@ -136,7 +136,6 @@ void showBalanceError(QWidget* parent, const BalanceValidationResult& res) {
     }
     QMessageBox box(QMessageBox::Warning, title,
                     QString::fromStdString(res.errorMessage), QMessageBox::Ok, parent);
-    box.setStyleSheet("QLabel { font-size: 13px; color: #102748; line-height: 140%; }");
     box.exec();
 }
 

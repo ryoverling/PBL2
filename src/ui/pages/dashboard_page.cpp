@@ -69,7 +69,7 @@ void DashboardPage::addRecentRow(const Transaction* tx) {
 
     QString amountPrefix = income ? "↑ + " : "↓ - ";
     QTableWidgetItem* amount = new QTableWidgetItem(amountPrefix + UiHelper::formatMoneyVND(tx->getAmount()));
-    amount->setForeground(QColor(income ? "#0E8F4F" : "#E0173D"));
+    amount->setForeground(income ? UiHelper::colorIncome() : UiHelper::colorExpense());
     QFont f = amount->font();
     f.setBold(true);
     amount->setFont(f);

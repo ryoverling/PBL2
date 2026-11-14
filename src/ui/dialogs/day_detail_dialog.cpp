@@ -27,7 +27,7 @@ void DayDetailDialog::setupKpiBadges() {
 
 QWidget* DayDetailDialog::createTypeBadgeWidget(bool isIncome) {
     QWidget* container = new QWidget(this);
-    container->setStyleSheet("background: transparent;");
+    container->setObjectName("dayBadgeContainer");
     QHBoxLayout* layout = new QHBoxLayout(container);
     layout->setContentsMargins(6, 4, 6, 4);
     layout->setAlignment(Qt::AlignCenter);
@@ -111,7 +111,7 @@ void DayDetailDialog::addDayRow(const Transaction* tx, int row) {
     // Cột 3: Số tiền
     QString sign = isInc ? "+ " : "- ";
     auto* amountItem = new QTableWidgetItem(sign + UiHelper::formatMoneyVND(tx->getAmount()));
-    amountItem->setForeground(QColor(isInc ? "#0E8F4F" : "#E0173D"));
+    amountItem->setForeground(isInc ? UiHelper::colorIncome() : UiHelper::colorExpense());
     amountItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     QFont f = amountItem->font();
     f.setBold(true);

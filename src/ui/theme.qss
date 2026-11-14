@@ -1158,3 +1158,18 @@ DatePickerPopup #btnPopupSelect:hover {
     border-color: #BACFE8;
 }
 
+/* 23. QMessageBox & Dialog Helpers */
+QMessageBox {
+    background-color: #FFFFFF;
+    border: 1px solid #DCE8FA;
+    border-radius: 14px;
+}
+QMessageBox QLabel {
+    font-size: 13px;
+    color: #102748;
+    line-height: 140%;
+}
+#dayBadgeContainer {
+    background: transparent;
+}
+

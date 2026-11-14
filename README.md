@@ -55,7 +55,7 @@ Chương trình được thiết kế theo 5 tầng phân định trách nhiệm
 3. **Tầng Quản lý nghiệp vụ chuyên trách (`Managers`)**:
    - `UserManager`: Quản lý danh sách người dùng, đăng nhập, đăng ký, đổi mật khẩu. Mật khẩu được lưu nguyên văn (plain text) trong `users.dat` (đây là giới hạn đã biết trong phạm vi đồ án năm 2, chưa áp dụng cơ chế băm bảo mật).
    - `WalletManager`: Quản lý danh sách ví, cập nhật số dư, nạp/rút tiền.
-   - `CategoryManager`: Quản lý danh mục thu/chi gắn liền với giao dịch, tự động tái dùng hoặc tạo mới khi lưu giao dịch (không duy trì CRUD danh mục độc lập ngoài UI).
+   - `CategoryManager`: Quản lý danh mục thu/chi gắn liền với giao dịch, tự động tái dùng hoặc tạo mới khi lưu giao dịch.
    - `TransactionManager`: Quản lý giao dịch, sắp xếp theo ngày qua Selection Sort, thực thi quy tắc bất biến ngăn số dư âm qua `validateWalletTimeline`.
 4. **Tầng Mô hình & Cấu trúc dữ liệu (`Models & Structures`)**:
    - Các thực thể: `User`, `Wallet`, `Category`, và đa hình `Transaction` (`Income` / `Expense`).

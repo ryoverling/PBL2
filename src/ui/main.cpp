@@ -58,10 +58,18 @@ static void captureScreenshots(QApplication& app, MoneyManager& mm, const std::s
         mm.login("thang", "552007");
     }
     std::string userDir = prepareUserDir(mm, dataDir);
+
+    QString baseDir = "build/screenshots";
+    for (const QString& arg : app.arguments()) {
+        if (arg.startsWith("--screenshot-dir=")) {
+            baseDir = arg.mid(17);
+        }
+    }
+
     QString subDir = (screenshotTarget == "125") ? "dpi125" : "dpi100";
-    QString outDir = "D:/Downloads/WORKSPACE/PBL2/build/screenshots/" + subDir;
+    QString outDir = baseDir + "/" + subDir;
     QDir().mkpath(outDir);
-    QDir().mkpath("D:/Downloads/WORKSPACE/PBL2/build/screenshots");
+    QDir().mkpath(baseDir);
 
     QFile logFile(outDir + "/log.txt");
     if (logFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -82,7 +90,7 @@ static void captureScreenshots(QApplication& app, MoneyManager& mm, const std::s
         mainWin.navigateToPage(pageIndices[i]);
         app.processEvents();
         mainWin.grab().save(outDir + pageFiles[i]);
-        if (screenshotTarget == "100") mainWin.grab().save(QString("D:/Downloads/WORKSPACE/PBL2/build/screenshots") + pageFiles[i]);
+        if (screenshotTarget == "100") mainWin.grab().save(baseDir + pageFiles[i]);
     }
 
     // 6-7. Popup chọn ngày
@@ -149,14 +157,7 @@ static void captureScreenshots(QApplication& app, MoneyManager& mm, const std::s
     }
 }
 
-int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
-    app.setQuitOnLastWindowClosed(false);
-    initStyle(app);
-    std::string dataDir = DATA_DIR;
-    MoneyManager mm;
-    mm.loadUsers(dataDir);
-
+static bool handleScreenshotOption(QApplication& app, MoneyManager& mm, const std::string& dataDir) {
     QString screenshotTarget = "";
     for (const QString& arg : app.arguments()) {
         if (arg == "--screenshot" || arg == "--screenshot=100") {
@@ -167,9 +168,22 @@ int main(int argc, char *argv[]) {
             break;
         }
     }
+    if (screenshotTarget.isEmpty()) {
+        return false;
+    }
+    captureScreenshots(app, mm, dataDir, screenshotTarget);
+    return true;
+}
 
-    if (!screenshotTarget.isEmpty()) {
-        captureScreenshots(app, mm, dataDir, screenshotTarget);
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+    app.setQuitOnLastWindowClosed(false);
+    initStyle(app);
+    std::string dataDir = DATA_DIR;
+    MoneyManager mm;
+    mm.loadUsers(dataDir);
+
+    if (handleScreenshotOption(app, mm, dataDir)) {
         return 0;
     }
 

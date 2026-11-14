@@ -34,7 +34,7 @@ QDialog {
     background-color: #FFFFFF;
 }
 
-/* 2. Tooltip Nen Tang */
+/* 2. Tooltip nền tảng */
 QToolTip {
     background-color: #0B2A6B;
     color: #FFFFFF;
@@ -44,7 +44,7 @@ QToolTip {
     font-size: 12px;
 }
 
-/* 3. ScrollBar Mong Chuan Modern */
+/* 3. Thanh cuộn mỏng chuẩn hiện đại (ScrollBar) */
 QScrollBar:vertical {
     background: transparent;
     width: 7px;
@@ -89,7 +89,7 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
     width: 0px;
 }
 
-/* 4. Checkbox Nen Tang */
+/* 4. Hộp kiểm nền tảng (Checkbox) */
 QCheckBox {
     color: #0B2A6B;
     spacing: 8px;
@@ -267,7 +267,7 @@ QLabel#lblPageSubtitle {
     font-size: 14px;
 }
 
-/* 8. Cards & Containers (Bo goc 18px) */
+/* 8. Thẻ và khung chứa (Cards & Containers, bo góc 18px) */
 QFrame[property="card"], #frmFilter, #frmChart, #frmDonut, #frmCalendarCard, #frmTableCard,
 #cardAccount, #cardUtilities, #cardChangePassword {
     background-color: #FFFFFF;
@@ -281,7 +281,7 @@ QLabel[property="card-title"] {
     font-weight: 600;
 }
 
-/* 9. Financial KPIs */
+/* 9. Chỉ số tài chính (Financial KPIs) */
 QLabel[property="amount-income"], #lblFilteredIncome, #lblTotalIncome, #lblDayIncome {
     color: #0E8F4F;
     font-size: 26px;
@@ -376,7 +376,7 @@ QLabel[property="amount-balance"], #lblTotalBalance, #lblNetTotal, #lblDayNet {
     font-weight: 700;
 }
 
-/* 10. Buttons Variants (Bo goc 12px, cao 42px) */
+/* 10. Các biến thể nút bấm (Button Variants, bo góc 12px, cao 42px) */
 QPushButton {
     min-height: 42px;
     padding: 0 18px;
@@ -401,7 +401,7 @@ QPushButton:focus {
     border-color: #1E6FFF;
 }
 
-/* Primary Button */
+/* Nút chính (Primary Button) */
 QPushButton[role="primary"] {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #1E6FFF, stop:1 #155EEF);
     border: 1px solid #1E6FFF;
@@ -421,7 +421,7 @@ QPushButton[role="primary"]:pressed {
     border-color: #0B43AB;
 }
 
-/* Secondary Button */
+/* Nút phụ (Secondary Button) */
 QPushButton[role="secondary"] {
     background-color: #FFFFFF;
     border: 1.5px solid #D5E1F5;
@@ -440,7 +440,7 @@ QPushButton[role="secondary"]:pressed {
     background-color: #EEF4FC;
 }
 
-/* Danger Button */
+/* Nút cảnh báo (Danger Button) */
 QPushButton[role="danger"] {
     background-color: #FFFFFF;
     border: 1.5px solid #FFCCD5;
@@ -459,7 +459,7 @@ QPushButton[role="danger"]:pressed {
     background-color: #FFE2E6;
 }
 
-/* Ghost Button */
+/* Nút trong suốt (Ghost Button) */
 QPushButton[role="ghost"] {
     background-color: transparent;
     border: none;
@@ -474,7 +474,7 @@ QPushButton[role="ghost"]:hover {
     color: #155EEF;
 }
 
-/* Filter Chip Buttons (Pill bo goc 20px) */
+/* Nút lọc dạng chip (Filter Chip Buttons, pill bo góc 20px) */
 QPushButton[role="chip"] {
     background-color: #FFFFFF;
     border: 1px solid #D5E1F5;
@@ -525,7 +525,7 @@ QPushButton:disabled {
     color: #94A3B8;
 }
 
-/* 11. Form Inputs & Combobox (Bo goc 12px, cao 42px) */
+/* 11. Ô nhập liệu và hộp chọn (Form Inputs & Combobox, bo góc 12px, cao 42px) */
 QLineEdit, QComboBox, QDateEdit, QSpinBox {
     min-height: 42px;
     background-color: #FFFFFF;
@@ -594,7 +594,7 @@ QSpinBox::up-button, QSpinBox::down-button {
     width: 18px;
 }
 
-/* 12. Bang Du Lieu (Header #F1F6FF, Row cao 48px) */
+/* 12. Bảng dữ liệu (TableWidget, Header #F1F6FF, Row cao 48px) */
 QTableWidget {
     background-color: #FFFFFF;
     border: 1px solid #DCE8FA;
@@ -962,7 +962,7 @@ DatePickerPopup QPushButton {
     border-radius: 10px;
 }
 
-/* 19. Progress Bar Styling (Bo goc 6px, cao 12px) */
+/* 19. Kiểu dáng thanh tiến trình (Progress Bar, bo góc 6px, cao 12px) */
 QProgressBar {
     background-color: #E2E8F0;
     border: none;
@@ -989,7 +989,7 @@ QProgressBar[variant="success"]::chunk {
     background-color: #0E8F4F;
 }
 
-/* PlanDialog Styles */
+/* 20. Kiểu dáng hộp thoại kế hoạch (PlanDialog) */
 #lblPlanDialogTitle {
     font-size: 16px;
     font-weight: 700;
@@ -1019,13 +1019,13 @@ QPushButton[role="danger-outline"]:hover {
     background-color: #FFF0F3;
 }
 
-/* EyeButton Styles */
+/* 21. Kiểu dáng nút ẩn/hiện mật khẩu (EyeButton) */
 EyeButton {
     border: none;
     background: transparent;
 }
 
-/* MonthPickerWidget Styles */
+/* 22. Kiểu dáng bộ chọn tháng (MonthPickerWidget) */
 MonthPickerWidget QPushButton {
     background-color: #FFFFFF;
     border: 1px solid #DCE6F2;
@@ -1050,7 +1050,7 @@ MonthPickerWidget QLineEdit:hover {
     background-color: #F8FAFC;
 }
 
-/* DatePickerPopup Header & Footer Styles */
+/* 23. Kiểu dáng Header & Footer của DatePickerPopup */
 DatePickerPopup #btnPrevMonth, DatePickerPopup #btnNextMonth {
     background-color: #FFFFFF;
     border: 1px solid #E2E8F0;
@@ -1112,7 +1112,7 @@ DatePickerPopup #btnPopupSelect:hover {
     background-color: #155EEF;
 }
 
-/* Segmented Buttons in TransactionDialog */
+/* 24. Nút phân đoạn chọn loại giao dịch trong TransactionDialog */
 #btnTypeExpense[active="true"] {
     background-color: #EBF3FE;
     border: 2px solid #1E6FFF;
@@ -1173,7 +1173,7 @@ DatePickerPopup #btnPopupSelect:hover {
     color: #94A3B8;
 }
 
-/* 23. QMessageBox & Dialog Helpers */
+/* 25. Hộp thoại thông báo (QMessageBox) và tiện ích */
 QMessageBox {
     background-color: #FFFFFF;
     border: 1px solid #DCE8FA;

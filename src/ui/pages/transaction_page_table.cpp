@@ -22,8 +22,8 @@ void TransactionPage::loadWalletFilter() {
     ui->cboWallet->addItem(GuiIcons::createWalletIcon(), "Ví: Tất cả", 0);
     const LinkedList<Wallet>& wallets = moneyManager.getWalletManager().getWallets();
     for (const Node<Wallet>* cur = wallets.getHead(); cur; cur = cur->next) {
-        QString wName = QString::fromStdString(cur->data.getName());
-        QString display = UiHelper::getWalletIcon(wName, (int)cur->data.getType()) + "  " + wName;
+        QString walletName = QString::fromStdString(cur->data.getName());
+        QString display = UiHelper::getWalletIcon(walletName, (int)cur->data.getType()) + "  " + walletName;
         ui->cboWallet->addItem(display, cur->data.getId());
     }
     int index = ui->cboWallet->findData(id);
@@ -37,8 +37,8 @@ void TransactionPage::loadCategoryFilter() {
     ui->cboCategory->addItem(GuiIcons::createTagIcon(), "Danh mục: Tất cả", 0);
     const LinkedList<Category>& categories = moneyManager.getCategoryManager().getCategories();
     for (const Node<Category>* cur = categories.getHead(); cur; cur = cur->next) {
-        QString cName = QString::fromStdString(cur->data.getName());
-        QString display = UiHelper::getCategoryIcon(cName) + "  " + cName;
+        QString categoryName = QString::fromStdString(cur->data.getName());
+        QString display = UiHelper::getCategoryIcon(categoryName) + "  " + categoryName;
         ui->cboCategory->addItem(display, cur->data.getId());
     }
     int index = ui->cboCategory->findData(id);
@@ -75,15 +75,15 @@ void TransactionPage::addTxRow(const Transaction* tx) {
     dateItem->setForeground(QColor("#0B2A6B"));
 
     // Cột 3: Ví (Badge vuông nhỏ bo góc pastel + tên)
-    QString wName = wallet ? QString::fromStdString(wallet->getName()) : "Ví khác";
-    QTableWidgetItem* walletItem = new QTableWidgetItem(wName);
-    walletItem->setIcon(QIcon(GuiIcons::createWalletBadgeIcon(wName, wallet ? (int)wallet->getType() : 0, 24)));
+    QString walletName = wallet ? QString::fromStdString(wallet->getName()) : "Ví khác";
+    QTableWidgetItem* walletItem = new QTableWidgetItem(walletName);
+    walletItem->setIcon(QIcon(GuiIcons::createWalletBadgeIcon(walletName, wallet ? (int)wallet->getType() : 0, 24)));
     walletItem->setForeground(QColor("#0B2A6B"));
 
     // Cột 4: Danh mục (Badge tròn màu pastel + tên)
-    QString cName = category ? QString::fromStdString(category->getName()) : "Khác";
-    QTableWidgetItem* catItem = new QTableWidgetItem(cName);
-    catItem->setIcon(GuiIcons::createCategoryCircleIcon(cName, 24));
+    QString categoryName = category ? QString::fromStdString(category->getName()) : "Khác";
+    QTableWidgetItem* catItem = new QTableWidgetItem(categoryName);
+    catItem->setIcon(GuiIcons::createCategoryCircleIcon(categoryName, 24));
     catItem->setForeground(QColor("#0B2A6B"));
 
     ui->tblTransactions->setItem(row, 0, type);

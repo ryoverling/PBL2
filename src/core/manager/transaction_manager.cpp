@@ -13,6 +13,8 @@ void TransactionManager::applyToWallet(const Transaction* tx, Wallet* wallet, bo
 }
 
 TransactionManager::~TransactionManager() {
+    // Gọi clear() để giải phóng toàn bộ các đối tượng Transaction cấp phát động trên heap
+    // trước khi đối tượng quản lý bị hủy, đảm bảo không rò rỉ bộ nhớ (memory leak).
     clear();
 }
 
@@ -554,6 +556,9 @@ void TransactionManager::sortByAmount(LinkedList<Transaction*>& list, bool ascen
 }
 
 void TransactionManager::clear() {
+    // Danh sách liên kết transactions lưu trữ các con trỏ thô Transaction* (đa hình Income/Expense).
+    // Vì LinkedList::clear() chỉ giải phóng các Node<T>, nên ta PHẢI duyệt qua từng node và
+    // gọi 'delete cur->data' để giải phóng vùng nhớ heap của từng đối tượng trước khi làm rỗng danh sách.
     for (Node<Transaction*>* cur = transactions.getHead(); cur != nullptr; cur = cur->next) {
         delete cur->data;
     }

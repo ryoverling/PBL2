@@ -98,7 +98,11 @@ void TransactionDialog::setupEditData(const Transaction* tx) {
         ui->cboCategory->setEditText(QString::fromStdString(category->getName()));
     }
 
-    // Ở chế độ Sửa, khóa lựa chọn Khoản chi/Khoản thu để không đổi loại giao dịch
+    // Ở chế độ Sửa, khóa lựa chọn Khoản chi/Khoản thu để không đổi loại giao dịch:
+    // 1. Về OOP: Transaction là lớp trừu tượng có 2 lớp con là Income và Expense.
+    //    Đổi loại giao dịch đòi hỏi phải hủy đối tượng cũ và cấp phát đối tượng mới, phá vỡ tính nguyên vẹn.
+    // 2. Về nghiệp vụ: Đổi chiều thu/chi làm biến động kép dòng tiền lịch sử, dễ vi phạm bất biến số dư ví >= 0.
+    // 3. Quy trình an toàn và rõ ràng nhất cho người dùng: Muốn đổi loại, hãy xóa giao dịch cũ và tạo mới.
     ui->btnTypeExpense->setEnabled(false);
     ui->btnTypeIncome->setEnabled(false);
     const QString lockTooltip = "Muốn đổi loại, hãy xóa và thêm giao dịch mới";

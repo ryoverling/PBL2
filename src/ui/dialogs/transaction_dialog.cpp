@@ -101,6 +101,13 @@ void TransactionDialog::setupEditData(const Transaction* tx) {
     if (category) {
         ui->cboCategory->setEditText(QString::fromStdString(category->getName()));
     }
+
+    // Ở chế độ Sửa, khóa lựa chọn Khoản chi/Khoản thu để không đổi loại giao dịch
+    ui->btnTypeExpense->setEnabled(false);
+    ui->btnTypeIncome->setEnabled(false);
+    const QString lockTooltip = "Muốn đổi loại, hãy xóa và thêm giao dịch mới";
+    ui->btnTypeExpense->setToolTip(lockTooltip);
+    ui->btnTypeIncome->setToolTip(lockTooltip);
 }
 
 void TransactionDialog::loadWallets() {

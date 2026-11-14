@@ -1157,6 +1157,21 @@ DatePickerPopup #btnPopupSelect:hover {
     background-color: #F1F6FF;
     border-color: #BACFE8;
 }
+#btnTypeExpense[active="true"]:disabled {
+    background-color: #F1F6FF;
+    border: 2px solid #94A3B8;
+    color: #1E6FFF;
+}
+#btnTypeIncome[active="true"]:disabled {
+    background-color: #F0FDF4;
+    border: 2px solid #94A3B8;
+    color: #0E8F4F;
+}
+#btnTypeExpense[active="false"]:disabled, #btnTypeIncome[active="false"]:disabled {
+    background-color: #F8FAFD;
+    border: 1px solid #E2E8F0;
+    color: #94A3B8;
+}
 
 /* 23. QMessageBox & Dialog Helpers */
 QMessageBox {

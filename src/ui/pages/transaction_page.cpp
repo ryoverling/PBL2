@@ -275,17 +275,9 @@ void TransactionPage::on_btnAdd_clicked() {
 }
 
 bool TransactionPage::updateTransaction(int id, const TransactionDialog& dialog) {
-    const Transaction* old = moneyManager.getTransactionManager().findById(id);
-    if (!old) return false;
     CategoryType type = dialog.getType() == TransactionType::INCOME ? CategoryType::INCOME : CategoryType::EXPENSE;
-    if (old->getType() == dialog.getType()) {
-        return moneyManager.updateTransaction(id, dialog.getAmount(), dialog.getDate(), dialog.getNote(),
-                                               dialog.getWalletId(), dialog.getCategoryName(), type);
-    }
-    Transaction* replacement = dialog.createTransaction(id, 0);
-    bool changed = moneyManager.deleteTransaction(id) && moneyManager.addTransaction(replacement, dialog.getCategoryName(), type);
-    if (!changed) delete replacement;
-    return changed;
+    return moneyManager.updateTransaction(id, dialog.getAmount(), dialog.getDate(), dialog.getNote(),
+                                           dialog.getWalletId(), dialog.getCategoryName(), type);
 }
 
 void TransactionPage::on_btnEdit_clicked() {

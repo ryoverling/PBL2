@@ -22,7 +22,7 @@ public:
     bool isValidDate() const { return m_date.isValid(); }
     void clearDate();
 
-    // Định dạng chuỗi yyyy-MM-dd phục vụ database/storage
+    // Định dạng chuỗi yyyy-MM-dd phục vụ file_storage
     QString toIsoString() const;
     void setIsoString(const QString& iso);
 

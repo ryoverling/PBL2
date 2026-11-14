@@ -27,7 +27,6 @@ QIcon createEditIcon(const QColor& color = QColor("#1E6FFF"));
 QIcon createTrashIcon(const QColor& color = QColor("#E0173D"));
 QIcon createListIcon(int size = 16, const QColor& color = QColor("#1E6FFF"));
 QIcon createCalendarIcon(const QColor& color = QColor("#1E6FFF"));
-QIcon createSearchIcon(const QColor& color = QColor("#5B6B8C"));
 QIcon createFilterIcon(const QColor& color = QColor("#5B6B8C"));
 QIcon createWalletIcon(const QColor& color = QColor("#5B6B8C"));
 QIcon createTagIcon(const QColor& color = QColor("#5B6B8C"));

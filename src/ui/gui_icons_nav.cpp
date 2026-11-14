@@ -223,17 +223,6 @@ QIcon createCalendarIcon(const QColor& color) {
     return QIcon(pix);
 }
 
-QIcon createSearchIcon(const QColor& color) {
-    QPixmap pix(18, 18);
-    pix.fill(Qt::transparent);
-    QPainter p(&pix);
-    p.setRenderHint(QPainter::Antialiasing);
-    p.setPen(QPen(color, 1.8, Qt::SolidLine, Qt::RoundCap));
-    p.drawEllipse(3, 3, 9, 9);
-    p.drawLine(10, 10, 15, 15);
-    return QIcon(pix);
-}
-
 QIcon createFilterIcon(const QColor& color) {
     QPixmap pix(18, 18);
     pix.fill(Qt::transparent);

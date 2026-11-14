@@ -175,23 +175,6 @@ QPixmap createCalendarBadge(int size) {
     return pix;
 }
 
-QPixmap createPlusCircleBadge(int size) {
-    QPixmap pix(size, size);
-    pix.fill(Qt::transparent);
-    QPainter p(&pix);
-    p.setRenderHint(QPainter::Antialiasing);
-    p.setPen(Qt::NoPen);
-    p.setBrush(QColor("#1E6FFF"));
-    p.drawEllipse(0, 0, size, size);
-
-    p.setPen(QPen(Qt::white, 2, Qt::SolidLine, Qt::RoundCap));
-    int c = size / 2;
-    int r = size * 0.28;
-    p.drawLine(c, c - r, c, c + r);
-    p.drawLine(c - r, c, c + r, c);
-    return pix;
-}
-
 QPixmap createPlanBadge(const QString& type, int size) {
     QPixmap pix(size, size);
     pix.fill(Qt::transparent);

@@ -17,7 +17,6 @@ QPixmap createMiniBars(int width = 80, int height = 36, const QColor& color = QC
 QPixmap createKpiBadge(const QString& kind, int size = 44);
 QPixmap createScaleBadge(int size = 44);
 QPixmap createCalendarBadge(int size = 44);
-QPixmap createPlusCircleBadge(int size = 28);
 QPixmap createPlanBadge(const QString& type, int size = 24);
 
 // Icon tròn nền màu cho bảng giao dịch

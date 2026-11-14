@@ -17,11 +17,8 @@ QPixmap createWalletBadgeIcon(const QString& walletName, int walletType, int siz
 QPixmap createChevronCircle(int size = 32);
 QPixmap createWalletPageHeaderIcon(int size = 44);
 
-// Header trang Thống kê & Badge trang Cài đặt
+// Header trang Thống kê
 QPixmap createStatisticsHeaderIcon(int size = 44);
-QPixmap createUserBadge(int size = 32);
-QPixmap createShieldBadge(int size = 32);
-QPixmap createLockBadge(int size = 32);
 
 } // namespace GuiIcons
 

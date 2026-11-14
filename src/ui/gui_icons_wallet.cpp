@@ -225,54 +225,5 @@ QPixmap createStatisticsHeaderIcon(int size) {
     return pix;
 }
 
-QPixmap createUserBadge(int size) {
-    QPixmap pix(size, size);
-    pix.fill(Qt::transparent);
-    QPainter p(&pix);
-    p.setRenderHint(QPainter::Antialiasing);
-
-    p.setPen(QPen(QColor("#1E6FFF"), 1.8, Qt::SolidLine, Qt::RoundCap));
-    p.setBrush(Qt::NoBrush);
-    int c = size / 2;
-    p.drawEllipse(c - 5, 4, 10, 10);
-    p.drawArc(4, 15, size - 8, 16, 0, 180 * 16);
-    return pix;
-}
-
-QPixmap createShieldBadge(int size) {
-    QPixmap pix(size, size);
-    pix.fill(Qt::transparent);
-    QPainter p(&pix);
-    p.setRenderHint(QPainter::Antialiasing);
-
-    p.setPen(QPen(QColor("#1E6FFF"), 1.8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    p.setBrush(Qt::NoBrush);
-    QPainterPath path;
-    path.moveTo(size / 2, 4);
-    path.lineTo(size - 6, 8);
-    path.lineTo(size - 6, size / 2);
-    path.quadTo(size - 6, size - 5, size / 2, size - 4);
-    path.quadTo(6, size - 5, 6, size / 2);
-    path.lineTo(6, 8);
-    path.closeSubpath();
-    p.drawPath(path);
-    p.drawLine(size / 2 - 3, size / 2, size / 2 - 1, size / 2 + 3);
-    p.drawLine(size / 2 - 1, size / 2 + 3, size / 2 + 4, size / 2 - 3);
-    return pix;
-}
-
-QPixmap createLockBadge(int size) {
-    QPixmap pix(size, size);
-    pix.fill(Qt::transparent);
-    QPainter p(&pix);
-    p.setRenderHint(QPainter::Antialiasing);
-
-    p.setPen(QPen(QColor("#1E6FFF"), 1.8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    p.setBrush(Qt::NoBrush);
-    p.drawRoundedRect(6, 12, size - 12, size - 16, 3, 3);
-    p.drawArc(9, 5, size - 18, 14, 0, 180 * 16);
-    return pix;
-}
-
 } // namespace GuiIcons
 

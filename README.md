@@ -22,13 +22,35 @@ Khi chưa có `data/users.dat`, hãy đăng ký tài khoản trong ứng dụng 
 - Thêm, sửa, xóa ví; xem tổng số dư và các giao dịch. Giao dịch chi tiêu bị từ chối nếu làm số dư ví âm.
 - Thêm, sửa, xóa và lọc giao dịch theo ngày, ví, danh mục, loại; có thể nhập tên danh mục mới khi thêm giao dịch.
 - Dashboard và trang Statistics dùng chung `MoneyManager::getMonthlyTotals` → `StatUtils::getMonthlyTotals`. Biểu đồ 6 tháng và thống kê danh mục tái dùng tổng tháng; lịch hiển thị chi theo ngày.
-- Dữ liệu người dùng được đọc/ghi qua `FileStorage` trong thư mục `data/<username>/` bằng các tệp tin văn bản `.dat` (mỗi dòng một bản ghi, ngăn cách bằng dấu `|`). Dự án hoàn toàn không sử dụng cơ sở dữ liệu ngoài.
+- Dữ liệu người dùng được đọc/ghi qua `FileStorage` trong thư mục `data/<username>/` bằng các tệp tin văn bản `.dat` (mỗi dòng một bản ghi, ngăn cách bằng dấu `|`). Dự án hoàn toàn lưu trữ file văn bản tuần tự, không dùng hệ quản trị cơ sở dữ liệu.
 
-### Cấu trúc mã nguồn Core (Chuẩn OOP PBL2)
+### Cấu trúc phân tầng thực tế
+Chương trình được thiết kế theo 5 tầng phân định trách nhiệm rõ ràng:
+1. **Tầng Giao diện (UI)**: Xây dựng bằng Qt 6 Widgets, tiếp nhận tương tác người dùng, hiển thị dữ liệu và kích hoạt lệnh qua các cửa sổ (`LoginWindow`, `MainWindow`), trang con (`pages`), hộp thoại (`dialogs`) và widget tái sử dụng (`widgets`).
+2. **Tầng Điều phối trung tâm (`MoneyManager`)**: Làm đầu mối kết nối duy nhất giữa giao diện và nghiệp vụ, cung cấp các hàm dịch vụ (`addTransaction`, `updateTransaction`, `getMonthlyTotals`...) cho toàn bộ UI.
+3. **Tầng Quản lý nghiệp vụ chuyên trách (`Managers`)**:
+   - `UserManager`: Quản lý danh sách người dùng, đăng nhập, đăng ký, mã hóa mật khẩu đơn giản.
+   - `WalletManager`: Quản lý danh sách ví, cập nhật số dư, nạp/rút tiền.
+   - `CategoryManager`: Quản lý danh mục thu/chi, tự động tái dùng hoặc tạo mới.
+   - `TransactionManager`: Quản lý giao dịch, thực thi quy tắc bất biến ngăn số dư âm qua `validateWalletTimeline`.
+4. **Tầng Mô hình & Cấu trúc dữ liệu (`Models & Structures`)**:
+   - Các thực thể: `User`, `Wallet`, `Category`, và đa hình `Transaction` (`Income` / `Expense`).
+   - Cấu trúc dữ liệu tự cài đặt: `LinkedList<T>` và thuật toán Selection Sort.
+5. **Tầng Lưu trữ tập tin (`FileStorage`)**: Đọc và ghi dữ liệu ra các file văn bản `.dat` tuần tự theo định dạng `trường1|trường2|...`.
 
-- Mỗi module nghiệp vụ trong `src/core/` được tổ chức tinh gọn: tương ứng đúng 1 cặp file `.h` và `.cpp` (`MoneyManager`, `TransactionManager`, `WalletManager`, `CategoryManager`, `UserManager`, `FileStorage`, `utils`).
-- Lớp `Income` và `Expense` kế thừa `Transaction` được đặt chung trong `src/core/model/transaction.h/.cpp`.
-- `RecordFields` và `tachTruong()` được tích hợp trực tiếp trong `src/core/storage/file_storage.h/.cpp`.
+### Thống kê tệp tin mã nguồn
+- **Mã nguồn UI (66 tệp)**:
+  - Thư mục gốc `src/ui/`: 17 tệp (`main.cpp`, `main_window`, `login_window`, `gui_helpers`, 3 cặp icon `gui_icons_*`, `theme.qss`, `resources.qrc`).
+  - Thư mục `src/ui/pages/`: 16 tệp (5 trang: `dashboard`, `transaction` [+ table helper], `wallet`, `statistics`, `settings`).
+  - Thư mục `src/ui/dialogs/`: 14 tệp (5 hộp thoại: `register`, `wallet`, `transaction`, `day_detail`, `plan`).
+  - Thư mục `src/ui/widgets/`: 19 tệp (`wallet_card`, `date_picker_field`, `date_picker_popup`, `calendar_widget`, `chart_widget`, `donut_widget`, `month_picker_widget`, `eye_button`, `icon_badge`).
+- **Mã nguồn Core (23 tệp)**:
+  - `src/core/app/`: 2 tệp (`money_manager.h/.cpp`).
+  - `src/core/manager/`: 8 tệp (`transaction_manager`, `wallet_manager`, `category_manager`, `user_manager`).
+  - `src/core/model/`: 8 tệp (`transaction`, `wallet`, `category`, `user`).
+  - `src/core/storage/`: 2 tệp (`file_storage.h/.cpp`).
+  - `src/core/structure/`: 1 tệp (`linked_list.h`).
+  - `src/core/utils/`: 2 tệp (`utils.h/.cpp`).
 
 ## Sơ đồ lớp
 
@@ -56,7 +78,6 @@ classDiagram
     DashboardPage --> IconBadge
     WalletPage --> EyeButton
     WalletPage --> WalletCard
-    WalletPage --> AddWalletCard
     WalletCard --> IconBadge
     StatisticsPage --> ChartWidget
     StatisticsPage --> DonutWidget
@@ -78,14 +99,16 @@ Sao lưu `data/`, đóng ứng dụng, rồi sao chép các file ví, danh mục
 | Đăng ký | `src/ui/dialogs/register_dialog.ui` | `src/ui/dialogs/register_dialog.cpp` |
 | Cửa sổ chính | `src/ui/main_window.ui` | `src/ui/main_window.cpp` |
 | Tổng quan | `src/ui/pages/dashboard_page.ui` | `src/ui/pages/dashboard_page.cpp` |
-| Giao dịch | `src/ui/pages/transaction_page.ui` | `src/ui/pages/transaction_page*.cpp` |
-| Ví | `src/ui/pages/wallet_page.ui` | `src/ui/pages/wallet_page*.cpp` |
+| Giao dịch | `src/ui/pages/transaction_page.ui` | `src/ui/pages/transaction_page.cpp`, `src/ui/pages/transaction_page_table.cpp` |
+| Ví tiền | `src/ui/pages/wallet_page.ui` | `src/ui/pages/wallet_page.cpp` |
 | Thống kê | `src/ui/pages/statistics_page.ui` | `src/ui/pages/statistics_page.cpp` |
 | Cài đặt | `src/ui/pages/settings_page.ui` | `src/ui/pages/settings_page.cpp` |
-| Hộp thoại giao dịch | `src/ui/dialogs/transaction_dialog.ui` | `src/ui/dialogs/transaction_dialog*.cpp` |
+| Hộp thoại giao dịch | `src/ui/dialogs/transaction_dialog.ui` | `src/ui/dialogs/transaction_dialog.cpp` |
 | Hộp thoại ví | `src/ui/dialogs/wallet_dialog.ui` | `src/ui/dialogs/wallet_dialog.cpp` |
+| Chi tiết giao dịch trong ngày | `src/ui/dialogs/day_detail_dialog.ui` | `src/ui/dialogs/day_detail_dialog.cpp` |
+| Thẻ ví | `src/ui/widgets/wallet_card.ui` | `src/ui/widgets/wallet_card.cpp` |
 
-`EyeButton`, `CalendarWidget`, `ChartWidget`, `WalletCard`, `AddWalletCard`, `IconBadge` và `DonutWidget` nằm trong `src/ui/widgets/`. `WalletCard` dùng form `wallet_card.ui`; các trang còn lại cũng giữ bố cục trong form `.ui`. Thanh menu ngang có năm mục, gồm Cài đặt; nút tên tài khoản đã được bỏ. Tên tài khoản hiển thị trong card Tài khoản ở trang Cài đặt. Giữ các `objectName` có kết nối tín hiệu hoặc được mã C++ truy cập. Các file `ui_*.h` được sinh trong `build/`, không sửa trực tiếp.
+Các widget tự vẽ hoặc custom control (`CalendarWidget`, `ChartWidget`, `DonutWidget`, `DatePickerField`, `DatePickerPopup`, `MonthPickerWidget`, `EyeButton`, `IconBadge`, `WalletCard`) nằm trong `src/ui/widgets/`. Thanh điều hướng ngang có năm mục (Tổng quan, Giao dịch, Ví tiền, Thống kê, Cài đặt). Giữ các `objectName` có kết nối tín hiệu hoặc được mã C++ truy cập. Các file `ui_*.h` được sinh tự động trong `build/`, không sửa trực tiếp.
 
 Các nút khai báo thuộc tính động `role` ngay trong `.ui`: `primary` cho thao tác chính, `secondary` cho thao tác phụ, `danger` cho xóa/đăng xuất, `nav` cho năm mục menu. `theme.qss` định màu mặc định, hover, chọn và disabled dùng chung. Hộp thoại và trang đăng nhập dùng nền trắng, trang nội dung dùng nền xanh băng `#EFF6FF`.
 

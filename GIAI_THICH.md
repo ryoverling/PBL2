@@ -31,13 +31,26 @@ classDiagram
     DashboardPage --> IconBadge
     WalletPage --> EyeButton
     WalletPage --> WalletCard
-    WalletPage --> AddWalletCard
     WalletCard --> IconBadge
     StatisticsPage --> ChartWidget
     StatisticsPage --> DonutWidget
 ```
 
 `LinkedList<T>` cài đặt danh sách liên kết đơn và selection sort. `TransactionManager` sở hữu các đối tượng `Transaction*` trong danh sách chính; danh sách lọc chỉ tham chiếu đến chúng. `Income` và `Expense` ghi đè `getSignedAmount()`, nên số dư ví được cập nhật đúng dấu. `FileStorage` đọc/ghi dữ liệu văn bản; `UserManager` quản lý xác thực.
+
+## Cấu trúc phân tầng thực tế
+Chương trình được tổ chức theo 5 tầng phân định rõ trách nhiệm:
+1. **Tầng Giao diện (UI)** (66 file): Cửa sổ chính `MainWindow`, `LoginWindow`, các trang `pages` (Tổng quan, Giao dịch, Ví tiền, Thống kê, Cài đặt), các hộp thoại `dialogs` và các thành phần tự vẽ / custom `widgets`.
+2. **Tầng Điều phối trung tâm (`MoneyManager`)**: Cầu nối duy nhất giữa giao diện và các module nghiệp vụ, chịu trách nhiệm tiếp nhận yêu cầu từ UI và ủy quyền cho các Manager chuyên trách.
+3. **Tầng Quản lý nghiệp vụ chuyên trách (`Managers`)**:
+   - `UserManager`: Xác thực tài khoản, đăng ký, đăng nhập.
+   - `WalletManager`: Quản lý danh sách ví, cập nhật số dư, nạp/rút tiền.
+   - `CategoryManager`: Quản lý danh mục, tìm hoặc tạo tự động.
+   - `TransactionManager`: Quản lý giao dịch, kiểm soát bất biến không âm qua dòng thời gian.
+4. **Tầng Mô hình & Cấu trúc dữ liệu (`Models & Structure`)**:
+   - Các thực thể: `User`, `Wallet`, `Category`, `Transaction` (`Income` / `Expense`).
+   - Cấu trúc dữ liệu tự cài đặt: `LinkedList<T>` và giải thuật Selection Sort.
+5. **Tầng Lưu trữ tập tin (`FileStorage`)**: Đọc và ghi các file văn bản `.dat` tuần tự theo định dạng phân tách trường bằng ký tự `|`. Chương trình không sử dụng cơ sở dữ liệu ngoài.
 
 ## Quy ước mã nguồn
 
@@ -69,6 +82,29 @@ Core tự cài `LinkedList` và Selection Sort cho phần cấu trúc dữ liệ
 `DashboardPage::updateCards` và `StatisticsPage::updateCards` đều gọi `MoneyManager::getMonthlyTotals`. Hàm bọc này gọi `StatUtils::getMonthlyTotals` với danh sách giao dịch hiện hành. `StatUtils::getExpenseByDay` và thống kê danh mục dùng cùng `cungThangNam` với hàm tổng tháng, chỉ cộng khoản chi vào 31 ô ngày và để các ngày thừa bằng 0. Biểu đồ 6 tháng gọi `get6MonthsStats`, mỗi tháng cũng đi qua `getMonthlyTotals`; thống kê danh mục dùng tổng chi từ hàm đó để tính tỷ trọng.
 
 Thanh menu ngang gồm Tổng quan, Giao dịch, Ví tiền, Thống kê và Cài đặt; cả năm nút có `role=nav` và cùng `navButtonGroup`. `WalletCard` là widget riêng, dùng `wallet_card.ui` để hiển thị từng ví và phát tín hiệu chọn ví. `IconBadge` vẽ dấu hiệu nhỏ trên card; `DonutWidget` vẽ cơ cấu chi từ thống kê danh mục của core. Bốn role khai báo trong `.ui`: `primary` cho lưu/thêm, `secondary` cho hủy/sửa, `danger` cho xóa/đăng xuất và `nav` cho menu. `theme.qss` tập trung màu hover, disabled và trạng thái được chọn.
+
+## Những chỗ dễ bị hỏi khi bảo vệ đồ án (Trọng tâm OOP & Bộ nhớ)
+
+1. **Destructor ảo trong `Transaction` (`virtual ~Transaction()`):**
+   - *Vấn đề:* `TransactionManager` quản lý một danh sách các con trỏ kiểu lớp cha `Transaction*`, nhưng các đối tượng thực tế được cấp phát trong bộ nhớ heap là các lớp con `Income` hoặc `Expense`.
+   - *Vì sao bắt buộc có destructor ảo?* Khi giải phóng một giao dịch bằng lệnh `delete tx;`, nếu lớp cha không có destructor ảo, trình biên dịch chỉ liên kết tĩnh và gọi duy nhất destructor của `Transaction`, bỏ qua destructor của lớp con `Income`/`Expense`. Điều này dẫn đến thất thoát tài nguyên (memory leak) hoặc hành vi không xác định (undefined behavior). Khai báo `virtual ~Transaction() = default;` đảm bảo bảng phương thức ảo (vtable) kích hoạt đúng destructor của đối tượng dẫn xuất thực tế.
+
+2. **Ai chịu trách nhiệm giải phóng con trỏ (`delete tx`) khi thêm giao dịch thất bại?**
+   - *Quy trình chuyển giao quyền sở hữu:* Khi người dùng nhập form và nhấn Lưu, giao diện UI dùng toán tử `new` để tạo đối tượng (`new Income(...)` hoặc `new Expense(...)`) rồi truyền con trỏ đó vào `MoneyManager::addTransaction(tx, ...)`.
+   - *Nếu thêm thành công:* Quyền sở hữu đối tượng được chuyển giao hoàn toàn cho `TransactionManager`. Nó được thêm vào danh sách `transactions` và sẽ được `TransactionManager` tự động giải phóng khi người dùng xóa giao dịch hoặc khi hủy ứng dụng.
+   - *Nếu thêm thất bại:* (Ví dụ do số dư không đủ làm âm ví, ngày không hợp lệ, v.v.), `MoneyManager` trả về `false`. Lúc này `TransactionManager` không giữ con trỏ, do đó **chính lớp gọi (UI) phải gọi `delete tx;` ngay lập tức** để tránh rò rỉ bộ nhớ.
+
+3. **Vì sao phương thức `LinkedList<T>::clear()` không tự động `delete` dữ liệu con trỏ?**
+   - `LinkedList<T>` là một template danh sách liên kết tổng quát cho nhiều kiểu dữ liệu (`int`, `std::string`, `Wallet`, `Transaction*`). Bản thân `LinkedList` chỉ cấp phát và sở hữu các `Node<T>`, nên khi `clear()` nó chỉ có quyền giải phóng các Node bằng `delete current_node`.
+   - Nếu `LinkedList` tự ý gọi `delete node->data` khi `T` là con trỏ, chương trình sẽ lập tức bị lỗi giải phóng bộ nhớ 2 lần (double free) hoặc crash trong các trường hợp danh sách chỉ "mượn" tham chiếu (như danh sách lọc `filteredTransactions` chỉ lưu con trỏ để hiển thị lên bảng, không sở hữu vùng nhớ).
+   - Vì vậy, việc giải phóng đối tượng con trỏ luôn do nơi sở hữu thực hiện tường minh: `TransactionManager::clearAll()` duyệt qua danh sách chính để `delete` từng đối tượng `Transaction*`, sau đó mới gọi `transactions.clear()`.
+
+4. **Giải thích chi tiết 5 bước của quy trình cập nhật giao dịch (`validateUpdate`):**
+   - *Bước 1 (Tìm kiếm giao dịch cũ):* Xác định giao dịch cần sửa theo `txId`. Nếu không tìm thấy, lập tức từ chối cập nhật.
+   - *Bước 2 (Hoàn lại tác động của giao dịch cũ):* Giả lập trạng thái số dư ví như thể giao dịch cũ chưa diễn ra (nếu giao dịch cũ là Thu thì trừ đi, nếu là Chi thì cộng hoàn trả).
+   - *Bước 3 (Thử nghiệm tác động của thông tin mới):* Kiểm tra tính hợp lệ của số tiền mới (> 0), ngày mới, ví mới. Sau đó thử nghiệm áp dụng số tiền mới vào ví cũ (hoặc ví mới nếu người dùng đổi ví).
+   - *Bước 4 (Thẩm định dòng thời gian số dư - `validateWalletTimeline`):* Tái hiện toàn bộ dòng lịch sử giao dịch từ quá khứ đến hiện tại theo thứ tự thời gian trên các ví liên quan để đảm bảo số dư không bị âm tại bất kỳ thời điểm nào.
+   - *Bước 5 (Áp dụng thật hoặc hoàn tác):* Nếu dòng thời gian hợp lệ, cập nhật thông tin và số dư ví thật. Nếu không hợp lệ ở bất kỳ bước nào, giữ nguyên vẹn toàn bộ trạng thái ban đầu của ví và bản ghi giao dịch, không để lại tác dụng phụ.
 
 ## 10 câu hỏi bảo vệ Phần 1 và 2 câu hỏi giao diện
 

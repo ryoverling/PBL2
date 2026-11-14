@@ -141,7 +141,7 @@ void showBalanceError(QWidget* parent, const BalanceValidationResult& res) {
 
 void applyCardShadow(QWidget* target, int blurRadius, int offsetY, qreal opacity) {
     if (!target) return;
-    auto* shadow = new QGraphicsDropShadowEffect(target);
+    QGraphicsDropShadowEffect* shadow = new QGraphicsDropShadowEffect(target);
     shadow->setBlurRadius(blurRadius);
     shadow->setOffset(0, offsetY);
     shadow->setColor(QColor(11, 42, 107, static_cast<int>(opacity * 255)));

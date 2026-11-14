@@ -76,7 +76,7 @@ void TransactionPage::initSummaryCards() {
 void TransactionPage::initTableAndFilters() {
     ui->tblTransactions->setShowGrid(false);
     ui->tblTransactions->setIconSize(QSize(24, 24));
-    auto* header = ui->tblTransactions->horizontalHeader();
+    QHeaderView* header = ui->tblTransactions->horizontalHeader();
     header->setSectionResizeMode(QHeaderView::Fixed);
     header->setFixedHeight(44);
     ui->tblTransactions->setItemDelegateForColumn(0, new TypeBadgeDelegate(ui->tblTransactions));

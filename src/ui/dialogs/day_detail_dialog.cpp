@@ -97,20 +97,20 @@ void DayDetailDialog::addDayRow(const Transaction* tx, int row) {
     QString catName = cat ? QString::fromStdString(cat->getName()) : "Khác";
     QString note = QString::fromStdString(tx->getNote());
     QString displayText = note.isEmpty() ? catName : (catName + "  —  " + note);
-    auto* descItem = new QTableWidgetItem(displayText);
+    QTableWidgetItem* descItem = new QTableWidgetItem(displayText);
     descItem->setToolTip(QString("Danh mục: %1\nGhi chú: %2").arg(catName, note.isEmpty() ? "(Không có)" : note));
     descItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     ui->tblDayTransactions->setItem(row, 1, descItem);
 
     // Cột 2: Ví
     const Wallet* w = moneyManager.getWalletManager().findById(tx->getWalletId());
-    auto* walletItem = new QTableWidgetItem(w ? QString::fromStdString(w->getName()) : "Ví khác");
+    QTableWidgetItem* walletItem = new QTableWidgetItem(w ? QString::fromStdString(w->getName()) : "Ví khác");
     walletItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     ui->tblDayTransactions->setItem(row, 2, walletItem);
 
     // Cột 3: Số tiền
     QString sign = isInc ? "+ " : "- ";
-    auto* amountItem = new QTableWidgetItem(sign + UiHelper::formatMoneyVND(tx->getAmount()));
+    QTableWidgetItem* amountItem = new QTableWidgetItem(sign + UiHelper::formatMoneyVND(tx->getAmount()));
     amountItem->setForeground(isInc ? UiHelper::colorIncome() : UiHelper::colorExpense());
     amountItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     QFont f = amountItem->font();
@@ -154,7 +154,7 @@ void DayDetailDialog::populateData() {
     if (list.isEmpty()) {
         ui->tblDayTransactions->setRowCount(1);
         ui->tblDayTransactions->setSpan(0, 0, 1, 4);
-        auto* emptyItem = new QTableWidgetItem("Không có giao dịch nào trong ngày này");
+        QTableWidgetItem* emptyItem = new QTableWidgetItem("Không có giao dịch nào trong ngày này");
         emptyItem->setTextAlignment(Qt::AlignCenter);
         emptyItem->setForeground(QColor("#5B6B8C"));
         QFont ef = emptyItem->font();

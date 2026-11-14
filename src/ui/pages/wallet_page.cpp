@@ -132,7 +132,7 @@ void WalletPage::on_btnDelete_clicked() {
 }
 
 void WalletPage::addWalletCard(const Wallet& wallet) {
-    auto* card = new WalletCard(wallet, ui->walletContainer);
+    WalletCard* card = new WalletCard(wallet, ui->walletContainer);
     connect(card, &WalletCard::clicked, this, &WalletPage::onWalletCardClicked);
     cards.append(card);
 }
@@ -145,7 +145,7 @@ void WalletPage::populateCards() {
     }
     cards.clear();
 
-    const auto& wallets = moneyManager.getWalletManager().getWallets();
+    const LinkedList<Wallet>& wallets = moneyManager.getWalletManager().getWallets();
     for (const Node<Wallet>* cur = wallets.getHead(); cur; cur = cur->next) {
         addWalletCard(cur->data);
     }

@@ -62,9 +62,9 @@ PlanDialog::PlanDialog(const BudgetPlan& initialPlan, QWidget* parent)
 }
 
 void PlanDialog::setupBudgetGroup(QVBoxLayout* mainLayout) {
-    auto* grpBudget = new QGroupBox("Hạn mức ngân sách chi tiêu tháng", this);
+    QGroupBox* grpBudget = new QGroupBox("Hạn mức ngân sách chi tiêu tháng", this);
     grpBudget->setObjectName("grpBudget");
-    auto* budgetLayout = new QFormLayout(grpBudget);
+    QFormLayout* budgetLayout = new QFormLayout(grpBudget);
     budgetLayout->setContentsMargins(14, 16, 14, 14);
     budgetLayout->setSpacing(10);
 
@@ -79,9 +79,9 @@ void PlanDialog::setupBudgetGroup(QVBoxLayout* mainLayout) {
 }
 
 void PlanDialog::setupGoalGroup(QVBoxLayout* mainLayout) {
-    auto* grpGoal = new QGroupBox("Mục tiêu tiết kiệm", this);
+    QGroupBox* grpGoal = new QGroupBox("Mục tiêu tiết kiệm", this);
     grpGoal->setObjectName("grpGoal");
-    auto* goalLayout = new QFormLayout(grpGoal);
+    QFormLayout* goalLayout = new QFormLayout(grpGoal);
     goalLayout->setContentsMargins(14, 16, 14, 14);
     goalLayout->setSpacing(10);
 
@@ -117,7 +117,7 @@ void PlanDialog::setupGoalGroup(QVBoxLayout* mainLayout) {
 }
 
 void PlanDialog::setupActionButtons(QVBoxLayout* mainLayout) {
-    auto* footerLayout = new QHBoxLayout();
+    QHBoxLayout* footerLayout = new QHBoxLayout();
     footerLayout->setSpacing(10);
 
     btnDelete = new QPushButton("Xóa kế hoạch", this);
@@ -146,11 +146,11 @@ void PlanDialog::setupActionButtons(QVBoxLayout* mainLayout) {
 }
 
 void PlanDialog::setupUi() {
-    auto* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(24, 20, 24, 20);
     mainLayout->setSpacing(16);
 
-    auto* lblTitle = new QLabel("Thiết lập Kế hoạch tháng này", this);
+    QLabel* lblTitle = new QLabel("Thiết lập Kế hoạch tháng này", this);
     lblTitle->setObjectName("lblPlanDialogTitle");
     mainLayout->addWidget(lblTitle);
 

@@ -8,7 +8,7 @@
 
 static QTableWidgetItem* noteItem(const Transaction* tx) {
     QString note = QString::fromStdString(tx->getNote());
-    auto* item = new QTableWidgetItem(note);
+    QTableWidgetItem* item = new QTableWidgetItem(note);
     item->setToolTip(note);
     item->setForeground(QColor("#5B6B8C"));
     return item;
@@ -19,7 +19,7 @@ void TransactionPage::loadWalletFilter() {
     int id = ui->cboWallet->currentData().toInt();
     ui->cboWallet->clear();
     ui->cboWallet->addItem(UiHelper::createWalletIcon(), "Ví: Tất cả", 0);
-    const auto& wallets = moneyManager.getWalletManager().getWallets();
+    const LinkedList<Wallet>& wallets = moneyManager.getWalletManager().getWallets();
     for (const Node<Wallet>* cur = wallets.getHead(); cur; cur = cur->next) {
         QString wName = QString::fromStdString(cur->data.getName());
         QString display = UiHelper::getWalletIcon(wName, (int)cur->data.getType()) + "  " + wName;
@@ -34,7 +34,7 @@ void TransactionPage::loadCategoryFilter() {
     int id = ui->cboCategory->currentData().toInt();
     ui->cboCategory->clear();
     ui->cboCategory->addItem(UiHelper::createTagIcon(), "Danh mục: Tất cả", 0);
-    const auto& categories = moneyManager.getCategoryManager().getCategories();
+    const LinkedList<Category>& categories = moneyManager.getCategoryManager().getCategories();
     for (const Node<Category>* cur = categories.getHead(); cur; cur = cur->next) {
         QString cName = QString::fromStdString(cur->data.getName());
         QString display = UiHelper::getCategoryIcon(cName) + "  " + cName;
@@ -57,12 +57,12 @@ void TransactionPage::addTxRow(const Transaction* tx) {
     const Category* category = moneyManager.getCategoryManager().findById(tx->getCategoryId());
 
     // Cột 0: Loại (TypeBadgeDelegate vẽ pill)
-    auto* type = new QTableWidgetItem(income ? "↑ Thu nhập" : "↓ Chi tiêu");
+    QTableWidgetItem* type = new QTableWidgetItem(income ? "↑ Thu nhập" : "↓ Chi tiêu");
     type->setData(Qt::UserRole, tx->getId());
 
     // Cột 1: Số tiền (Bold, màu chuẩn prompt)
     QString prefix = income ? "↑ + " : "↓ - ";
-    auto* amount = new QTableWidgetItem(prefix + UiHelper::formatMoneyVND(tx->getAmount()));
+    QTableWidgetItem* amount = new QTableWidgetItem(prefix + UiHelper::formatMoneyVND(tx->getAmount()));
     amount->setForeground(income ? UiHelper::colorIncome() : UiHelper::colorExpense());
     QFont amountFont = amount->font();
     amountFont.setBold(true);
@@ -70,18 +70,18 @@ void TransactionPage::addTxRow(const Transaction* tx) {
     amount->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 
     // Cột 2: Ngày
-    auto* dateItem = new QTableWidgetItem(UiHelper::formatDate(tx->getDate()));
+    QTableWidgetItem* dateItem = new QTableWidgetItem(UiHelper::formatDate(tx->getDate()));
     dateItem->setForeground(QColor("#0B2A6B"));
 
     // Cột 3: Ví (Badge vuông nhỏ bo góc pastel + tên)
     QString wName = wallet ? QString::fromStdString(wallet->getName()) : "Ví khác";
-    auto* walletItem = new QTableWidgetItem(wName);
+    QTableWidgetItem* walletItem = new QTableWidgetItem(wName);
     walletItem->setIcon(QIcon(GuiIcons::createWalletBadgeIcon(wName, wallet ? (int)wallet->getType() : 0, 24)));
     walletItem->setForeground(QColor("#0B2A6B"));
 
     // Cột 4: Danh mục (Badge tròn màu pastel + tên)
     QString cName = category ? QString::fromStdString(category->getName()) : "Khác";
-    auto* catItem = new QTableWidgetItem(cName);
+    QTableWidgetItem* catItem = new QTableWidgetItem(cName);
     catItem->setIcon(UiHelper::createCategoryCircleIcon(cName, 24));
     catItem->setForeground(QColor("#0B2A6B"));
 
@@ -119,7 +119,7 @@ void TransactionPage::showEmptyTable() {
     QString msg = dateInvalid
         ? "Khoảng ngày không hợp lệ: 'Từ ngày' phải trước hoặc bằng 'Đến ngày'"
         : "Không có giao dịch phù hợp với bộ lọc";
-    auto* item = new QTableWidgetItem(msg);
+    QTableWidgetItem* item = new QTableWidgetItem(msg);
     item->setTextAlignment(Qt::AlignCenter);
     if (dateInvalid) item->setForeground(QColor("#E0173D"));
     else item->setForeground(QColor("#5B6B8C"));

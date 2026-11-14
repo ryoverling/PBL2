@@ -65,7 +65,7 @@ void SettingsPage::setupPasswordForm() {
     setupPasswordEyeAction(ui->edtConfirmPassword);
 
     lblPasswordError = new QLabel(this);
-    lblPasswordError->setStyleSheet("color: #E0173D; font-size: 13px; font-weight: 500;");
+    lblPasswordError->setObjectName("lblSettingsPasswordError");
     lblPasswordError->setVisible(false);
     ui->changePassLayout->insertWidget(ui->changePassLayout->count() - 1, lblPasswordError);
 

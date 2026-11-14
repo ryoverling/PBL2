@@ -33,14 +33,10 @@ QWidget* DayDetailDialog::createTypeBadgeWidget(bool isIncome) {
     layout->setAlignment(Qt::AlignCenter);
 
     QLabel* lblBadge = new QLabel(isIncome ? "Thu nhập" : "Chi tiêu", container);
+    lblBadge->setObjectName(isIncome ? "lblDayBadgeIncome" : "lblDayBadgeExpense");
     lblBadge->setAlignment(Qt::AlignCenter);
     lblBadge->setFixedHeight(26);
     lblBadge->setFixedWidth(86);
-    lblBadge->setStyleSheet(QString(
-        "background-color: %1; color: %2; font-weight: 700; font-size: 12px; "
-        "border-radius: 13px; border: none;"
-    ).arg(isIncome ? UiHelper::colorIncomeBg().name() : UiHelper::colorExpenseBg().name(),
-          isIncome ? UiHelper::colorIncome().name() : UiHelper::colorExpense().name()));
     layout->addWidget(lblBadge);
     return container;
 }

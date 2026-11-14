@@ -1187,4 +1187,25 @@ QMessageBox QLabel {
 #dayBadgeContainer {
     background: transparent;
 }
+QLabel#lblDayBadgeIncome {
+    background-color: #EAFBF3;
+    color: #0E8F4F;
+    font-weight: 700;
+    font-size: 12px;
+    border-radius: 13px;
+    border: none;
+}
+QLabel#lblDayBadgeExpense {
+    background-color: #FFF0F3;
+    color: #E0173D;
+    font-weight: 700;
+    font-size: 12px;
+    border-radius: 13px;
+    border: none;
+}
+QLabel#lblSettingsPasswordError {
+    color: #E0173D;
+    font-size: 13px;
+    font-weight: 500;
+}
 

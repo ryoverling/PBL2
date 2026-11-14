@@ -88,39 +88,6 @@ bool CategoryManager::addCategory(const std::string& name, CategoryType type, in
     return true;
 }
 
-bool CategoryManager::updateCategory(int id, const std::string& newName, CategoryType newType, bool isUsed) {
-    if (newName.empty()) return false;
-    Category* c = findById(id);
-    if (!c) return false;
-    if (c->getType() != newType && isUsed) return false;
-    if (hasCategoryName(newName, newType, id)) return false;
-    c->setName(newName);
-    c->setType(newType);
-    return true;
-}
-
-bool CategoryManager::deleteCategory(int id, bool isUsed) {
-    // Nếu danh mục đang được sử dụng ở giao dịch thì từ chối xóa
-    if (isUsed) return false;
-
-    std::vector<Category> kept;
-    bool found = false;
-    for (Node<Category>* cur = categories.getHead(); cur != nullptr; cur = cur->next) {
-        if (!found && cur->data.getId() == id) {
-            found = true;
-        } else {
-            kept.push_back(cur->data);
-        }
-    }
-    if (!found) return false;
-
-    categories.clear();
-    for (size_t i = 0; i < kept.size(); ++i) {
-        categories.pushBack(kept[i]);
-    }
-    return true;
-}
-
 Category* CategoryManager::findById(int id) {
     for (Node<Category>* cur = categories.getHead(); cur != nullptr; cur = cur->next) {
         if (cur->data.getId() == id) {

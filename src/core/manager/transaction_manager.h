@@ -90,9 +90,8 @@ public:
     Transaction* findById(int id);
     const Transaction* findById(int id) const;
 
-    // Kiểm tra xem một ví hoặc danh mục có đang được sử dụng trong giao dịch nào không
+    // Kiểm tra xem một ví có đang được sử dụng trong giao dịch nào không
     bool isWalletUsed(int walletId) const;
-    bool isCategoryUsed(int categoryId) const;
 
     // Lấy số lượng giao dịch
     size_t getCount() const;
@@ -109,14 +108,12 @@ public:
                             int type = 0, // 0: Tất cả, 1: Thu nhập, 2: Chi tiêu
                             const std::string& keyword = "") const;
 
-    // SẮP XẾP GIAO DỊCH (Sử dụng Selection Sort trên LinkedList):
+    // SẮP XẾP GIAO DỊCH THEO NGÀY (Sử dụng Selection Sort trên LinkedList):
     // Sắp xếp trên danh sách chính của Manager
     void sortTransactionsByDate(bool ascending = true);
-    void sortTransactionsByAmount(bool ascending = true);
 
     // Sắp xếp trên bất kỳ danh sách nào (ví dụ danh sách sau khi lọc)
     static void sortByDate(LinkedList<Transaction*>& list, bool ascending = true);
-    static void sortByAmount(LinkedList<Transaction*>& list, bool ascending = true);
 
     // Xóa sạch toàn bộ giao dịch và delete từng con trỏ
     void clear();

@@ -468,15 +468,6 @@ bool TransactionManager::isWalletUsed(int walletId) const {
     return false;
 }
 
-bool TransactionManager::isCategoryUsed(int categoryId) const {
-    for (Node<Transaction*>* cur = transactions.getHead(); cur != nullptr; cur = cur->next) {
-        if (cur->data && cur->data->getCategoryId() == categoryId) {
-            return true;
-        }
-    }
-    return false;
-}
-
 size_t TransactionManager::getCount() const {
     return transactions.getSize();
 }
@@ -516,14 +507,6 @@ static bool ngayGiamDan(Transaction* a, Transaction* b) {
     return a && b && b->getDate() < a->getDate();
 }
 
-static bool tienTangDan(Transaction* a, Transaction* b) {
-    return a && b && a->getAmount() < b->getAmount();
-}
-
-static bool tienGiamDan(Transaction* a, Transaction* b) {
-    return a && b && b->getAmount() < a->getAmount();
-}
-
 void TransactionManager::filterTransactions(LinkedList<Transaction*>& outResult,
                                             const Date& fromDate,
                                             const Date& toDate,
@@ -543,16 +526,8 @@ void TransactionManager::sortTransactionsByDate(bool ascending) {
     sortByDate(transactions, ascending);
 }
 
-void TransactionManager::sortTransactionsByAmount(bool ascending) {
-    sortByAmount(transactions, ascending);
-}
-
 void TransactionManager::sortByDate(LinkedList<Transaction*>& list, bool ascending) {
     list.selectionSort(ascending ? ngayTangDan : ngayGiamDan);
-}
-
-void TransactionManager::sortByAmount(LinkedList<Transaction*>& list, bool ascending) {
-    list.selectionSort(ascending ? tienTangDan : tienGiamDan);
 }
 
 void TransactionManager::clear() {

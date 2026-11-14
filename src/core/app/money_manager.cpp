@@ -78,20 +78,6 @@ bool MoneyManager::deleteWallet(int id) {
     return walletManager.deleteWallet(id, isUsed);
 }
 
-bool MoneyManager::addCategory(const std::string& name, CategoryType type, int* outId) {
-    return categoryManager.addCategory(name, type, outId);
-}
-
-bool MoneyManager::updateCategory(int id, const std::string& newName, CategoryType newType) {
-    bool isUsed = transactionManager.isCategoryUsed(id);
-    return categoryManager.updateCategory(id, newName, newType, isUsed);
-}
-
-bool MoneyManager::deleteCategory(int id) {
-    bool isUsed = transactionManager.isCategoryUsed(id);
-    return categoryManager.deleteCategory(id, isUsed);
-}
-
 bool MoneyManager::getFilteredTransactions(LinkedList<Transaction*>& result,
                                            const Date& from, const Date& to,
                                            int walletId, int categoryId, int type) const {

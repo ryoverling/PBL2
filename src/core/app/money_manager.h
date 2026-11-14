@@ -57,11 +57,6 @@ public:
     bool updateWallet(int id, const std::string& name, WalletType type);
     bool deleteWallet(int id);
 
-    // Nghiệp vụ Danh mục
-    bool addCategory(const std::string& name, CategoryType type, int* outId = nullptr);
-    bool updateCategory(int id, const std::string& newName, CategoryType newType);
-    bool deleteCategory(int id);
-
     // Nghiệp vụ Giao dịch: nhận tên danh mục + loại, tự kiểm tra tính hợp lệ trước khi tạo danh mục
     bool addTransaction(Transaction* tx, const std::string& categoryName, CategoryType categoryType);
 

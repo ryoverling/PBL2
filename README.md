@@ -44,7 +44,7 @@ Dự án cung cấp sẵn một bộ dữ liệu mẫu chuẩn hóa trong thư m
 
 - Đăng nhập, đăng ký, đổi mật khẩu và đăng xuất qua `UserManager`.
 - Thêm, sửa, xóa ví; xem tổng số dư và các giao dịch. Giao dịch chi tiêu bị từ chối nếu làm số dư ví âm.
-- Thêm, sửa, xóa và lọc giao dịch theo ngày, ví, danh mục, loại; có thể nhập tên danh mục mới khi thêm giao dịch.
+- Thêm, sửa, xóa và lọc giao dịch theo ngày, ví, danh mục, loại; danh mục được chọn từ danh sách hoặc tự động tạo mới khi lưu giao dịch; giao dịch được sắp xếp theo ngày (mới nhất lên đầu).
 - Dashboard và trang Statistics dùng chung `MoneyManager::getMonthlyTotals` → `StatUtils::getMonthlyTotals`. Biểu đồ 6 tháng và thống kê danh mục tái dùng tổng tháng; lịch hiển thị chi theo ngày.
 - Dữ liệu người dùng được đọc/ghi qua `FileStorage` trong thư mục `data/<username>/` bằng các tệp tin văn bản `.dat` (mỗi dòng một bản ghi, ngăn cách bằng dấu `|`). Dự án hoàn toàn lưu trữ file văn bản tuần tự, không dùng hệ quản trị cơ sở dữ liệu. Khi đọc các tệp `.dat`, các dòng hỏng định dạng (thiếu trường, sai cú pháp) sẽ tự động bị bỏ qua để ứng dụng hoạt động an toàn và không bị crash.
 
@@ -55,8 +55,8 @@ Chương trình được thiết kế theo 5 tầng phân định trách nhiệm
 3. **Tầng Quản lý nghiệp vụ chuyên trách (`Managers`)**:
    - `UserManager`: Quản lý danh sách người dùng, đăng nhập, đăng ký, đổi mật khẩu. Mật khẩu được lưu nguyên văn (plain text) trong `users.dat` (đây là giới hạn đã biết trong phạm vi đồ án năm 2, chưa áp dụng cơ chế băm bảo mật).
    - `WalletManager`: Quản lý danh sách ví, cập nhật số dư, nạp/rút tiền.
-   - `CategoryManager`: Quản lý danh mục thu/chi, tự động tái dùng hoặc tạo mới.
-   - `TransactionManager`: Quản lý giao dịch, thực thi quy tắc bất biến ngăn số dư âm qua `validateWalletTimeline`.
+   - `CategoryManager`: Quản lý danh mục thu/chi gắn liền với giao dịch, tự động tái dùng hoặc tạo mới khi lưu giao dịch (không duy trì CRUD danh mục độc lập ngoài UI).
+   - `TransactionManager`: Quản lý giao dịch, sắp xếp theo ngày qua Selection Sort, thực thi quy tắc bất biến ngăn số dư âm qua `validateWalletTimeline`.
 4. **Tầng Mô hình & Cấu trúc dữ liệu (`Models & Structures`)**:
    - Các thực thể: `User`, `Wallet`, `Category`, và đa hình `Transaction` (`Income` / `Expense`).
    - Cấu trúc dữ liệu tự cài đặt: `LinkedList<T>` và thuật toán Selection Sort.

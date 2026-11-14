@@ -1,4 +1,4 @@
-﻿#undef NDEBUG
+#undef NDEBUG
 #include <iostream>
 #include <fstream>
 #include <cassert>
@@ -203,32 +203,37 @@ void testStep43() {
     assert(wm.findById(2) == nullptr);
     std::cout << "   -> Cac dieu kien chan ten rong, so du am, trung ten, xoa vi dang dung deu DUNG!\n";
 
-    // 3. CategoryManager hop le
-    std::cout << "3. Kiem tra CategoryManager (Hop le):\n";
-    int cId1 = 0, cId2 = 0;
-    assert(cm.addCategory("Luong", CategoryType::INCOME, &cId1) == true);
+    // 3. CategoryManager findOrCreateCategory (tu dong tao va tai su dung)
+    std::cout << "3. Kiem tra CategoryManager (findOrCreateCategory):\n";
+    int cId1 = cm.findOrCreateCategory("Luong", CategoryType::INCOME);
     assert(cId1 == 1);
-    assert(cm.addCategory("An uong", CategoryType::EXPENSE, &cId2) == true);
+    int cId2 = cm.findOrCreateCategory("An uong", CategoryType::EXPENSE);
     assert(cId2 == 2);
-    assert(cm.updateCategory(2, "An uong ngoai quan", CategoryType::EXPENSE) == true);
-    std::cout << "   - Danh muc 2 sau khi sua: " << cm.findById(2)->getName() << "\n";
+    // Goi lai danh muc da co -> tai su dung ID cu, khong tao trung
+    int cId1_reuse = cm.findOrCreateCategory("Luong", CategoryType::INCOME);
+    assert(cId1_reuse == 1);
+    // Chuẩn hóa khoảng trắng đầu cuối
+    int cId2_reuse = cm.findOrCreateCategory("  An uong  ", CategoryType::EXPENSE);
+    assert(cId2_reuse == 2);
+    assert(cm.getCount() == 2);
+    std::cout << "   - Danh muc 1 (Luong, Thu): ID " << cId1 << "\n";
+    std::cout << "   - Danh muc 2 (An uong, Chi): ID " << cId2 << "\n";
+    std::cout << "   - Tai su dung danh muc: DUNG (khong tao trung, giu nguyen so luong " << cm.getCount() << ")\n";
 
-    // 4. CategoryManager that bai (chan loi)
-    std::cout << "4. Kiem tra CategoryManager (Chan loi hop le):\n";
-    assert(cm.addCategory("", CategoryType::EXPENSE) == false); // Ten rong
-    assert(cm.addCategory("An uong ngoai quan", CategoryType::EXPENSE) == false); // Trung ten
-    assert(cm.deleteCategory(2, true) == false); // Dang dung -> tu choi
-    assert(cm.findById(2) != nullptr);
-    assert(cm.deleteCategory(1, false) == true); // isUsed = false -> xoa duoc
-    assert(cm.findById(1) == nullptr);
-    std::cout << "   -> Cac dieu kien chan ten rong, trung ten, xoa danh muc dang dung deu DUNG!\n";
+    // 4. CategoryManager chan ten rong va tra ve 0
+    std::cout << "4. Kiem tra CategoryManager (Chan ten rong an toan):\n";
+    assert(cm.findOrCreateCategory("", CategoryType::EXPENSE) == 0); // Ten rong -> tra ve 0
+    assert(cm.findOrCreateCategory("   ", CategoryType::EXPENSE) == 0); // Chi chua khoang trang -> tra ve 0
+    assert(cm.getCount() == 2);
+    std::cout << "   -> Ten rong hoac chi co khoang trang tra ve 0 an toan!\n";
 
-    // 5. Kiem tra quy uoc ID tu tang
+    // 5. Kiem tra quy uoc ID tu tang khi tao moi danh muc
     std::cout << "5. Kiem tra quy uoc ID tu tang max(id) + 1:\n";
-    assert(cm.getNextId() == 3);
-    int cId3 = 0;
-    assert(cm.addCategory("Tien nha", CategoryType::EXPENSE, &cId3) == true);
+    int cId3 = cm.findOrCreateCategory("Tien nha", CategoryType::EXPENSE);
     assert(cId3 == 3);
+    assert(cm.getCount() == 3);
+    assert(cm.findById(3) != nullptr);
+    assert(cm.findById(3)->getName() == "Tien nha");
     std::cout << "   - ID sinh ra tiep theo la: " << cId3 << " (max(id) + 1)\n";
     std::cout << "=> BUOC 4.3 HOAN TAT DAT 100%!\n";
 }
@@ -397,15 +402,12 @@ void testStep44() {
     delete tErr4;
     std::cout << "   - Chan con tro null: DUNG (tra ve false)\n";
 
-    // 5. Kiem tra isWalletUsed va isCategoryUsed
-    std::cout << "\n5. Kiem tra kiem tra rang buoc su dung:\n";
+    // 5. Kiem tra isWalletUsed
+    std::cout << "\n5. Kiem tra kiem tra rang buoc su dung vi:\n";
     // Hien tai con t3 (walletId = 1, categoryId = 3)
     assert(tm.isWalletUsed(1) == true);
     assert(tm.isWalletUsed(2) == false);
-    assert(tm.isCategoryUsed(3) == true);
-    assert(tm.isCategoryUsed(1) == false);
     std::cout << "   - isWalletUsed(1) = true, isWalletUsed(2) = false: DUNG!\n";
-    std::cout << "   - isCategoryUsed(3) = true, isCategoryUsed(1) = false: DUNG!\n";
 
     std::cout << "=> BUOC 4.4 HOAN TAT DAT 100%!\n";
 }
@@ -495,43 +497,33 @@ void testStep45() {
     std::cout << "   -> Chung minh thuc te: tempFilter da bi huy nhung danh sach goc van du " 
               << tm.getCount() << " GD nguyen ven!\n";
 
-    // 2.7 Sap xep tren ban sao tham chieu (getAllTransactions) de giu nguyen thu tu goc
+    // 2.7 Sap xep tren ban sao tham chieu (viewCopy) de giu nguyen thu tu goc
     LinkedList<Transaction*> viewCopy;
     tm.filterTransactions(viewCopy);
-    TransactionManager::sortByAmount(viewCopy, true);
-    assert(viewCopy.getHead()->data->getAmount() == 45000);
+    TransactionManager::sortByDate(viewCopy, true);
+    assert(viewCopy.getHead()->data->getDate() == Date(5, 10, 2026));
     assert(tm.getTransactions().getHead()->data->getId() == 1); // Thu tu goc van la GD 1 dau tien!
     std::cout << "   -> Sap xep tren viewCopy: viewCopy sap xep thanh cong, danh sach goc van GIU NGUYEN THU TU!\n";
 
     // =========================================================================
-    // PHAN B: KIEM TRA SAP XEP (SELECTION SORT TREN LINKEDLIST)
+    // PHAN B: KIEM TRA SAP XEP THEO NGAY (SELECTION SORT TREN LINKEDLIST)
     // =========================================================================
-    std::cout << "\n3. Kiem tra SAP XEP (Selection Sort tren LinkedList):\n";
+    std::cout << "\n3. Kiem tra SAP XEP THEO NGAY (Selection Sort tren LinkedList):\n";
 
-    // 3.1 Sap xep theo So tien TANG DAN
-    tm.sortTransactionsByAmount(true);
-    assert(tm.getTransactions().getHead()->data->getAmount() == 45000); // Nho nhat: 45k
-    printTxList(tm.getTransactions(), "Sau khi sap xep theo SO TIEN TANG DAN");
-
-    // 3.2 Sap xep theo So tien GIAM DAN
-    tm.sortTransactionsByAmount(false);
-    assert(tm.getTransactions().getHead()->data->getAmount() == 5000000); // Lon nhat: 5tr
-    printTxList(tm.getTransactions(), "Sau khi sap xep theo SO TIEN GIAM DAN");
-
-    // 3.3 Sap xep theo Ngay GIAM DAN (Moi nhat len dau)
+    // 3.1 Sap xep theo Ngay GIAM DAN (Moi nhat len dau)
     tm.sortTransactionsByDate(false);
     assert(tm.getTransactions().getHead()->data->getDate() == Date(15, 10, 2026)); // 15/10 len dau
     printTxList(tm.getTransactions(), "Sau khi sap xep theo NGAY GIAM DAN (Moi nhat len dau)");
 
-    // 3.4 Sap xep theo Ngay TANG DAN (Cu nhat den moi nhat)
+    // 3.2 Sap xep theo Ngay TANG DAN (Cu nhat den moi nhat)
     tm.sortTransactionsByDate(true);
     assert(tm.getTransactions().getHead()->data->getDate() == Date(5, 10, 2026)); // 05/10 len dau
     printTxList(tm.getTransactions(), "Sau khi sap xep theo NGAY TANG DAN (Cu nhat len dau)");
 
-    // 3.5 Sap xep tren danh sach loc bat ky (sortByAmount tren fExpense)
-    TransactionManager::sortByAmount(fExpense, true);
-    assert(fExpense.getHead()->data->getAmount() == 45000);
-    printTxList(fExpense, "Sap xep danh sach loc Khoan Chi theo SO TIEN TANG DAN");
+    // 3.3 Sap xep tren danh sach loc bat ky (sortByDate tren fExpense)
+    TransactionManager::sortByDate(fExpense, false);
+    assert(fExpense.getHead()->data->getDate() == Date(10, 10, 2026));
+    printTxList(fExpense, "Sap xep danh sach loc Khoan Chi theo NGAY GIAM DAN");
 
     // 4. Kiem tra tim kiem tu khoa tieng Viet co dau va gioi han Unicode o Core
     std::cout << "\n4. Kiem tra tim kiem tu khoa tieng Viet co dau:\n";
@@ -633,7 +625,7 @@ static void seedStep47Persistence(MoneyManager& mm, int walletId) {
     assert(mm.addWallet("Ngan hang test", WalletType::BANK, 8000000));
     assert(mm.addWallet("Vi dien tu test", WalletType::EWALLET, 8300000));
     for (int i = 0; i < 7; ++i)
-        assert(mm.addCategory("Danh muc kiem thu " + std::to_string(i), CategoryType::EXPENSE));
+        assert(mm.getCategoryManager().findOrCreateCategory("Danh muc kiem thu " + std::to_string(i), CategoryType::EXPENSE) > 0);
     for (int i = 0; i < 13; ++i) {
         int incomeId = mm.getTransactionManager().getNextId();
         assert(mm.addTransaction(new Income(incomeId, 1000, Date(3, 10, 2026), "", walletId, 0),
@@ -659,36 +651,33 @@ void testStep47() {
     assert(mm.login("unknown_test_user", "fixture_password") == false);
     std::cout << "   - Dang nhap tai khoan test: THANH CONG!\n";
 
-    // 2. Kiem tra dieu phoi nghiep vu (Them vi, Danh muc, Giao dich cap nhat so du)
+    // 2. Kiem tra dieu phoi nghiep vu (Them vi, Giao dich tu dong tao danh muc va cap nhat so du)
     std::cout << "\n2. Kiem tra dieu phoi nghiep vu lien-manager:\n";
-    int wId = 0, cIncId = 0, cExpId = 0;
+    int wId = 0;
     assert(mm.addWallet("Tien mat", WalletType::CASH, 1000000, &wId) == true);
-    assert(mm.addCategory("Luong lam them", CategoryType::INCOME, &cIncId) == true);
-    assert(mm.addCategory("Tien an uong", CategoryType::EXPENSE, &cExpId) == true);
 
-    // Them giao dich Thu -> So du vi tu dong tang (1M + 2M = 3M)
+    // Them giao dich Thu -> Tu dong tao danh muc "Luong lam them" & So du vi tu dong tang (1M + 2M = 3M)
     assert(mm.addTransaction(new Income(1, 2000000, Date(1, 10, 2026), "Nhan luong", wId, 0), "Luong lam them", CategoryType::INCOME) == true);
     assert(mm.getWalletManager().findById(wId)->getBalance() == 3000000);
-    std::cout << "   - Thu +2.000.000 -> So du vi tu dong tang: " 
+    assert(mm.getCategoryManager().findCategoryId("Luong lam them", CategoryType::INCOME) > 0);
+    std::cout << "   - Thu +2.000.000 -> Tu dong tao DM & So du vi tu dong tang: " 
               << formatMoney(mm.getWalletManager().findById(wId)->getBalance()) << "\n";
 
-    // Them giao dich Chi -> So du vi tu dong giam (3M - 500k = 2.5M)
+    // Them giao dich Chi -> Tu dong tao danh muc "Tien an uong" & So du vi tu dong giam (3M - 500k = 2.5M)
     assert(mm.addTransaction(new Expense(2, 500000, Date(2, 10, 2026), "An com", wId, 0), "Tien an uong", CategoryType::EXPENSE) == true);
     assert(mm.getWalletManager().findById(wId)->getBalance() == 2500000);
-    std::cout << "   - Chi -500.000 -> So du vi tu dong giam: " 
+    assert(mm.getCategoryManager().findCategoryId("Tien an uong", CategoryType::EXPENSE) > 0);
+    std::cout << "   - Chi -500.000 -> Tu dong tao DM & So du vi tu dong giam: " 
               << formatMoney(mm.getWalletManager().findById(wId)->getBalance()) << "\n";
 
-    // 3. Kiem tra rang buoc XOA DANH MUC (chi kiem tra Transaction su dung)
-    std::cout << "\n3. Kiem tra rang buoc xoa danh muc:\n";
-    // 3.1 Danh muc dang co Transaction dung -> TU CHOI!
-    assert(mm.deleteCategory(cIncId) == false);
-    std::cout << "   - Xoa DM Luong (co GD dung): BI TU CHOI dung nhu mong doi!\n";
+    // 3. Kiem tra tu dong tai su dung danh muc (khong tao trung)
+    std::cout << "\n3. Kiem tra tu dong tai su dung danh muc:\n";
+    size_t catCountBefore = mm.getCategoryManager().getCount();
+    assert(mm.addTransaction(new Expense(99, 10000, Date(2, 10, 2026), "Tra da", wId, 0), "Tien an uong", CategoryType::EXPENSE) == true);
+    assert(mm.getCategoryManager().getCount() == catCountBefore);
+    assert(mm.deleteTransaction(99) == true);
+    std::cout << "   - Them GD cung danh muc 'Tien an uong' -> Tai su dung danh muc cu, so danh muc khong tang: DUNG!\n";
 
-    // 3.2 Danh muc ranh roi (khong GD) -> XOA THANH CONG!
-    int cFreeId = 0;
-    assert(mm.addCategory("Danh muc thu nghiem", CategoryType::EXPENSE, &cFreeId) == true);
-    assert(mm.deleteCategory(cFreeId) == true);
-    std::cout << "   - Xoa DM ranh roi: THANH CONG!\n";
     // 4. Kiem tra SUA va XOA giao dich qua MoneyManager
     std::cout << "\n4. Kiem tra sua va xoa giao dich qua MoneyManager:\n";
     // Sua giao dich 2 (Chi 500k sua thanh Chi 300k) -> So du vi: 2.5M + 500k - 300k = 2.7M

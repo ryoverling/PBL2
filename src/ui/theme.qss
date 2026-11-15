@@ -695,8 +695,9 @@ QCalendarWidget #qt_calendar_navigationbar {
 /* 14. Wallet Cards */
 QFrame#WalletCard {
     border: 1px solid #DCE8FA;
-    border-radius: 18px;
+    border-radius: 20px;
     background-color: #FFFFFF;
+    min-height: 185px;
 }
 
 QFrame#WalletCard[walletType="cash"] {
@@ -808,11 +809,10 @@ QFrame#WalletCard[selected="true"] {
 }
 
 #WalletPage QPushButton#addWalletCard {
-    min-height: 176px;
-    max-height: 176px;
+    min-height: 185px;
     padding: 0;
-    border: 2px dashed #BACFE8;
-    border-radius: 18px;
+    border: 2px dashed #B8CBE6;
+    border-radius: 20px;
     background: transparent;
 }
 

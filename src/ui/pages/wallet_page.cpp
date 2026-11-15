@@ -163,7 +163,7 @@ void WalletPage::reflowCards() {
     if (cards.isEmpty() || !isVisible() || reflowing) return;
     reflowing = true;
     int available = ui->scrollWallets->viewport()->width();
-    int columns = qBound(1, (available + 20) / 290, 3);
+    int columns = qBound(1, (available + 24) / 260, 3);
 
     ui->walletGrid->removeWidget(addCard);
     for (WalletCard* card : cards) ui->walletGrid->removeWidget(card);

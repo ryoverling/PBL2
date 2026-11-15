@@ -38,6 +38,7 @@ WalletCard::WalletCard(const Wallet& wallet, QWidget* parent)
     ui->lblBalance->setText(UiHelper::formatBalance(wallet.getBalance()));
     ui->lblChevron->setPixmap(GuiIcons::createChevronCircle(32));
 
+    setMinimumHeight(185);
     UiHelper::applyCardShadow(this);
     setCursor(Qt::PointingHandCursor);
     setToolTip(fullName);
@@ -74,9 +75,9 @@ void WalletCard::resizeEvent(QResizeEvent* event) {
 
 AddWalletCard::AddWalletCard(QWidget* parent) : QPushButton("+ Thêm ví", parent) {
     setObjectName("addWalletCard");
-    setMinimumSize(260, 150);
-    setMaximumHeight(165);
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    setMinimumSize(260, 185);
+    setMinimumHeight(185);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
     setCursor(Qt::PointingHandCursor);
     setAttribute(Qt::WA_Hover);
 }
@@ -87,8 +88,8 @@ void AddWalletCard::paintEvent(QPaintEvent*) {
 
     bool hover = underMouse() || isDown();
     p.setBrush(QColor(hover ? "#F4F8FE" : "#FFFFFF"));
-    p.setPen(QPen(QColor(hover ? "#1E6FFF" : "#BACFE8"), 1.6, Qt::DashLine));
-    p.drawRoundedRect(rect().adjusted(2, 2, -2, -2), 18, 18);
+    p.setPen(QPen(QColor(hover ? "#1E6FFF" : "#B8CBE6"), 2.0, Qt::DashLine));
+    p.drawRoundedRect(rect().adjusted(2, 2, -2, -2), 20, 20);
 
     QPoint center(width() / 2, height() / 2 - 14);
 

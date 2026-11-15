@@ -370,10 +370,10 @@
           <number>4</number>
          </property>
          <property name="horizontalSpacing">
-          <number>20</number>
+          <number>24</number>
          </property>
          <property name="verticalSpacing">
-          <number>20</number>
+          <number>24</number>
          </property>
         </layout>
        </item>

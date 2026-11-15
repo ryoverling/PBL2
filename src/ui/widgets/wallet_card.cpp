@@ -38,7 +38,8 @@ WalletCard::WalletCard(const Wallet& wallet, QWidget* parent)
     ui->lblBalance->setText(UiHelper::formatBalance(wallet.getBalance()));
     ui->lblChevron->setPixmap(GuiIcons::createChevronCircle(32));
 
-    setMinimumHeight(185);
+    setFixedHeight(185);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     UiHelper::applyCardShadow(this);
     setCursor(Qt::PointingHandCursor);
     setToolTip(fullName);
@@ -47,6 +48,10 @@ WalletCard::WalletCard(const Wallet& wallet, QWidget* parent)
 WalletCard::~WalletCard() { delete ui; }
 
 int WalletCard::walletId() const { return id; }
+
+QSize WalletCard::sizeHint() const {
+    return QSize(280, 185);
+}
 
 void WalletCard::setSelected(bool selected) {
     if (property("selected").toBool() == selected) return;
@@ -75,11 +80,19 @@ void WalletCard::resizeEvent(QResizeEvent* event) {
 
 AddWalletCard::AddWalletCard(QWidget* parent) : QPushButton("+ Thêm ví", parent) {
     setObjectName("addWalletCard");
-    setMinimumSize(260, 185);
-    setMinimumHeight(185);
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
+    setFixedHeight(185);
+    setMinimumWidth(260);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     setCursor(Qt::PointingHandCursor);
     setAttribute(Qt::WA_Hover);
+}
+
+QSize AddWalletCard::sizeHint() const {
+    return QSize(280, 185);
+}
+
+QSize AddWalletCard::minimumSizeHint() const {
+    return QSize(260, 185);
 }
 
 void AddWalletCard::paintEvent(QPaintEvent*) {

@@ -698,6 +698,7 @@ QFrame#WalletCard {
     border-radius: 20px;
     background-color: #FFFFFF;
     min-height: 185px;
+    max-height: 185px;
 }
 
 QFrame#WalletCard[walletType="cash"] {
@@ -805,17 +806,18 @@ QFrame#WalletCard[selected="true"] {
     font-size: 13px;
     font-weight: 500;
 }
-    font-size: 13px;
-}
 
+QPushButton#addWalletCard,
 #WalletPage QPushButton#addWalletCard {
     min-height: 185px;
+    max-height: 185px;
     padding: 0;
     border: 2px dashed #B8CBE6;
     border-radius: 20px;
     background: transparent;
 }
 
+QPushButton#addWalletCard:hover,
 #WalletPage QPushButton#addWalletCard:hover {
     background-color: #E0EDFF;
     border-color: #1E6FFF;

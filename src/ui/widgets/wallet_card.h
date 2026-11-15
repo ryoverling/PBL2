@@ -3,6 +3,7 @@
 #include <QFrame>
 #include <QPushButton>
 #include <QString>
+#include <QSize>
 
 class Wallet;
 class QMouseEvent;
@@ -18,6 +19,7 @@ public:
     ~WalletCard();
     int walletId() const;
     void setSelected(bool selected);
+    QSize sizeHint() const override;
 
 signals:
     void clicked(int walletId);
@@ -36,6 +38,8 @@ private:
 class AddWalletCard : public QPushButton {
 public:
     explicit AddWalletCard(QWidget* parent = nullptr);
+    QSize sizeHint() const override;
+    QSize minimumSizeHint() const override;
 protected:
     void paintEvent(QPaintEvent* event) override;
 };
